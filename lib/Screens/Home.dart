@@ -58,8 +58,8 @@ class _HomePageState extends State<HomePage> {
             label: 'Categories',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
+            icon: Icon(Icons.calculate_rounded),
+            label: 'Insights',
           ),
         ],
       ),
@@ -68,7 +68,11 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {
           print('Floating action button tapped');
         },
-        child: const Icon(Icons.add),
+        child: _selectedIndex == 0
+            ? const Icon(Icons.currency_rupee)
+            : (_selectedIndex == 1
+                ? const Icon(Icons.category)
+                : const Icon(Icons.calculate_rounded)),
       ),
       drawer: Drawer(
         child: ListView(
@@ -79,7 +83,7 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.blue,
               ),
               child: Text(
-                'Drawer Header',
+                'Make the changes',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24,
@@ -94,8 +98,8 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
+              leading: const Icon(Icons.info),
+              title: const Text('Insights'),
               onTap: () {
                 // Handle drawer item tap
               },
@@ -150,7 +154,7 @@ class _HomePageState extends State<HomePage> {
               child: Text("Categories"),
             ),
             Center(
-              child: Text("Others"),
+              child: Text("Infographics"),
             ),
           ],
         ),
