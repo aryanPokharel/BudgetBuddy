@@ -1,3 +1,4 @@
+import 'package:budget_buddy/Screens/Expenses.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -147,9 +148,7 @@ class _HomePageState extends State<HomePage> {
         child: IndexedStack(
           index: _selectedIndex,
           children: const [
-            Center(
-              child: Text("Latest Expenses"),
-            ),
+            Expenses(),
             Center(
               child: Text("Categories"),
             ),
