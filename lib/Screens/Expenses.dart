@@ -27,12 +27,16 @@ class _ExpensesState extends State<Expenses> {
 
   var toDelete;
   deleteItem() {
-    context.read<StateProvider>().deleteExpense(toDelete);
+    context.read<StateProvider>().deleteTransaction(toDelete);
   }
 
   @override
   Widget build(BuildContext context) {
-    List<dynamic> expenseList = Provider.of<StateProvider>(context).expenseList;
+    List<dynamic> transactionList =
+        Provider.of<StateProvider>(context).transactionList;
+    // List<dynamic> expenseList = Provider.of<StateProvider>(context).expenseList;
+    // List<dynamic> incomeList = Provider.of<StateProvider>(context).incomeList;
+
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
@@ -41,7 +45,7 @@ class _ExpensesState extends State<Expenses> {
         },
         child: const Icon(Icons.currency_rupee_rounded),
       ),
-      body: expenseList.isEmpty
+      body: transactionList.isEmpty
           ? const Center(
               child: EmptyListWidget(),
             )
@@ -49,28 +53,45 @@ class _ExpensesState extends State<Expenses> {
               children: [
                 Center(
                   child: ListView.builder(
-                    itemCount: expenseList.length,
+                    itemCount: transactionList.length,
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Card(
                           color: const Color.fromARGB(255, 231, 229, 229),
-                          child: ListTile(
-                            leading: const Icon(Icons.coffee),
-                            title: Row(
-                              children: [
-                                Text(
-                                  expenseList[index]['title'].toString(),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border(
+                                top: BorderSide(
+                                  width: 2,
+                                  color: transactionList[index]['type'] ==
+                                          'Expense'
+                                      ? Colors.red
+                                      : Colors.green,
                                 ),
-                              ],
+                              ),
                             ),
-                            subtitle: Text(
-                              expenseList[index]['description'].toString(),
+                            child: ListTile(
+                              leading:
+                                  transactionList[index]['category'] == "Food"
+                                      ? const Icon(Icons.coffee)
+                                      : const Icon(Icons.music_video_rounded),
+                              title: Row(
+                                children: [
+                                  Text(
+                                    transactionList[index]['title'].toString(),
+                                  ),
+                                ],
+                              ),
+                              subtitle: Text(
+                                transactionList[index]['description']
+                                    .toString(),
+                              ),
+                              trailing: Text(
+                                  'Rs. ${transactionList[index]['amount']}'),
+                              onLongPress: () =>
+                                  {toDelete = index, _toggleOverlay()},
                             ),
-                            trailing:
-                                Text('Rs. ${expenseList[index]['amount']}'),
-                            onLongPress: () =>
-                                {toDelete = index, _toggleOverlay()},
                           ),
                         ),
                       );

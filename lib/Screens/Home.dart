@@ -55,6 +55,7 @@ class _HomePageState extends State<HomePage> {
     List<dynamic> expenseList = Provider.of<StateProvider>(context).expenseList;
 
     dynamic totalExpenses = Provider.of<StateProvider>(context).totalExpenses;
+    dynamic totalIncome = Provider.of<StateProvider>(context).totalIncome;
 
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
@@ -132,7 +133,7 @@ class _HomePageState extends State<HomePage> {
                       "Expense : $totalExpenses",
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 18.0,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -140,7 +141,7 @@ class _HomePageState extends State<HomePage> {
                       "Income   : $totalIncome",
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 18.0,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

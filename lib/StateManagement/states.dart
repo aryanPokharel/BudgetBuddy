@@ -1,9 +1,30 @@
 import 'package:flutter/material.dart';
 
 class StateProvider with ChangeNotifier {
-  // Working with constants
   dynamic totalExpenses = 0;
+  dynamic totalIncome = 0;
 
+  // Transaction States
+  final List<dynamic> _transactionList = [];
+
+  List<dynamic> get transactionList => _transactionList;
+
+  void setTransactionList(dynamic newTransaction) {
+    _transactionList.add(newTransaction);
+    // totalExpenses += double.parse(newTransaction['amount']);
+
+    notifyListeners();
+  }
+
+  void deleteTransaction(dynamic transactionId) {
+    var transactionToRemove = _transactionList[transactionId];
+    // totalExpenses -= double.parse(transactionToRemove['amount']);
+    _transactionList.removeAt(transactionId);
+
+    notifyListeners();
+  }
+
+// Expense States
   final List<dynamic> _expenseList = [];
 
   List<dynamic> get expenseList => _expenseList;
@@ -17,8 +38,28 @@ class StateProvider with ChangeNotifier {
 
   void deleteExpense(dynamic expenseId) {
     var expenseToRemove = _expenseList[expenseId];
-    totalExpenses -= expenseToRemove['amount'];
+    totalExpenses -= double.parse(expenseToRemove['amount']);
     _expenseList.removeAt(expenseId);
+
+    notifyListeners();
+  }
+
+// Income States
+  final List<dynamic> _incomeList = [];
+
+  List<dynamic> get incomeList => _incomeList;
+
+  void setIncomeList(dynamic newIncome) {
+    _incomeList.add(newIncome);
+    totalIncome += double.parse(newIncome['amount']);
+
+    notifyListeners();
+  }
+
+  void deleteIncome(dynamic incomeId) {
+    var incomeToRemove = _incomeList[incomeId];
+    totalIncome -= double.parse(incomeToRemove['amount']);
+    _incomeList.removeAt(incomeId);
 
     notifyListeners();
   }

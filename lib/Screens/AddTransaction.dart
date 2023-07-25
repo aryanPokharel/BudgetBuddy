@@ -72,6 +72,12 @@ class _AddTransactionState extends State<AddTransaction> {
 
   saveExpense(dynamic newExpense) {
     context.read<StateProvider>().setExpenseList(newExpense);
+    context.read<StateProvider>().setTransactionList(newExpense);
+  }
+
+  saveIncome(dynamic newIncome) {
+    context.read<StateProvider>().setIncomeList(newIncome);
+    context.read<StateProvider>().setTransactionList(newIncome);
   }
 
   @override
@@ -195,16 +201,27 @@ class _AddTransactionState extends State<AddTransaction> {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      setState(
-                        () {
-                          var newExpense = {
-                            "title": title,
-                            "description": description,
-                            "amount": amount
-                          };
-                          saveExpense(newExpense);
-                        },
-                      );
+                      if (_transactionType == "Expense") {
+                        var newExpense = {
+                          "type": "Expense",
+                          "title": title,
+                          "description": description,
+                          "amount": amount,
+                          "date": selectedDate,
+                          "category": _selectedCategory,
+                        };
+                        saveExpense(newExpense);
+                      } else {
+                        var newIncome = {
+                          "type": "Income",
+                          "title": title,
+                          "description": description,
+                          "amount": amount,
+                          "date": selectedDate,
+                          "category": _selectedCategory,
+                        };
+                        saveIncome(newIncome);
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
