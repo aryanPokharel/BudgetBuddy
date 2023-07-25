@@ -28,9 +28,9 @@ class _AddTransactionState extends State<AddTransaction> {
     // _selectedCategory = _categories[Random().nextInt(_categories.length)];
   }
 
-  late var title;
-  late var amount;
-  late var description;
+  var title = "N/A";
+  var amount = "N/A";
+  var description = "N/A";
 
   DateTime? selectedDate;
   dynamic dateToSend;
@@ -71,7 +71,6 @@ class _AddTransactionState extends State<AddTransaction> {
   }
 
   saveExpense(dynamic newExpense) {
-    // context.read<UserProvider>().fetchRequests();
     context.read<StateProvider>().setExpenseList(newExpense);
   }
 

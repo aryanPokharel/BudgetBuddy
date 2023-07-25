@@ -1,8 +1,10 @@
 import 'package:budget_buddy/Screens/Categories.dart';
 import 'package:budget_buddy/Screens/Expenses.dart';
 import 'package:budget_buddy/Screens/Insights.dart';
+import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -12,8 +14,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final int _currentIndex = 0;
   int _selectedIndex = 0;
+
+  // dynamic totalExpenses = 0;
+  dynamic totalIncome = 0;
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -47,6 +52,10 @@ class _HomePageState extends State<HomePage> {
     // Format the DateTime to a human-friendly string
     String formattedDateTime = getFormattedDateTime(now);
 
+    List<dynamic> expenseList = Provider.of<StateProvider>(context).expenseList;
+
+    dynamic totalExpenses = Provider.of<StateProvider>(context).totalExpenses;
+
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -66,17 +75,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: () {
-      //     print('Floating action button tapped');
-      //   },
-      //   child: _selectedIndex == 0
-      //       ? const Icon(Icons.currency_rupee)
-      //       : (_selectedIndex == 1
-      //           ? const Icon(Icons.category)
-      //           : const Icon(Icons.calculate_rounded)),
-      // ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -120,26 +118,33 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         ],
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(48.0),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(48.0),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  "Expenses",
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  "Income",
-                  style: TextStyle(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Expense : $totalExpenses",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      "Income   : $totalIncome",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
