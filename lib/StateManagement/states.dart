@@ -18,7 +18,10 @@ class StateProvider with ChangeNotifier {
 
   void deleteTransaction(dynamic transactionId) {
     var transactionToRemove = _transactionList[transactionId];
-    // totalExpenses -= double.parse(transactionToRemove['amount']);
+
+    transactionToRemove['type'] == "Expense"
+        ? totalExpenses -= double.parse(transactionToRemove['amount'])
+        : totalIncome -= double.parse(transactionToRemove['amount']);
     _transactionList.removeAt(transactionId);
 
     notifyListeners();
