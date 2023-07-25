@@ -1,4 +1,6 @@
+import 'package:budget_buddy/Screens/Categories.dart';
 import 'package:budget_buddy/Screens/Expenses.dart';
+import 'package:budget_buddy/Screens/Insights.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -64,17 +66,17 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          print('Floating action button tapped');
-        },
-        child: _selectedIndex == 0
-            ? const Icon(Icons.currency_rupee)
-            : (_selectedIndex == 1
-                ? const Icon(Icons.category)
-                : const Icon(Icons.calculate_rounded)),
-      ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     print('Floating action button tapped');
+      //   },
+      //   child: _selectedIndex == 0
+      //       ? const Icon(Icons.currency_rupee)
+      //       : (_selectedIndex == 1
+      //           ? const Icon(Icons.category)
+      //           : const Icon(Icons.calculate_rounded)),
+      // ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -149,12 +151,8 @@ class _HomePageState extends State<HomePage> {
           index: _selectedIndex,
           children: const [
             Expenses(),
-            Center(
-              child: Text("Categories"),
-            ),
-            Center(
-              child: Text("Infographics"),
-            ),
+            Categories(),
+            Insights(),
           ],
         ),
       ),

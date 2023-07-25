@@ -1,9 +1,17 @@
+import 'package:budget_buddy/Screens/AddTransaction.dart';
 import 'package:budget_buddy/Screens/Home.dart';
+import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider<StateProvider>(
+      create: (_) => StateProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -18,6 +26,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const HomePage(),
+        '/addTransaction': (context) => const AddTransaction()
       },
       debugShowCheckedModeBanner: false,
     );
