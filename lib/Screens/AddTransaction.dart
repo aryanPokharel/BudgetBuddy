@@ -1,4 +1,6 @@
+import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AddTransaction extends StatefulWidget {
   const AddTransaction({super.key});
@@ -25,6 +27,10 @@ class _AddTransactionState extends State<AddTransaction> {
     super.initState();
     // _selectedCategory = _categories[Random().nextInt(_categories.length)];
   }
+
+  late var title;
+  late var amount;
+  late var description;
 
   DateTime? selectedDate;
   dynamic dateToSend;
@@ -55,11 +61,18 @@ class _AddTransactionState extends State<AddTransaction> {
     if (picked != null && picked != selectedDate) {
       final DateTime pickedDate =
           DateTime(picked.year, picked.month, picked.day);
-      setState(() {
-        selectedDate = pickedDate;
-        dateToSend = "${picked.year}-${picked.month}-${picked.day}";
-      });
+      setState(
+        () {
+          selectedDate = pickedDate;
+          dateToSend = "${picked.year}-${picked.month}-${picked.day}";
+        },
+      );
     }
+  }
+
+  saveExpense(dynamic newExpense) {
+    // context.read<UserProvider>().fetchRequests();
+    context.read<StateProvider>().setExpenseList(newExpense);
   }
 
   @override
@@ -99,6 +112,22 @@ class _AddTransactionState extends State<AddTransaction> {
               ),
               const SizedBox(height: 16),
               TextFormField(
+                onChanged: (val) {
+                  setState(() {
+                    title = val;
+                  });
+                },
+                decoration: const InputDecoration(
+                  hintText: "Title",
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                onChanged: (val) {
+                  setState(() {
+                    amount = val;
+                  });
+                },
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   hintText: "Amount",
@@ -106,6 +135,11 @@ class _AddTransactionState extends State<AddTransaction> {
               ),
               const SizedBox(height: 16),
               TextFormField(
+                onChanged: (val) {
+                  setState(() {
+                    description = val;
+                  });
+                },
                 maxLines: 2,
                 decoration: const InputDecoration(
                   hintText: "Description",
@@ -161,7 +195,18 @@ class _AddTransactionState extends State<AddTransaction> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(
+                        () {
+                          var newExpense = {
+                            "title": title,
+                            "description": description,
+                            "amount": amount
+                          };
+                          saveExpense(newExpense);
+                        },
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                     ),

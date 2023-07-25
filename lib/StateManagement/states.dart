@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 
 class StateProvider with ChangeNotifier {
-  final List<dynamic> _expenseList = [
-    {"title": "HairCut", "price": "100", "description": "Trimmed my hair"},
-    {"title": "Movie", "price": "300", "description": "Watched Oppenheimer."}
-  ];
+  final List<dynamic> _expenseList = [];
 
   List<dynamic> get expenseList => _expenseList;
 

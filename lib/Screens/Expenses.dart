@@ -16,20 +16,6 @@ class _ExpensesState extends State<Expenses> {
     context.read<StateProvider>();
   }
 
-  List<Map<String, String>> transactions = [
-    {"title": "Milk", "price": "100", "description": "Bought 1 litre milk"},
-    {"title": "Petrol", "price": "1200", "description": "Filled petrol in car"}
-  ];
-
-  addTransaction() {
-    setState(
-      () {
-        transactions.add(
-            {"title": "new", "price": "2222", "description": "dummy data"});
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     List<dynamic> expenseList = Provider.of<StateProvider>(context).expenseList;
@@ -37,15 +23,13 @@ class _ExpensesState extends State<Expenses> {
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // addTransaction();
-
           Navigator.pushNamed(context, "/addTransaction");
         },
         child: const Icon(Icons.currency_rupee_rounded),
       ),
       body: Center(
         child: ListView.builder(
-          itemCount: transactions.length,
+          itemCount: expenseList.length,
           itemBuilder: (context, index) {
             return Card(
               child: ListTile(
@@ -61,7 +45,7 @@ class _ExpensesState extends State<Expenses> {
                 ),
                 trailing: Column(
                   children: [
-                    Text('Rs. ${expenseList[index]['price']}'),
+                    Text('Rs. ${expenseList[index]['amount']}'),
                   ],
                 ),
               ),
