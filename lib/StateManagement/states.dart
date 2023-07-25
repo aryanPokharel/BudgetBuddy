@@ -9,4 +9,9 @@ class StateProvider with ChangeNotifier {
     _expenseList.add(newExpense);
     notifyListeners();
   }
+
+  void deleteExpense(dynamic expenseId) {
+    _expenseList.removeAt(expenseId);
+    notifyListeners();
+  }
 }
