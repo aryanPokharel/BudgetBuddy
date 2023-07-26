@@ -30,30 +30,28 @@ class _AddCategoryState extends State<AddCategory> {
     Icons.question_mark,
   ];
 
-  // List<IconData> incomeIcons = [
-  //   Icons.money,
-  //   Icons.currency_bitcoin,
-  //   Icons.gesture,
-  //   Icons.handshake,
-  //   Icons.find_replace,
-  // ];
-
-  // Declare a variable to store the selected icon
   IconData selectedIcon = Icons.local_dining;
 
   @override
   Widget build(BuildContext context) {
     saveCategory(dynamic type, dynamic title, dynamic icon) {
       var newCategory = {"type": type, "title": title, "icon": icon.codePoint};
-      print(newCategory);
       context.read<StateProvider>().setCategoryList(newCategory);
     }
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: const Text(
+          'Add Category',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
               children: [
@@ -66,7 +64,12 @@ class _AddCategoryState extends State<AddCategory> {
                     });
                   },
                 ),
-                const Text("Expense"),
+                const Text(
+                  "Expense",
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
                 const SizedBox(width: 16),
                 Radio(
                   value: "Income",
@@ -77,7 +80,12 @@ class _AddCategoryState extends State<AddCategory> {
                     });
                   },
                 ),
-                const Text("Income"),
+                const Text(
+                  "Income",
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -90,47 +98,71 @@ class _AddCategoryState extends State<AddCategory> {
               },
               decoration: const InputDecoration(
                 hintText: "Title",
-              ),
-            ),
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.9,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Select Icon'),
-                  SizedBox(
-                    width: 100,
-                    child: DropdownButton<IconData>(
-                      value: selectedIcon,
-                      onChanged: (IconData? newValue) {
-                        setState(() {
-                          selectedIcon = newValue!;
-                        });
-                      },
-                      items: expenseIcons.map<DropdownMenuItem<IconData>>(
-                        (IconData icon) {
-                          return DropdownMenuItem<IconData>(
-                            value: icon,
-                            child: Icon(
-                              icon,
-                              color: Colors.lightGreen,
-                            ),
-                          );
-                        },
-                      ).toList(),
-                    ),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.green,
                   ),
-                ],
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.green,
+                  ),
+                ),
               ),
             ),
+            const SizedBox(height: 16),
+            const Text(
+              'Select Icon',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            DropdownButton<IconData>(
+              value: selectedIcon,
+              onChanged: (IconData? newValue) {
+                setState(() {
+                  selectedIcon = newValue!;
+                });
+              },
+              items: expenseIcons.map<DropdownMenuItem<IconData>>(
+                (IconData icon) {
+                  return DropdownMenuItem<IconData>(
+                    value: icon,
+                    child: Icon(
+                      icon,
+                      color: Colors.green,
+                    ),
+                  );
+                },
+              ).toList(),
+            ),
+            const SizedBox(height: 24),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
               onPressed: () {
                 saveCategory(_categoryType, title, selectedIcon);
               },
-              child: const Icon(Icons.save),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.save),
+                  SizedBox(width: 8),
+                  Text(
+                    'Save Category',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
