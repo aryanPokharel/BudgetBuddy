@@ -11,15 +11,8 @@ class AddTransaction extends StatefulWidget {
 
 class _AddTransactionState extends State<AddTransaction> {
   String _transactionType = "Expense";
-  String _selectedCategory = "Food";
-  final List<String> _categories = [
-    "Food",
-    "Transportation",
-    "Entertainment",
-    "Shopping",
-    "Health",
-    "Other"
-  ];
+
+  final List<dynamic> _categories = [];
 
   var title = "N/A";
   var amount = "N/A";
@@ -88,7 +81,20 @@ class _AddTransactionState extends State<AddTransaction> {
 
   @override
   Widget build(BuildContext context) {
-    final List myCategories = Provider.of<StateProvider>(context).categoryList;
+    var categoryList = Provider.of<StateProvider>(context).categoryList;
+
+    var expenseCategories = [];
+    var incomeCategories = [];
+
+    for (var category in categoryList) {
+      if (category['type'] == "Expense") {
+        // print(category);
+        expenseCategories.add(category['title'].toString());
+      } else {
+        incomeCategories.add(category['title'].toString());
+      }
+    }
+    String selectedCategory = categoryList[0]['title'];
 
     return Scaffold(
       appBar: AppBar(),
@@ -190,17 +196,36 @@ class _AddTransactionState extends State<AddTransaction> {
                 ),
               ),
               const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: _selectedCategory,
-                items: _categories.map((String category) {
-                  return DropdownMenuItem<String>(
-                    value: category,
-                    child: Text(category),
-                  );
-                }).toList(),
+              DropdownButtonFormField<dynamic>(
+                // value: _selectedCategory,
+                items: _transactionType == "Expense"
+                    ? expenseCategories.map((dynamic category) {
+                        return DropdownMenuItem<dynamic>(
+                          value: category,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Icon(Icons.apple),
+                              Text(category),
+                            ],
+                          ),
+                        );
+                      }).toList()
+                    : incomeCategories.map((dynamic category) {
+                        return DropdownMenuItem<dynamic>(
+                          value: category,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Icon(Icons.apple),
+                              Text(category),
+                            ],
+                          ),
+                        );
+                      }).toList(),
                 onChanged: (value) {
                   setState(() {
-                    _selectedCategory = value!;
+                    selectedCategory = value!;
                   });
                 },
                 decoration: const InputDecoration(
@@ -222,7 +247,7 @@ class _AddTransactionState extends State<AddTransaction> {
                           "description": description,
                           "amount": amount,
                           "date": selectedDate,
-                          "category": _selectedCategory,
+                          "category": selectedCategory,
                         };
                         saveExpense(newExpense);
                         var snackBar = const SnackBar(
@@ -237,7 +262,7 @@ class _AddTransactionState extends State<AddTransaction> {
                           "description": description,
                           "amount": amount,
                           "date": selectedDate,
-                          "category": _selectedCategory,
+                          "category": selectedCategory,
                         };
                         saveIncome(newIncome);
                         var snackBar = const SnackBar(
