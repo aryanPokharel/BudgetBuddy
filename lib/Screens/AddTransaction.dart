@@ -11,7 +11,6 @@ class AddTransaction extends StatefulWidget {
 
 class _AddTransactionState extends State<AddTransaction> {
   String _transactionType = "Expense";
-
   String _selectedCategory = "Food";
   final List<String> _categories = [
     "Food",
@@ -29,7 +28,6 @@ class _AddTransactionState extends State<AddTransaction> {
   DateTime? selectedDate;
   dynamic dateToSend;
 
-  // Text edititng controllers
   var titleController = TextEditingController();
   var amountController = TextEditingController();
   var descriptionController = TextEditingController();
@@ -84,13 +82,8 @@ class _AddTransactionState extends State<AddTransaction> {
       titleController.clear();
       amountController.clear();
       descriptionController.clear();
+      selectedDate = null;
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // _selectedCategory = _categories[Random().nextInt(_categories.length)];
   }
 
   @override
@@ -185,6 +178,9 @@ class _AddTransactionState extends State<AddTransaction> {
                         selectedDate == null
                             ? 'Please select a date'
                             : "${selectedDate!.year}-${selectedDate!.month}-${selectedDate!.day}",
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
                       ),
                       Container(
                         width: 10,
@@ -232,7 +228,6 @@ class _AddTransactionState extends State<AddTransaction> {
                         var snackBar = const SnackBar(
                           content: Text('Expense added'),
                         );
-
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         clear();
                       } else {
@@ -254,6 +249,9 @@ class _AddTransactionState extends State<AddTransaction> {
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                     child: const Icon(Icons.save),
                   ),
@@ -261,6 +259,9 @@ class _AddTransactionState extends State<AddTransaction> {
                     onPressed: clear,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                     child: const Icon(Icons.delete),
                   ),
@@ -277,11 +278,10 @@ class _AddTransactionState extends State<AddTransaction> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('This is a simple Snackbar.'),
-        duration: const Duration(seconds: 3), // Adjust the duration as needed
+        duration: const Duration(seconds: 3),
         action: SnackBarAction(
           label: 'Close',
           onPressed: () {
-            // Code to execute when the user taps on the action
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
           },
         ),

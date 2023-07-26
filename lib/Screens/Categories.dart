@@ -13,6 +13,7 @@ class Categories extends StatefulWidget {
 class _CategoriesState extends State<Categories> {
   var TypeToDelete;
   var TitleToDelete;
+
   deleteCategory() {
     context.read<StateProvider>().deleteCategory(TypeToDelete, TitleToDelete);
   }
@@ -53,22 +54,37 @@ class _CategoriesState extends State<Categories> {
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.white,
-          toolbarHeight: 4,
-          bottom: const TabBar(
-            tabs: [
-              Tab(
-                child: Text(
-                  "Expense",
-                  style: TextStyle(color: Colors.black),
-                ),
+          toolbarHeight: 10,
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(40),
+            child: Container(
+              color: Colors.white,
+              child: const TabBar(
+                indicatorColor: Colors.green,
+                tabs: [
+                  Tab(
+                    child: Text(
+                      "Expense",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Tab(
+                    child: Text(
+                      "Income",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              Tab(
-                child: Text(
-                  "Income",
-                  style: TextStyle(color: Colors.black),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
         body: TabBarView(
@@ -81,8 +97,12 @@ class _CategoriesState extends State<Categories> {
                         itemCount: expenseCategories.length,
                         itemBuilder: (context, index) {
                           return Padding(
-                            padding: const EdgeInsets.all(5),
+                            padding: const EdgeInsets.all(8),
                             child: Card(
+                              color: Colors.green[100],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                               child: ListTile(
                                 onLongPress: () => {
                                   TypeToDelete = "Expense",
@@ -94,10 +114,15 @@ class _CategoriesState extends State<Categories> {
                                   IconData(expenseCategories[index]['icon'],
                                       fontFamily: 'MaterialIcons'),
                                   color: Colors.red,
+                                  size: 36,
                                 ),
                                 title: Center(
                                   child: Text(
                                     expenseCategories[index]['title'],
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -114,9 +139,12 @@ class _CategoriesState extends State<Categories> {
                             child: SizedBox(
                               height: MediaQuery.of(context).size.height / 4,
                               child: Card(
-                                color: const Color.fromARGB(255, 212, 216, 219),
+                                color: Colors.white,
                                 elevation: 4,
                                 margin: const EdgeInsets.all(16.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -142,7 +170,12 @@ class _CategoriesState extends State<Categories> {
                                       children: [
                                         ElevatedButton(
                                           style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.green),
+                                            backgroundColor: Colors.green,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
                                           onPressed: () {
                                             deleteCategory();
                                             _toggleOverlay();
@@ -151,7 +184,12 @@ class _CategoriesState extends State<Categories> {
                                         ),
                                         ElevatedButton(
                                           style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.red),
+                                            backgroundColor: Colors.red,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
                                           onPressed: () {
                                             _toggleOverlay();
                                           },
@@ -175,8 +213,12 @@ class _CategoriesState extends State<Categories> {
                         itemCount: incomeCategories.length,
                         itemBuilder: (context, index) {
                           return Padding(
-                            padding: const EdgeInsets.all(5),
+                            padding: const EdgeInsets.all(8),
                             child: Card(
+                              color: Colors.blue[100],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                               child: ListTile(
                                 onLongPress: () => {
                                   TypeToDelete = "Income",
@@ -188,10 +230,15 @@ class _CategoriesState extends State<Categories> {
                                   IconData(incomeCategories[index]['icon'],
                                       fontFamily: 'MaterialIcons'),
                                   color: Colors.red,
+                                  size: 36,
                                 ),
                                 title: Center(
                                   child: Text(
                                     incomeCategories[index]['title'],
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -208,9 +255,12 @@ class _CategoriesState extends State<Categories> {
                             child: SizedBox(
                               height: MediaQuery.of(context).size.height / 4,
                               child: Card(
-                                color: const Color.fromARGB(255, 212, 216, 219),
+                                color: Colors.white,
                                 elevation: 4,
                                 margin: const EdgeInsets.all(16.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -236,7 +286,12 @@ class _CategoriesState extends State<Categories> {
                                       children: [
                                         ElevatedButton(
                                           style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.green),
+                                            backgroundColor: Colors.green,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
                                           onPressed: () {
                                             deleteCategory();
                                             _toggleOverlay();
@@ -245,7 +300,12 @@ class _CategoriesState extends State<Categories> {
                                         ),
                                         ElevatedButton(
                                           style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.red),
+                                            backgroundColor: Colors.red,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                          ),
                                           onPressed: () {
                                             _toggleOverlay();
                                           },

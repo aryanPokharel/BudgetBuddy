@@ -34,8 +34,6 @@ class _ExpensesState extends State<Expenses> {
   Widget build(BuildContext context) {
     List<dynamic> transactionList =
         Provider.of<StateProvider>(context).transactionList;
-    // List<dynamic> expenseList = Provider.of<StateProvider>(context).expenseList;
-    // List<dynamic> incomeList = Provider.of<StateProvider>(context).incomeList;
 
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -58,7 +56,10 @@ class _ExpensesState extends State<Expenses> {
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Card(
-                          color: const Color.fromARGB(255, 231, 229, 229),
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                           child: Container(
                             decoration: BoxDecoration(
                               border: Border(
@@ -72,25 +73,38 @@ class _ExpensesState extends State<Expenses> {
                               ),
                             ),
                             child: ListTile(
-                              leading:
-                                  transactionList[index]['category'] == "Food"
-                                      ? const Icon(Icons.coffee)
-                                      : const Icon(Icons.music_video_rounded),
-                              title: Row(
-                                children: [
-                                  Text(
-                                    transactionList[index]['title'].toString(),
-                                  ),
-                                ],
+                              leading: transactionList[index]['type'] ==
+                                      "Expense"
+                                  ? const Icon(Icons.coffee, color: Colors.red)
+                                  : const Icon(Icons.music_video_rounded,
+                                      color: Colors.green),
+                              title: Text(
+                                transactionList[index]['title'].toString(),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
                               ),
                               subtitle: Text(
                                 transactionList[index]['description']
                                     .toString(),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[700],
+                                ),
                               ),
                               trailing: Text(
-                                  'Rs. ${transactionList[index]['amount']}'),
-                              onLongPress: () =>
-                                  {toDelete = index, _toggleOverlay()},
+                                'Rs. ${transactionList[index]['amount']}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              onLongPress: () => {
+                                toDelete = index,
+                                _toggleOverlay(),
+                              },
                             ),
                           ),
                         ),
@@ -135,7 +149,11 @@ class _ExpensesState extends State<Expenses> {
                                 children: [
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.green),
+                                      backgroundColor: Colors.green,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
                                     onPressed: () {
                                       deleteItem();
                                       _toggleOverlay();
@@ -144,7 +162,11 @@ class _ExpensesState extends State<Expenses> {
                                   ),
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                        backgroundColor: Colors.red),
+                                      backgroundColor: Colors.red,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
                                     onPressed: () {
                                       _toggleOverlay();
                                     },
