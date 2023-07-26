@@ -133,7 +133,7 @@ class _HomePageState extends State<HomePage> {
                       "Expense : $totalExpenses",
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 16,
+                        fontSize: 15,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -141,7 +141,7 @@ class _HomePageState extends State<HomePage> {
                       "Income   : $totalIncome",
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 16,
+                        fontSize: 15,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

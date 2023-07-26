@@ -22,18 +22,17 @@ class _AddTransactionState extends State<AddTransaction> {
     "Other"
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    // _selectedCategory = _categories[Random().nextInt(_categories.length)];
-  }
-
   var title = "N/A";
   var amount = "N/A";
   var description = "N/A";
 
   DateTime? selectedDate;
   dynamic dateToSend;
+
+  // Text edititng controllers
+  var titleController = TextEditingController();
+  var amountController = TextEditingController();
+  var descriptionController = TextEditingController();
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -80,8 +79,27 @@ class _AddTransactionState extends State<AddTransaction> {
     context.read<StateProvider>().setTransactionList(newIncome);
   }
 
+  clear() {
+    setState(() {
+      titleController.clear();
+      amountController.clear();
+      descriptionController.clear();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // _selectedCategory = _categories[Random().nextInt(_categories.length)];
+  }
+
   @override
   Widget build(BuildContext context) {
+    final List myCategories = Provider.of<StateProvider>(context).categoryList;
+    for (var category in myCategories) {
+      print(category);
+    }
+
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
@@ -117,6 +135,7 @@ class _AddTransactionState extends State<AddTransaction> {
               ),
               const SizedBox(height: 16),
               TextFormField(
+                controller: titleController,
                 onChanged: (val) {
                   setState(() {
                     title = val;
@@ -128,6 +147,7 @@ class _AddTransactionState extends State<AddTransaction> {
               ),
               const SizedBox(height: 16),
               TextFormField(
+                controller: amountController,
                 onChanged: (val) {
                   setState(() {
                     amount = val;
@@ -140,6 +160,7 @@ class _AddTransactionState extends State<AddTransaction> {
               ),
               const SizedBox(height: 16),
               TextFormField(
+                controller: descriptionController,
                 onChanged: (val) {
                   setState(() {
                     description = val;
@@ -229,7 +250,7 @@ class _AddTransactionState extends State<AddTransaction> {
                     child: const Icon(Icons.save),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: clear,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                     ),

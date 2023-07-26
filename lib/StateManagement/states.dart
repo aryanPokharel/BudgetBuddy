@@ -4,6 +4,29 @@ class StateProvider with ChangeNotifier {
   dynamic totalExpenses = 0;
   dynamic totalIncome = 0;
 
+  // Category States
+  final List<dynamic> _categoryList = [
+    // "Sports", "Fun", "Cafe Hopping"
+    {"type": "Expense", "title": "Food & Drinks", "icon": "Icons.coffee"},
+    {"type": "Expense", "title": "Transportation", "icon": "Icons.fire_truck"},
+    {"type": "Expense", "title": "Fuel", "icon": "Icons.oil_barrel"},
+
+    {"type": "Income", "title": "Salary", "icon": "Icons.money"}
+  ];
+
+  List<dynamic> get categoryList => _categoryList;
+
+  void setCategoryList(dynamic newCategory) {
+    _categoryList.add(newCategory);
+    notifyListeners();
+  }
+
+  void deleteCategory(dynamic categoryId) {
+    var categoryToRemove = _categoryList[categoryId];
+    _categoryList.removeAt(categoryId);
+    notifyListeners();
+  }
+
   // Transaction States
   final List<dynamic> _transactionList = [];
 
