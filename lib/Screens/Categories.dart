@@ -46,7 +46,7 @@ class _CategoriesState extends State<Categories> {
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.pushNamed(context, "/addTransaction");
+            Navigator.pushNamed(context, "/addCategory");
           },
           child: const Icon(Icons.category),
         ),
@@ -90,8 +90,9 @@ class _CategoriesState extends State<Categories> {
                                       expenseCategories[index]['title'],
                                   _toggleOverlay(),
                                 },
-                                leading: const Icon(
-                                  Icons.temple_buddhist,
+                                leading: Icon(
+                                  IconData(expenseCategories[index]['icon'],
+                                      fontFamily: 'MaterialIcons'),
                                   color: Colors.red,
                                 ),
                                 title: Center(
@@ -183,9 +184,10 @@ class _CategoriesState extends State<Categories> {
                                       incomeCategories[index]['title'],
                                   _toggleOverlay()
                                 },
-                                leading: const Icon(
-                                  Icons.temple_buddhist,
-                                  color: Colors.green,
+                                leading: Icon(
+                                  IconData(incomeCategories[index]['icon'],
+                                      fontFamily: 'MaterialIcons'),
+                                  color: Colors.red,
                                 ),
                                 title: Center(
                                   child: Text(

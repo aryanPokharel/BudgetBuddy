@@ -1,3 +1,4 @@
+import 'package:budget_buddy/Screens/AddCategory.dart';
 import 'package:budget_buddy/Screens/AddTransaction.dart';
 import 'package:budget_buddy/Screens/Home.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const HomePage(),
         '/addTransaction': (context) => const AddTransaction(),
+        '/addCategory': (context) => const AddCategory(),
       },
       debugShowCheckedModeBanner: false,
     );
