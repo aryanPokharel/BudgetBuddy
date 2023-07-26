@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const HomePage(),
-        '/addTransaction': (context) => const AddTransaction()
+        '/addTransaction': (context) => const AddTransaction(),
       },
       debugShowCheckedModeBanner: false,
     );

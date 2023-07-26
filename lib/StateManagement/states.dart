@@ -32,43 +32,43 @@ class StateProvider with ChangeNotifier {
   }
 
   // Expense Category
-  final List<dynamic> _expenseCategoryList = [
-    {"type": "Expense", "title": "Food & Drinks", "icon": "Icons.coffee"},
-    {"type": "Expense", "title": "Transportation", "icon": "Icons.fire_truck"},
-    {"type": "Expense", "title": "Fuel", "icon": "Icons.oil_barrel"},
-  ];
+  // final List<dynamic> _expenseCategoryList = [
+  //   {"type": "Expense", "title": "Food & Drinks", "icon": "Icons.coffee"},
+  //   {"type": "Expense", "title": "Transportation", "icon": "Icons.fire_truck"},
+  //   {"type": "Expense", "title": "Fuel", "icon": "Icons.oil_barrel"},
+  // ];
 
-  List<dynamic> get expenseCategoryList => _expenseCategoryList;
+  // List<dynamic> get expenseCategoryList => _expenseCategoryList;
 
-  void setExpenseCategoryList(dynamic newCategory) {
-    _expenseCategoryList.add(newCategory);
-    notifyListeners();
-  }
+  // void setExpenseCategoryList(dynamic newCategory) {
+  //   _expenseCategoryList.add(newCategory);
+  //   notifyListeners();
+  // }
 
-  void deleteExpenseCategory(dynamic categoryId) {
-    var expenseCategoryToRemove = _expenseCategoryList[categoryId];
-    _expenseCategoryList.removeAt(categoryId);
-    notifyListeners();
-  }
+  // void deleteExpenseCategory(dynamic categoryId) {
+  //   var expenseCategoryToRemove = _expenseCategoryList[categoryId];
+  //   _expenseCategoryList.removeAt(categoryId);
+  //   notifyListeners();
+  // }
 
   // Income Category
-  final List<dynamic> _incomeCategoryList = [
-    {"type": "Income", "title": "Salary", "icon": "Icons.money"},
-    {"type": "Income", "title": "Dakshina", "icon": "Icons.temple_hindu"}
-  ];
+  // final List<dynamic> _incomeCategoryList = [
+  //   {"type": "Income", "title": "Salary", "icon": "Icons.money"},
+  //   {"type": "Income", "title": "Dakshina", "icon": "Icons.temple_hindu"}
+  // ];
 
-  List<dynamic> get incomeCategoryList => _incomeCategoryList;
+  // List<dynamic> get incomeCategoryList => _incomeCategoryList;
 
-  void setIncomeCategoryList(dynamic newCategory) {
-    _incomeCategoryList.add(newCategory);
-    notifyListeners();
-  }
+  // void setIncomeCategoryList(dynamic newCategory) {
+  //   _incomeCategoryList.add(newCategory);
+  //   notifyListeners();
+  // }
 
-  void deleteIncomeCategory(dynamic categoryId) {
-    var incomeCategoryToRemove = _incomeCategoryList[categoryId];
-    _incomeCategoryList.removeAt(categoryId);
-    notifyListeners();
-  }
+  // void deleteIncomeCategory(dynamic categoryId) {
+  //   var incomeCategoryToRemove = _incomeCategoryList[categoryId];
+  //   _incomeCategoryList.removeAt(categoryId);
+  //   notifyListeners();
+  // }
 
   // Transaction States
   final List<dynamic> _transactionList = [];

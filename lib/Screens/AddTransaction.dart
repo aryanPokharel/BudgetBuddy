@@ -96,9 +96,6 @@ class _AddTransactionState extends State<AddTransaction> {
   @override
   Widget build(BuildContext context) {
     final List myCategories = Provider.of<StateProvider>(context).categoryList;
-    for (var category in myCategories) {
-      print(category);
-    }
 
     return Scaffold(
       appBar: AppBar(),
@@ -232,6 +229,12 @@ class _AddTransactionState extends State<AddTransaction> {
                           "category": _selectedCategory,
                         };
                         saveExpense(newExpense);
+                        var snackBar = const SnackBar(
+                          content: Text('Expense added'),
+                        );
+
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        clear();
                       } else {
                         var newIncome = {
                           "type": "Income",
@@ -242,6 +245,11 @@ class _AddTransactionState extends State<AddTransaction> {
                           "category": _selectedCategory,
                         };
                         saveIncome(newIncome);
+                        var snackBar = const SnackBar(
+                          content: Text('Income added'),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        clear();
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -260,6 +268,22 @@ class _AddTransactionState extends State<AddTransaction> {
               )
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  void showSnackBar(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('This is a simple Snackbar.'),
+        duration: const Duration(seconds: 3), // Adjust the duration as needed
+        action: SnackBarAction(
+          label: 'Close',
+          onPressed: () {
+            // Code to execute when the user taps on the action
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          },
         ),
       ),
     );
