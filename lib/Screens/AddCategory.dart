@@ -97,9 +97,7 @@ class _AddCategoryState extends State<AddCategory> {
                 child: TextFormField(
                   controller: titleController,
                   onChanged: (val) {
-                    setState(() {
-                      title = val;
-                    });
+                    title = val;
                   },
                   decoration: const InputDecoration(
                     hintText: "Title",

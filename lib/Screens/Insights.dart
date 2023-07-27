@@ -8,13 +8,20 @@ class Insights extends StatefulWidget {
 }
 
 class _InsightsState extends State<Insights> {
+  sendSnackBar(dynamic message) {
+    var snackBar = SnackBar(
+      content: Text(message),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          print('Floating action button tapped');
+          sendSnackBar("This page is being built!");
         },
         child: const Icon(Icons.calculate_rounded),
       ),

@@ -31,6 +31,24 @@ class StateProvider with ChangeNotifier {
           category['type'] == categoryType &&
           category['title'] == categoryTitle,
     );
+    var expenseCheckList = 0;
+    var incomeCheckList = 0;
+    for (dynamic category in categoryList) {
+      if (category['type'] == "Expense") {
+        expenseCheckList++;
+      } else {
+        incomeCheckList++;
+      }
+    }
+    if (expenseCheckList == 0) {
+      _categoryList
+          .add({"type": "Expense", "title": "Miscellaneous", "icon": 0x0E517});
+    }
+    if (incomeCheckList == 0) {
+      _categoryList.add(
+        {"type": "Income", "title": "Miscellaneous", "icon": 0x0E04F},
+      );
+    }
     notifyListeners();
   }
 
