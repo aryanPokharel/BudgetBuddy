@@ -67,6 +67,7 @@ class _AddCategoryState extends State<AddCategory> {
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
 
+    final formKey = GlobalKey<FormState>();
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -78,96 +79,118 @@ class _AddCategoryState extends State<AddCategory> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildRadioOption("Expense"),
-                const SizedBox(width: 16),
-                _buildRadioOption("Income"),
-              ],
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: titleController,
-              onChanged: (val) {
-                setState(() {
-                  title = val;
-                });
-              },
-              decoration: const InputDecoration(
-                hintText: "Title",
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.green,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.green,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Select Icon',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            DropdownButton<IconData>(
-              value: selectedIcon,
-              onChanged: (IconData? newValue) {
-                setState(() {
-                  selectedIcon = newValue!;
-                });
-              },
-              items: expenseIcons.map<DropdownMenuItem<IconData>>(
-                (IconData icon) {
-                  return DropdownMenuItem<IconData>(
-                    value: icon,
-                    child: Icon(
-                      icon,
-                      color: Colors.lightGreen,
-                    ),
-                  );
-                },
-              ).toList(),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              onPressed: () {
-                saveCategory(_categoryType, title, selectedIcon);
-                sendSnackBar("Category Added");
-                clear();
-              },
-              child: const Row(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.save),
-                  SizedBox(width: 8),
-                  Text(
-                    'Save Category',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  _buildRadioOption("Expense"),
+                  const SizedBox(width: 16),
+                  _buildRadioOption("Income"),
                 ],
               ),
-            ),
-          ],
+              const SizedBox(height: 16),
+              Form(
+                key: formKey,
+                child: TextFormField(
+                  controller: titleController,
+                  onChanged: (val) {
+                    setState(() {
+                      title = val;
+                    });
+                  },
+                  decoration: const InputDecoration(
+                    hintText: "Title",
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.green,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Colors.green,
+                      ),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Give a title';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Select Icon',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: expenseIcons.map<Widget>((IconData icon) {
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 8),
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedIcon = icon;
+                        });
+                      },
+                      child: CircleAvatar(
+                        backgroundColor: selectedIcon == icon
+                            ? Colors.lightBlue
+                            : Colors.transparent,
+                        child: Icon(
+                          icon,
+                          color: selectedIcon == icon
+                              ? Colors.white
+                              : Colors.green,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () {
+                  if (formKey.currentState!.validate()) {
+                    saveCategory(_categoryType, title, selectedIcon);
+                    sendSnackBar("Category Added");
+                    clear();
+                  } else {
+                    sendSnackBar("Provide the title");
+                  }
+                },
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.save),
+                    SizedBox(width: 8),
+                    Text(
+                      'Save Category',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
