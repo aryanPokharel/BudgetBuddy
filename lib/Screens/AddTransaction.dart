@@ -12,9 +12,9 @@ class AddTransaction extends StatefulWidget {
 class _AddTransactionState extends State<AddTransaction> {
   String _transactionType = "Expense";
 
-  var title = "N/A";
-  var amount = "N/A";
-  var description = "N/A";
+  var title;
+  var amount;
+  var description;
 
   DateTime? selectedDate = DateTime.now();
   dynamic dateToSend;
@@ -104,6 +104,7 @@ class _AddTransactionState extends State<AddTransaction> {
     selectedCategory = _transactionType == 'Expense'
         ? expenseCategories[0]
         : incomeCategories[0];
+
     sendSnackBar(dynamic message) {
       var snackBar = SnackBar(
         content: Text(message),
@@ -115,285 +116,294 @@ class _AddTransactionState extends State<AddTransaction> {
     DateTime today = DateTime(now.year, now.month, now.day);
     DateTime yesterday = today.subtract(const Duration(days: 1));
     DateTime dayBeforeYesterday = today.subtract(const Duration(days: 2));
+
+    final formKey = GlobalKey<FormState>();
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Radio(
-                    value: "Expense",
-                    groupValue: _transactionType,
-                    onChanged: (value) {
-                      setState(() {
-                        _transactionType = value.toString();
-                      });
-                    },
-                  ),
-                  const Text("Expense"),
-                  const SizedBox(width: 16),
-                  Radio(
-                    value: "Income",
-                    groupValue: _transactionType,
-                    onChanged: (value) {
-                      setState(() {
-                        _transactionType = value.toString();
-                      });
-                    },
-                  ),
-                  const Text("Income"),
-                ],
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: titleController,
-                onChanged: (val) {
-                  setState(() {
+          child: Form(
+            key: formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Radio(
+                      value: "Expense",
+                      groupValue: _transactionType,
+                      onChanged: (value) {
+                        setState(() {
+                          _transactionType = value.toString();
+                        });
+                      },
+                    ),
+                    const Text("Expense"),
+                    const SizedBox(width: 16),
+                    Radio(
+                      value: "Income",
+                      groupValue: _transactionType,
+                      onChanged: (value) {
+                        setState(() {
+                          _transactionType = value.toString();
+                        });
+                      },
+                    ),
+                    const Text("Income"),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: titleController,
+                  onChanged: (val) {
                     title = val;
-                  });
-                },
-                decoration: const InputDecoration(
-                  hintText: "Title",
+                  },
+                  decoration: const InputDecoration(
+                    hintText: "Title",
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Give a title';
+                    }
+                    return null;
+                  },
                 ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: amountController,
-                onChanged: (val) {
-                  setState(() {
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: amountController,
+                  onChanged: (val) {
                     amount = val;
-                  });
-                },
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  hintText: "Amount",
+                  },
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    hintText: "Amount",
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Enter a value';
+                    }
+                    return null;
+                  },
                 ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: descriptionController,
-                onChanged: (val) {
-                  setState(() {
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: descriptionController,
+                  onChanged: (val) {
                     description = val;
-                  });
-                },
-                maxLines: 2,
-                decoration: const InputDecoration(
-                  hintText: "Description",
+                  },
+                  maxLines: 2,
+                  decoration: const InputDecoration(
+                    hintText: "Description",
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        splashFactory: NoSplash.splashFactory,
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        elevation: 8,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 24),
                       ),
-                      elevation: 8,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 24),
+                      onPressed: () {
+                        setState(() {
+                          selectedDate = now;
+                        });
+                      },
+                      child: const Text("Today"),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        selectedDate = now;
-                      });
-                    },
-                    child: const Text("Today"),
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.blue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        splashFactory: NoSplash.splashFactory,
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.blue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        elevation: 8,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 24),
                       ),
-                      elevation: 8,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 24),
+                      onPressed: () {
+                        setState(() {
+                          selectedDate = yesterday;
+                        });
+                      },
+                      child: const Text("Yesterday"),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        selectedDate = yesterday;
-                      });
-                    },
-                    child: const Text("Yesterday"),
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: const Color.fromARGB(255, 182, 165, 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        splashFactory: NoSplash.splashFactory,
+                        foregroundColor: Colors.white,
+                        backgroundColor:
+                            const Color.fromARGB(255, 182, 165, 10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        elevation: 8,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 24),
                       ),
-                      elevation: 8,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 24),
+                      onPressed: () {
+                        setState(() {
+                          selectedDate = dayBeforeYesterday;
+                        });
+                      },
+                      child: const Text("DayBefore"),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        selectedDate = dayBeforeYesterday;
-                      });
-                    },
-                    child: const Text("DayBefore"),
+                  ],
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                GestureDetector(
+                  onTap: () => _selectDate(context),
+                  child: Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 215, 218, 215),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        const Icon(Icons.calendar_month),
+                        Text(
+                          selectedDate == null
+                              ? 'Please select a date'
+                              : "${selectedDate!.year}-${selectedDate!.month}-${selectedDate!.day}",
+                          style: const TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              GestureDetector(
-                onTap: () => _selectDate(context),
-                child: Container(
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 215, 218, 215),
-                    borderRadius: BorderRadius.circular(10),
+                ),
+                const SizedBox(height: 10),
+                DropdownButtonFormField<dynamic>(
+                  value: _transactionType == "Expense"
+                      ? expenseCategories[0]
+                      : incomeCategories[0],
+                  items: _transactionType == "Expense"
+                      ? expenseCategories.map((dynamic category) {
+                          final Map<String, dynamic> categoryData =
+                              category as Map<String, dynamic>;
+                          return DropdownMenuItem<dynamic>(
+                            value: category,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Icon(
+                                  IconData(categoryData['icon'],
+                                      fontFamily: 'MaterialIcons'),
+                                ),
+                                Text(
+                                  categoryData['title'],
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList()
+                      : incomeCategories.map((dynamic category) {
+                          final Map<String, dynamic> categoryData =
+                              category as Map<String, dynamic>;
+                          return DropdownMenuItem<dynamic>(
+                            value: category,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Icon(
+                                  IconData(categoryData['icon'],
+                                      fontFamily: 'MaterialIcons'),
+                                ),
+                                Text(
+                                  categoryData['title'],
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                  onChanged: (value) {
+                    selectedCategory = value;
+                  },
+                  decoration: const InputDecoration(
+                    hintText: "Select category",
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      const Icon(Icons.calendar_month),
-                      Text(
-                        selectedDate == null
-                            ? 'Please select a date'
-                            : "${selectedDate!.year}-${selectedDate!.month}-${selectedDate!.day}",
-                        style: const TextStyle(
-                          fontSize: 16,
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        if (_transactionType == "Expense") {
+                          var newExpense = {
+                            "type": "Expense",
+                            "title": title,
+                            "description": description,
+                            "amount": amount,
+                            "date": selectedDate,
+                            "category": selectedCategory,
+                          };
+                          if (formKey.currentState!.validate()) {
+                            saveExpense(newExpense);
+                            sendSnackBar("Expense Added");
+                            clear();
+                          } else {
+                            sendSnackBar("Provide necessary info");
+                          }
+                        } else {
+                          var newIncome = {
+                            "type": "Income",
+                            "title": title,
+                            "description": description,
+                            "amount": amount,
+                            "date": selectedDate,
+                            "category": selectedCategory,
+                          };
+                          if (formKey.currentState!.validate()) {
+                            saveExpense(newIncome);
+                            sendSnackBar("Income Added");
+                            clear();
+                          } else {
+                            sendSnackBar("Provide necessary info");
+                          }
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              DropdownButtonFormField<dynamic>(
-                value: _transactionType == "Expense"
-                    ? expenseCategories[0]
-                    : incomeCategories[0],
-                items: _transactionType == "Expense"
-                    ? expenseCategories.map((dynamic category) {
-                        final Map<String, dynamic> categoryData =
-                            category as Map<String, dynamic>;
-                        return DropdownMenuItem<dynamic>(
-                          value: category,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Icon(IconData(categoryData['icon'],
-                                  fontFamily: 'MaterialIcons')),
-                              Text(categoryData['title']),
-                            ],
-                          ),
-                        );
-                      }).toList()
-                    : incomeCategories.map((dynamic category) {
-                        final Map<String, dynamic> categoryData =
-                            category as Map<String, dynamic>;
-                        return DropdownMenuItem<dynamic>(
-                          value: category,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Icon(
-                                IconData(categoryData['icon'],
-                                    fontFamily: 'MaterialIcons'),
-                              ),
-                              Text(
-                                categoryData['title'],
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedCategory = value;
-                  });
-                },
-                decoration: const InputDecoration(
-                  hintText: "Select category",
-                ),
-              ),
-              const SizedBox(
-                height: 16,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      if (_transactionType == "Expense") {
-                        var newExpense = {
-                          "type": "Expense",
-                          "title": title,
-                          "description": description,
-                          "amount": amount,
-                          "date": selectedDate,
-                          "category": selectedCategory,
-                        };
-                        saveExpense(newExpense);
-                        sendSnackBar("Expense Added");
-
-                        clear();
-                      } else {
-                        var newIncome = {
-                          "type": "Income",
-                          "title": title,
-                          "description": description,
-                          "amount": amount,
-                          "date": selectedDate,
-                          "category": selectedCategory,
-                        };
-                        saveIncome(newIncome);
-                        sendSnackBar("Income Added");
-                        clear();
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                      child: const Icon(Icons.save),
                     ),
-                    child: const Icon(Icons.save),
-                  ),
-                  ElevatedButton(
-                    onPressed: clear,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                    ElevatedButton(
+                      onPressed: clear,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
+                      child: const Icon(Icons.delete),
                     ),
-                    child: const Icon(Icons.delete),
-                  ),
-                ],
-              )
-            ],
+                  ],
+                )
+              ],
+            ),
           ),
-        ),
-      ),
-    );
-  }
-
-  void showSnackBar(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('This is a simple Snackbar.'),
-        duration: const Duration(seconds: 3),
-        action: SnackBarAction(
-          label: 'Close',
-          onPressed: () {
-            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          },
         ),
       ),
     );
