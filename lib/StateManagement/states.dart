@@ -9,9 +9,13 @@ class StateProvider with ChangeNotifier {
     {"type": "Expense", "title": "Food & Drinks", "icon": 0xE390},
     {"type": "Expense", "title": "Transportation", "icon": 0x0E1D5},
     {"type": "Expense", "title": "Fuel", "icon": 0xF07B7},
-    {"type": "Expense", "title": "Travel", "icon": 0xec43},
+    {"type": "Expense", "title": "Health", "icon": 0x0E0E3},
+    {"type": "Expense", "title": "Household", "icon": 0x0E328},
+    {"type": "Expense", "title": "Lost", "icon": 0x0E517},
     {"type": "Income", "title": "Salary", "icon": 0x0E6F2},
-    {"type": "Income", "title": "Dakshina", "icon": 0xF04DC},
+    {"type": "Income", "title": "Dakshina", "icon": 0x0E52F},
+    {"type": "Income", "title": "Cashback", "icon": 0xF04DC},
+    {"type": "Income", "title": "Found", "icon": 0x0E04F},
   ];
 
   List<dynamic> get categoryList => _categoryList;
