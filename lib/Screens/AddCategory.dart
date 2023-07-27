@@ -18,8 +18,13 @@ class _AddCategoryState extends State<AddCategory> {
   var title;
 
   List<IconData> expenseIcons = [
-    Icons.liquor,
+    Icons.directions_bus,
     Icons.local_dining,
+    Icons.work,
+    Icons.currency_rupee,
+    Icons.currency_pound,
+    Icons.currency_yuan,
+    Icons.currency_exchange,
     Icons.oil_barrel,
     Icons.train,
     Icons.payment,
@@ -37,6 +42,23 @@ class _AddCategoryState extends State<AddCategory> {
     saveCategory(dynamic type, dynamic title, dynamic icon) {
       var newCategory = {"type": type, "title": title, "icon": icon.codePoint};
       context.read<StateProvider>().setCategoryList(newCategory);
+
+      print(icon);
+    }
+
+    clear() {
+      titleController.clear();
+      setState(() {
+        selectedIcon = Icons.local_dining;
+        _categoryType = 'Expense';
+      });
+    }
+
+    sendSnackBar(dynamic message) {
+      var snackBar = SnackBar(
+        content: Text(message),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
 
     return Scaffold(
@@ -132,7 +154,7 @@ class _AddCategoryState extends State<AddCategory> {
                     value: icon,
                     child: Icon(
                       icon,
-                      color: Colors.green,
+                      color: Colors.lightGreen,
                     ),
                   );
                 },
@@ -148,6 +170,8 @@ class _AddCategoryState extends State<AddCategory> {
               ),
               onPressed: () {
                 saveCategory(_categoryType, title, selectedIcon);
+                sendSnackBar("Category Added");
+                clear();
               },
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,

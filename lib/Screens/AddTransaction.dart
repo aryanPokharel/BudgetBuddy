@@ -83,15 +83,29 @@ class _AddTransactionState extends State<AddTransaction> {
   Widget build(BuildContext context) {
     var categoryList = Provider.of<StateProvider>(context).categoryList;
 
-    var expenseCategories = [];
-    var incomeCategories = [];
+    // var expenseCategories = [];
+    // var incomeCategories = [];
 
-    for (var category in categoryList) {
-      if (category['type'] == "Expense") {
-        expenseCategories.add(category['title'].toString());
-      } else {
-        incomeCategories.add(category['title'].toString());
-      }
+    // for (var category in categoryList) {
+    //   if (category['type'] == "Expense") {
+    //     expenseCategories.add(category.toString());
+    //   } else {
+    //     incomeCategories.add(category.toString());
+    //   }
+    // }
+
+    var expenseCategories = categoryList
+        .where((category) => category['type'] == 'Expense')
+        .toList();
+
+    var incomeCategories =
+        categoryList.where((category) => category['type'] == 'Income').toList();
+
+    sendSnackBar(dynamic message) {
+      var snackBar = SnackBar(
+        content: Text(message),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
 
     return Scaffold(
@@ -200,25 +214,35 @@ class _AddTransactionState extends State<AddTransaction> {
                     : incomeCategories[0],
                 items: _transactionType == "Expense"
                     ? expenseCategories.map((dynamic category) {
+                        final Map<String, dynamic> categoryData =
+                            category as Map<String, dynamic>;
                         return DropdownMenuItem<dynamic>(
                           value: category,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Icon(Icons.apple),
-                              Text(category),
+                              Icon(IconData(categoryData['icon'],
+                                  fontFamily: 'MaterialIcons')),
+                              Text(categoryData['title']),
                             ],
                           ),
                         );
                       }).toList()
                     : incomeCategories.map((dynamic category) {
+                        final Map<String, dynamic> categoryData =
+                            category as Map<String, dynamic>;
                         return DropdownMenuItem<dynamic>(
                           value: category,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Icon(Icons.apple),
-                              Text(category),
+                              Icon(
+                                IconData(categoryData['icon'],
+                                    fontFamily: 'MaterialIcons'),
+                              ),
+                              Text(
+                                categoryData['title'],
+                              ),
                             ],
                           ),
                         );
@@ -250,10 +274,8 @@ class _AddTransactionState extends State<AddTransaction> {
                           "category": selectedCategory,
                         };
                         saveExpense(newExpense);
-                        var snackBar = const SnackBar(
-                          content: Text('Expense added'),
-                        );
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        sendSnackBar("Expense Added");
+
                         clear();
                       } else {
                         var newIncome = {
@@ -265,10 +287,7 @@ class _AddTransactionState extends State<AddTransaction> {
                           "category": selectedCategory,
                         };
                         saveIncome(newIncome);
-                        var snackBar = const SnackBar(
-                          content: Text('Income added'),
-                        );
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        sendSnackBar("Income Added");
                         clear();
                       }
                     },

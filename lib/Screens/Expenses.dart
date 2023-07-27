@@ -63,6 +63,20 @@ class _ExpensesState extends State<Expenses> {
                           child: Container(
                             decoration: BoxDecoration(
                               border: Border(
+                                left: BorderSide(
+                                  width: 2,
+                                  color: transactionList[index]['type'] ==
+                                          'Expense'
+                                      ? Colors.red
+                                      : Colors.green,
+                                ),
+                                right: BorderSide(
+                                  width: 2,
+                                  color: transactionList[index]['type'] ==
+                                          'Expense'
+                                      ? Colors.red
+                                      : Colors.green,
+                                ),
                                 top: BorderSide(
                                   width: 2,
                                   color: transactionList[index]['type'] ==
@@ -73,11 +87,11 @@ class _ExpensesState extends State<Expenses> {
                               ),
                             ),
                             child: ListTile(
-                              leading: transactionList[index]['type'] ==
-                                      "Expense"
-                                  ? const Icon(Icons.coffee, color: Colors.red)
-                                  : const Icon(Icons.music_video_rounded,
-                                      color: Colors.green),
+                              leading: Icon(
+                                IconData(
+                                    transactionList[index]['category']['icon'],
+                                    fontFamily: 'MaterialIcons'),
+                              ),
                               title: Text(
                                 transactionList[index]['title'].toString(),
                                 style: const TextStyle(
@@ -86,7 +100,8 @@ class _ExpensesState extends State<Expenses> {
                                 ),
                               ),
                               subtitle: Text(
-                                transactionList[index]['category'].toString(),
+                                transactionList[index]['description']
+                                    .toString(),
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey[700],

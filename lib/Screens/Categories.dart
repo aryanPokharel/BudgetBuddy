@@ -67,7 +67,7 @@ class _CategoriesState extends State<Categories> {
                       "Expense",
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 20,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -77,7 +77,7 @@ class _CategoriesState extends State<Categories> {
                       "Income",
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 20,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -113,14 +113,14 @@ class _CategoriesState extends State<Categories> {
                                 leading: Icon(
                                   IconData(expenseCategories[index]['icon'],
                                       fontFamily: 'MaterialIcons'),
-                                  color: Colors.red,
-                                  size: 36,
+                                  color: Colors.brown,
+                                  size: 26,
                                 ),
                                 title: Center(
                                   child: Text(
                                     expenseCategories[index]['title'],
                                     style: const TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -229,14 +229,14 @@ class _CategoriesState extends State<Categories> {
                                 leading: Icon(
                                   IconData(incomeCategories[index]['icon'],
                                       fontFamily: 'MaterialIcons'),
-                                  color: Colors.red,
-                                  size: 36,
+                                  color: Colors.brown,
+                                  size: 26,
                                 ),
                                 title: Center(
                                   child: Text(
                                     incomeCategories[index]['title'],
                                     style: const TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
