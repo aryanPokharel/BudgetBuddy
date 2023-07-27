@@ -238,22 +238,34 @@ class _AddTransactionState extends State<AddTransaction> {
                 GestureDetector(
                   onTap: () => _selectDate(context),
                   child: Container(
-                    height: 40,
+                    height: 50,
                     decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 215, 218, 215),
+                      color: Colors.lightBlue,
                       borderRadius: BorderRadius.circular(10),
                     ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Icon(Icons.calendar_month),
-                        Text(
-                          selectedDate == null
-                              ? 'Please select a date'
-                              : "${selectedDate!.year}-${selectedDate!.month}-${selectedDate!.day}",
-                          style: const TextStyle(
-                            fontSize: 16,
+                        const Icon(
+                          Icons.calendar_month,
+                          color: Colors.white,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            selectedDate == null
+                                ? 'Please select a date'
+                                : "${selectedDate!.year}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.day.toString().padLeft(2, '0')}",
+                            style: const TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                            ),
                           ),
+                        ),
+                        const Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.white,
                         ),
                       ],
                     ),
@@ -277,6 +289,9 @@ class _AddTransactionState extends State<AddTransaction> {
                                   IconData(categoryData['icon'],
                                       fontFamily: 'MaterialIcons'),
                                 ),
+                                const SizedBox(
+                                  width: 110,
+                                ),
                                 Text(
                                   categoryData['title'],
                                 ),
@@ -295,6 +310,9 @@ class _AddTransactionState extends State<AddTransaction> {
                                 Icon(
                                   IconData(categoryData['icon'],
                                       fontFamily: 'MaterialIcons'),
+                                ),
+                                const SizedBox(
+                                  width: 110,
                                 ),
                                 Text(
                                   categoryData['title'],
