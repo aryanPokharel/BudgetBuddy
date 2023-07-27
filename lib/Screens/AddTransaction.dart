@@ -362,7 +362,7 @@ class _AddTransactionState extends State<AddTransaction> {
                             "category": selectedCategory,
                           };
                           if (formKey.currentState!.validate()) {
-                            saveExpense(newIncome);
+                            saveIncome(newIncome);
                             sendSnackBar("Income Added");
                             clear();
                           } else {

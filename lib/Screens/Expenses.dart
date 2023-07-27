@@ -49,36 +49,27 @@ class _ExpensesState extends State<Expenses> {
             )
           : Stack(
               children: [
-                Center(
-                  child: ListView.builder(
-                    itemCount: transactionList.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Card(
-                          elevation: 2,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                ListView.builder(
+                  itemCount: transactionList.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Card(
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            topRight: Radius.circular(20),
+                            bottomRight: Radius.circular(20),
                           ),
                           child: Container(
                             decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 227, 224, 224),
                               border: Border(
                                 left: BorderSide(
-                                  width: 2,
-                                  color: transactionList[index]['type'] ==
-                                          'Expense'
-                                      ? Colors.red
-                                      : Colors.green,
-                                ),
-                                right: BorderSide(
-                                  width: 2,
-                                  color: transactionList[index]['type'] ==
-                                          'Expense'
-                                      ? Colors.red
-                                      : Colors.green,
-                                ),
-                                top: BorderSide(
-                                  width: 2,
+                                  width: 4,
                                   color: transactionList[index]['type'] ==
                                           'Expense'
                                       ? Colors.red
@@ -87,43 +78,58 @@ class _ExpensesState extends State<Expenses> {
                               ),
                             ),
                             child: ListTile(
-                              leading: Icon(
-                                IconData(
+                              leading: CircleAvatar(
+                                backgroundColor:
+                                    transactionList[index]['type'] == 'Expense'
+                                        ? Colors.red[100]
+                                        : Colors.green[100],
+                                child: Icon(
+                                  IconData(
                                     transactionList[index]['category']['icon'],
-                                    fontFamily: 'MaterialIcons'),
+                                    fontFamily: 'MaterialIcons',
+                                  ),
+                                  color: transactionList[index]['type'] ==
+                                          'Expense'
+                                      ? Colors.red
+                                      : Colors.green,
+                                ),
                               ),
                               title: Text(
                                 transactionList[index]['title'].toString(),
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+                                  fontSize: 18,
+                                  color: Colors.black,
                                 ),
                               ),
                               subtitle: Text(
                                 transactionList[index]['date'].toString(),
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: Colors.grey[700],
+                                  color: Colors.grey[600],
                                 ),
                               ),
                               trailing: Text(
                                 'Rs. ${transactionList[index]['amount']}',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: Colors.black,
+                                  fontSize: 18,
+                                  color: transactionList[index]['type'] ==
+                                          'Expense'
+                                      ? Colors.red
+                                      : Colors.green,
                                 ),
                               ),
-                              onLongPress: () => {
-                                toDelete = index,
-                                _toggleOverlay(),
+                              onLongPress: () {
+                                toDelete = index;
+                                _toggleOverlay();
                               },
                             ),
                           ),
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 ),
                 if (_showOverlay)
                   GestureDetector(
