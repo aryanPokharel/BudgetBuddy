@@ -50,8 +50,6 @@ class _AddCategoryState extends State<AddCategory> {
     saveCategory(dynamic type, dynamic title, dynamic icon) {
       var newCategory = {"type": type, "title": title, "icon": icon.codePoint};
       context.read<StateProvider>().setCategoryList(newCategory);
-
-      print(icon);
     }
 
     clear() {
@@ -84,38 +82,11 @@ class _AddCategoryState extends State<AddCategory> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Radio(
-                  value: "Expense",
-                  groupValue: _categoryType,
-                  onChanged: (value) {
-                    setState(() {
-                      _categoryType = value.toString();
-                    });
-                  },
-                ),
-                const Text(
-                  "Expense",
-                  style: TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
+                _buildRadioOption("Expense"),
                 const SizedBox(width: 16),
-                Radio(
-                  value: "Income",
-                  groupValue: _categoryType,
-                  onChanged: (value) {
-                    setState(() {
-                      _categoryType = value.toString();
-                    });
-                  },
-                ),
-                const Text(
-                  "Income",
-                  style: TextStyle(
-                    fontSize: 16,
-                  ),
-                ),
+                _buildRadioOption("Income"),
               ],
             ),
             const SizedBox(height: 16),
@@ -197,6 +168,36 @@ class _AddCategoryState extends State<AddCategory> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRadioOption(String option) {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          _categoryType = option;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: _categoryType == option ? Colors.blue : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: _categoryType == option ? Colors.blue : Colors.grey,
+            width: 1.5,
+          ),
+        ),
+        child: Text(
+          option,
+          style: TextStyle(
+            fontSize: 16,
+            color: _categoryType == option ? Colors.white : Colors.black,
+            fontWeight:
+                _categoryType == option ? FontWeight.bold : FontWeight.normal,
+          ),
         ),
       ),
     );

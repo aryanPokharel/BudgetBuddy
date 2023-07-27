@@ -82,18 +82,6 @@ class _AddTransactionState extends State<AddTransaction> {
   @override
   Widget build(BuildContext context) {
     var categoryList = Provider.of<StateProvider>(context).categoryList;
-
-    // var expenseCategories = [];
-    // var incomeCategories = [];
-
-    // for (var category in categoryList) {
-    //   if (category['type'] == "Expense") {
-    //     expenseCategories.add(category.toString());
-    //   } else {
-    //     incomeCategories.add(category.toString());
-    //   }
-    // }
-
     var expenseCategories = categoryList
         .where((category) => category['type'] == 'Expense')
         .toList();
@@ -129,28 +117,11 @@ class _AddTransactionState extends State<AddTransaction> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Radio(
-                      value: "Expense",
-                      groupValue: _transactionType,
-                      onChanged: (value) {
-                        setState(() {
-                          _transactionType = value.toString();
-                        });
-                      },
-                    ),
-                    const Text("Expense"),
+                    _buildRadioOption("Expense"),
                     const SizedBox(width: 16),
-                    Radio(
-                      value: "Income",
-                      groupValue: _transactionType,
-                      onChanged: (value) {
-                        setState(() {
-                          _transactionType = value.toString();
-                        });
-                      },
-                    ),
-                    const Text("Income"),
+                    _buildRadioOption("Income"),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -403,6 +374,36 @@ class _AddTransactionState extends State<AddTransaction> {
                 )
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRadioOption(String option) {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          _transactionType = option;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: _transactionType == option ? Colors.blue : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: _transactionType == option ? Colors.blue : Colors.grey,
+            width: 1.5,
+          ),
+        ),
+        child: Text(
+          option,
+          style: TextStyle(
+            color: _transactionType == option ? Colors.white : Colors.black,
+            fontWeight: _transactionType == option
+                ? FontWeight.bold
+                : FontWeight.normal,
           ),
         ),
       ),
