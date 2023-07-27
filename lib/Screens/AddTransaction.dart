@@ -12,8 +12,6 @@ class AddTransaction extends StatefulWidget {
 class _AddTransactionState extends State<AddTransaction> {
   String _transactionType = "Expense";
 
-  final List<dynamic> _categories = [];
-
   var title = "N/A";
   var amount = "N/A";
   var description = "N/A";
@@ -79,6 +77,8 @@ class _AddTransactionState extends State<AddTransaction> {
     });
   }
 
+  dynamic selectedCategory;
+
   @override
   Widget build(BuildContext context) {
     var categoryList = Provider.of<StateProvider>(context).categoryList;
@@ -88,13 +88,11 @@ class _AddTransactionState extends State<AddTransaction> {
 
     for (var category in categoryList) {
       if (category['type'] == "Expense") {
-        // print(category);
         expenseCategories.add(category['title'].toString());
       } else {
         incomeCategories.add(category['title'].toString());
       }
     }
-    String selectedCategory = categoryList[0]['title'];
 
     return Scaffold(
       appBar: AppBar(),
@@ -197,7 +195,9 @@ class _AddTransactionState extends State<AddTransaction> {
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<dynamic>(
-                // value: _selectedCategory,
+                value: _transactionType == "Expense"
+                    ? expenseCategories[0]
+                    : incomeCategories[0],
                 items: _transactionType == "Expense"
                     ? expenseCategories.map((dynamic category) {
                         return DropdownMenuItem<dynamic>(
@@ -225,7 +225,7 @@ class _AddTransactionState extends State<AddTransaction> {
                       }).toList(),
                 onChanged: (value) {
                   setState(() {
-                    selectedCategory = value!;
+                    selectedCategory = value;
                   });
                 },
                 decoration: const InputDecoration(

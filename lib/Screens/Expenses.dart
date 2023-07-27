@@ -86,8 +86,7 @@ class _ExpensesState extends State<Expenses> {
                                 ),
                               ),
                               subtitle: Text(
-                                transactionList[index]['description']
-                                    .toString(),
+                                transactionList[index]['category'].toString(),
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey[700],
