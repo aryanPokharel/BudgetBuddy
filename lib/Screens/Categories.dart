@@ -125,6 +125,18 @@ class _CategoriesState extends State<Categories> {
                                     ),
                                   ),
                                 ),
+                                trailing: IconButton(
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Color.fromARGB(255, 190, 42, 32),
+                                  ),
+                                  onPressed: () {
+                                    TypeToDelete = "Expense";
+                                    TitleToDelete =
+                                        expenseCategories[index]['title'];
+                                    _toggleOverlay();
+                                  },
+                                ),
                               ),
                             ),
                           );
@@ -240,6 +252,18 @@ class _CategoriesState extends State<Categories> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
+                                ),
+                                trailing: IconButton(
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Color.fromARGB(255, 190, 42, 32),
+                                  ),
+                                  onPressed: () {
+                                    TypeToDelete = "Income";
+                                    TitleToDelete =
+                                        incomeCategories[index]['title'];
+                                    _toggleOverlay();
+                                  },
                                 ),
                               ),
                             ),

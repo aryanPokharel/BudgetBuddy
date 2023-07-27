@@ -19,7 +19,16 @@ class _InsightsState extends State<Insights> {
         child: const Icon(Icons.calculate_rounded),
       ),
       body: const Center(
-        child: Text("Insights page"),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.construction,
+              size: 60,
+            ),
+            Text("Insights page being built"),
+          ],
+        ),
       ),
     );
   }

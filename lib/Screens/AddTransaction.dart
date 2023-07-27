@@ -16,7 +16,7 @@ class _AddTransactionState extends State<AddTransaction> {
   var amount = "N/A";
   var description = "N/A";
 
-  DateTime? selectedDate;
+  DateTime? selectedDate = DateTime.now();
   dynamic dateToSend;
 
   var titleController = TextEditingController();
@@ -101,6 +101,9 @@ class _AddTransactionState extends State<AddTransaction> {
     var incomeCategories =
         categoryList.where((category) => category['type'] == 'Income').toList();
 
+    selectedCategory = _transactionType == 'Expense'
+        ? expenseCategories[0]
+        : incomeCategories[0];
     sendSnackBar(dynamic message) {
       var snackBar = SnackBar(
         content: Text(message),
@@ -108,6 +111,10 @@ class _AddTransactionState extends State<AddTransaction> {
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
 
+    DateTime now = DateTime.now();
+    DateTime today = DateTime(now.year, now.month, now.day);
+    DateTime yesterday = today.subtract(const Duration(days: 1));
+    DateTime dayBeforeYesterday = today.subtract(const Duration(days: 2));
     return Scaffold(
       appBar: AppBar(),
       body: Padding(
@@ -180,6 +187,68 @@ class _AddTransactionState extends State<AddTransaction> {
                 ),
               ),
               const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.green,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      elevation: 8,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 24),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        selectedDate = now;
+                      });
+                    },
+                    child: const Text("Today"),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.blue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      elevation: 8,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 24),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        selectedDate = yesterday;
+                      });
+                    },
+                    child: const Text("Yesterday"),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: const Color.fromARGB(255, 182, 165, 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      elevation: 8,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 24),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        selectedDate = dayBeforeYesterday;
+                      });
+                    },
+                    child: const Text("DayBefore"),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 8,
+              ),
               GestureDetector(
                 onTap: () => _selectDate(context),
                 child: Container(
@@ -200,14 +269,11 @@ class _AddTransactionState extends State<AddTransaction> {
                           fontSize: 16,
                         ),
                       ),
-                      Container(
-                        width: 10,
-                      ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
               DropdownButtonFormField<dynamic>(
                 value: _transactionType == "Expense"
                     ? expenseCategories[0]
