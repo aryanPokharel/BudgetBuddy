@@ -111,14 +111,16 @@ class _ExpensesState extends State<Expenses> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const SizedBox(height: 4),
-                                Text(
-                                  transactionList[index]['description']
-                                      .toString(),
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey[600],
+                                if (transactionList[index]['description'] !=
+                                    null)
+                                  Text(
+                                    transactionList[index]['description']
+                                        .toString(),
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[600],
+                                    ),
                                   ),
-                                ),
                                 const SizedBox(height: 8),
                                 Row(
                                   children: [

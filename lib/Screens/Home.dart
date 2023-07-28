@@ -120,17 +120,29 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                     padding: const EdgeInsets.all(8.0),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    child: const Column(
                       children: [
-                        DrawerColorButton(color: Colors.red),
-                        DrawerColorButton(color: Colors.blue),
-                        DrawerColorButton(color: Colors.green),
-                        DrawerColorButton(color: Colors.yellow),
-                        DrawerColorButton(color: Colors.lightGreen),
-                        DrawerColorButton(color: Colors.blueGrey),
-                        DrawerColorButton(color: Colors.purple),
-                        DrawerColorButton(color: Colors.pink),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            DrawerColorButton(color: Colors.red),
+                            DrawerColorButton(color: Colors.blue),
+                            DrawerColorButton(color: Colors.green),
+                            DrawerColorButton(color: Colors.yellow),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            DrawerColorButton(color: Colors.lightGreen),
+                            DrawerColorButton(color: Colors.blueGrey),
+                            DrawerColorButton(color: Colors.purple),
+                            DrawerColorButton(color: Colors.pink),
+                          ],
+                        ),
                       ],
                     ),
                   ),
