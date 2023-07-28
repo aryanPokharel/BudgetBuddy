@@ -1,4 +1,5 @@
 import 'package:budget_buddy/Constants/DateName.dart';
+import 'package:budget_buddy/Constants/DrawerColorButton.dart';
 import 'package:budget_buddy/Screens/Categories.dart';
 import 'package:budget_buddy/Screens/Expenses.dart';
 import 'package:budget_buddy/Screens/Insights.dart';
@@ -59,8 +60,7 @@ class _HomePageState extends State<HomePage> {
     // Format the DateTime to a human-friendly string
     String formattedDateTime = getFormattedDateTime(now);
 
-    List<dynamic> expenseList = Provider.of<StateProvider>(context).expenseList;
-
+    dynamic appTheme = Provider.of<StateProvider>(context).appTheme;
     dynamic totalExpenses = Provider.of<StateProvider>(context).totalExpenses;
     dynamic totalIncome = Provider.of<StateProvider>(context).totalIncome;
 
@@ -87,13 +87,54 @@ class _HomePageState extends State<HomePage> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            const DrawerHeader(
-              child: Text(
-                'Make the changes',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 24,
+            DrawerHeader(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [appTheme.shade800, Colors.blue.shade200],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 ),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    "Choose Theme",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.all(8.0),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        DrawerColorButton(color: Colors.red),
+                        DrawerColorButton(color: Colors.blue),
+                        DrawerColorButton(color: Colors.green),
+                        DrawerColorButton(color: Colors.yellow),
+                        DrawerColorButton(color: Colors.lightGreen),
+                        DrawerColorButton(color: Colors.blueGrey),
+                        DrawerColorButton(color: Colors.purple),
+                        DrawerColorButton(color: Colors.pink),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
             ListTile(

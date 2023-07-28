@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
 
 class StateProvider with ChangeNotifier {
+// App Settings states
+  dynamic _appTheme = Colors.green;
+  dynamic get appTheme => _appTheme;
+
+  void setAppTheme(dynamic theme) {
+    _appTheme = theme;
+    notifyListeners();
+  }
+
   dynamic totalExpenses = 0;
   dynamic totalIncome = 0;
 

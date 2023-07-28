@@ -20,9 +20,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    dynamic appTheme = Provider.of<StateProvider>(context).appTheme;
     return MaterialApp(
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        primarySwatch: appTheme,
       ),
       initialRoute: '/',
       routes: {
