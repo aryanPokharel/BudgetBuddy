@@ -102,8 +102,8 @@ class _AddTransactionState extends State<AddTransaction> {
 
     DateTime now = DateTime.now();
     DateTime today = DateTime(now.year, now.month, now.day);
-    DateTime yesterday = today.subtract(const Duration(days: 1));
-    DateTime dayBeforeYesterday = today.subtract(const Duration(days: 2));
+    DateTime yesterday = now.subtract(const Duration(days: 1));
+    DateTime dayBeforeYesterday = now.subtract(const Duration(days: 2));
 
     final formKey = GlobalKey<FormState>();
     return Scaffold(
