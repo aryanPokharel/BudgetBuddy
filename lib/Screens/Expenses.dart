@@ -1,6 +1,7 @@
 import 'package:budget_buddy/Constants/LooksEmpty.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class Expenses extends StatefulWidget {
@@ -34,6 +35,12 @@ class _ExpensesState extends State<Expenses> {
   Widget build(BuildContext context) {
     List<dynamic> transactionList =
         Provider.of<StateProvider>(context).transactionList;
+    convertTime(transactionList) {
+      DateTime transactionDate = DateTime.parse(transactionList);
+      String formattedTime = DateFormat('h:mm a').format(transactionDate);
+
+      return formattedTime;
+    }
 
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -102,12 +109,30 @@ class _ExpensesState extends State<Expenses> {
                                   color: Colors.black,
                                 ),
                               ),
-                              subtitle: Text(
-                                transactionList[index]['date'].toString(),
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[600],
-                                ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    transactionList[index]['description']
+                                        .toString(),
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    convertTime(transactionList[index]['date']
+                                            .toString())
+                                        .toString(),
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
                               ),
                               trailing: Text(
                                 'Rs. ${transactionList[index]['amount']}',
