@@ -1,3 +1,4 @@
+import 'package:budget_buddy/Constants/DateName.dart';
 import 'package:budget_buddy/Screens/Categories.dart';
 import 'package:budget_buddy/Screens/Expenses.dart';
 import 'package:budget_buddy/Screens/Insights.dart';
@@ -33,15 +34,21 @@ class _HomePageState extends State<HomePage> {
         dateTime.month == today.month &&
         dateTime.day == today.day) {
       // Today
-      return 'Today';
+      return getAbbreviatedMonthName(
+        today.month.toString(),
+        today.year.toString(),
+      );
     } else if (dateTime.year == yesterday.year &&
         dateTime.month == yesterday.month &&
         dateTime.day == yesterday.day) {
       // Yesterday
-      return 'Yesterday';
+      return getAbbreviatedMonthName(
+        yesterday.month.toString(),
+        yesterday.year.toString(),
+      );
     } else {
-      // Format date as "dd MMMM"
-      return DateFormat('dd MMMM').format(dateTime);
+      // Format date as "dd MMM"
+      return DateFormat('dd MMM').format(dateTime);
     }
   }
 
@@ -141,6 +148,9 @@ class _HomePageState extends State<HomePage> {
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                       ),
+                    ),
+                    const SizedBox(
+                      height: 5,
                     ),
                   ],
                 ),

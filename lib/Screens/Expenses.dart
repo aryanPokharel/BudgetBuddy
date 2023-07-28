@@ -62,94 +62,102 @@ class _ExpensesState extends State<Expenses> {
                     return Padding(
                       padding: const EdgeInsets.all(8),
                       child: Card(
+                        color: const Color.fromARGB(255, 230, 232, 230),
                         elevation: 4,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: const BorderRadius.only(
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
                             topRight: Radius.circular(20),
                             bottomRight: Radius.circular(20),
                           ),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 227, 224, 224),
-                              border: Border(
-                                left: BorderSide(
-                                  width: 4,
-                                  color: transactionList[index]['type'] ==
-                                          'Expense'
-                                      ? Colors.red
-                                      : Colors.green,
-                                ),
-                              ),
-                            ),
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor:
+                        ),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border(
+                              left: BorderSide(
+                                width: 4,
+                                color:
                                     transactionList[index]['type'] == 'Expense'
-                                        ? Colors.red[100]
-                                        : Colors.green[100],
-                                child: Icon(
-                                  IconData(
-                                    transactionList[index]['category']['icon'],
-                                    fontFamily: 'MaterialIcons',
-                                  ),
-                                  color: transactionList[index]['type'] ==
-                                          'Expense'
-                                      ? Colors.red
-                                      : Colors.green,
-                                ),
+                                        ? Colors.red
+                                        : Colors.green,
                               ),
-                              title: Text(
-                                transactionList[index]['title'].toString(),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    transactionList[index]['description']
-                                        .toString(),
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    convertTime(transactionList[index]['date']
-                                            .toString())
-                                        .toString(),
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              trailing: Text(
-                                'Rs. ${transactionList[index]['amount']}',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                  color: transactionList[index]['type'] ==
-                                          'Expense'
-                                      ? Colors.red
-                                      : Colors.green,
-                                ),
-                              ),
-                              onLongPress: () {
-                                toDelete = index;
-                                _toggleOverlay();
-                              },
                             ),
+                          ),
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor:
+                                  transactionList[index]['type'] == 'Expense'
+                                      ? Colors.red[100]
+                                      : Colors.green[100],
+                              child: Icon(
+                                IconData(
+                                  transactionList[index]['category']['icon'],
+                                  fontFamily: 'MaterialIcons',
+                                ),
+                                color:
+                                    transactionList[index]['type'] == 'Expense'
+                                        ? Colors.red
+                                        : Colors.green,
+                              ),
+                            ),
+                            title: Text(
+                              transactionList[index]['title'].toString(),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: Colors.black,
+                              ),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 4),
+                                Text(
+                                  transactionList[index]['description']
+                                      .toString(),
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.access_time,
+                                      size: 16,
+                                      color: Colors.grey[600],
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      convertTime(transactionList[index]['date']
+                                          .toString()),
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            trailing: Text(
+                              'Rs. ${transactionList[index]['amount']}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color:
+                                    transactionList[index]['type'] == 'Expense'
+                                        ? Colors.red
+                                        : Colors.green,
+                              ),
+                            ),
+                            onTap: () {
+                              // Handle tap action if needed
+                            },
+                            onLongPress: () {
+                              toDelete = index;
+                              _toggleOverlay();
+                            },
                           ),
                         ),
                       ),

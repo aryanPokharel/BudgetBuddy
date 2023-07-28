@@ -182,33 +182,39 @@ class _AddTransactionState extends State<AddTransaction> {
                         ),
                         elevation: 8,
                         padding: const EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 24),
+                            vertical: 4, horizontal: 10),
                       ),
                       onPressed: () {
                         setState(() {
                           selectedDate = now;
                         });
                       },
-                      child: const Text("Today"),
+                      child: const Text(
+                        "Today",
+                        style: TextStyle(fontSize: 14),
+                      ),
                     ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         splashFactory: NoSplash.splashFactory,
                         foregroundColor: Colors.white,
-                        backgroundColor: Colors.blue,
+                        backgroundColor: Colors.lightBlue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
                         elevation: 8,
                         padding: const EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 24),
+                            vertical: 4, horizontal: 10),
                       ),
                       onPressed: () {
                         setState(() {
                           selectedDate = yesterday;
                         });
                       },
-                      child: const Text("Yesterday"),
+                      child: const Text(
+                        "Yesterday",
+                        style: TextStyle(fontSize: 14),
+                      ),
                     ),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -221,14 +227,17 @@ class _AddTransactionState extends State<AddTransaction> {
                         ),
                         elevation: 8,
                         padding: const EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 24),
+                            vertical: 4, horizontal: 10),
                       ),
                       onPressed: () {
                         setState(() {
                           selectedDate = dayBeforeYesterday;
                         });
                       },
-                      child: const Text("DayBefore"),
+                      child: const Text(
+                        "DayBefore",
+                        style: TextStyle(fontSize: 14),
+                      ),
                     ),
                   ],
                 ),
