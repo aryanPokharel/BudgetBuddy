@@ -23,22 +23,22 @@ class _InsightsState extends State<Insights> {
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          var category = {
-            DatabaseHelper.colTitle: 'New Category',
-            DatabaseHelper.colIcon: "Some Icon",
-          };
+          // var category = {
+          //   DatabaseHelper.colTitle: 'New Category',
+          //   DatabaseHelper.colIcon: "Some Icon",
+          // };
           // int id = await dbHelper.insert(category);
           // print('New task added with id: $id');
 
-          List<Map<String, dynamic>> tasks = await dbHelper.getAllTasks();
-          for (var task in tasks) {
-            print('Task ID: ${task[DatabaseHelper.colId]}');
-            print('Task Title: ${task[DatabaseHelper.colTitle]}');
-            print('Task Icon: ${task[DatabaseHelper.colIcon]}');
-          }
+          // List<Map<String, dynamic>> tasks = await dbHelper.getAllTasks();
+          // for (var task in tasks) {
+          //   print('Task ID: ${task[DatabaseHelper.colId]}');
+          //   print('Task Title: ${task[DatabaseHelper.colTitle]}');
+          //   print('Task Icon: ${task[DatabaseHelper.colIcon]}');
+          // }
           // print(dbHelper.getAllTasks().toString());
           // // sendSnackBar("This page is being built!");
-          // dbHelper.deleteAll();
+          dbHelper.deleteAllCategories();
           // print("After deleting : ${dbHelper.getAllTasks()}");
         },
         child: const Icon(Icons.calculate_rounded),

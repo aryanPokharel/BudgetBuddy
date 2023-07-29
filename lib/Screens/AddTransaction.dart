@@ -294,7 +294,10 @@ class _AddTransactionState extends State<AddTransaction> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Icon(
-                                  IconData(categoryData['icon'],
+                                  IconData(
+                                      int.parse(
+                                        categoryData['icon'],
+                                      ),
                                       fontFamily: 'MaterialIcons'),
                                 ),
                                 const SizedBox(
@@ -316,7 +319,10 @@ class _AddTransactionState extends State<AddTransaction> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Icon(
-                                  IconData(categoryData['icon'],
+                                  IconData(
+                                      int.parse(
+                                        categoryData['icon'],
+                                      ),
                                       fontFamily: 'MaterialIcons'),
                                 ),
                                 const SizedBox(
@@ -330,7 +336,7 @@ class _AddTransactionState extends State<AddTransaction> {
                           );
                         }).toList(),
                   onChanged: (value) {
-                    selectedCategory = value;
+                    selectedCategory = value['id'];
                   },
                   decoration: const InputDecoration(
                     hintText: "Select category",
@@ -348,10 +354,10 @@ class _AddTransactionState extends State<AddTransaction> {
                           var newExpense = {
                             "type": "Expense",
                             "title": title,
-                            "description": description,
+                            "remarks": description,
                             "amount": amount,
-                            "date": selectedDate,
-                            "category": selectedCategory,
+                            "dateTime": selectedDate.toString(),
+                            "category": selectedCategory.toString(),
                           };
                           if (formKey.currentState!.validate()) {
                             saveExpense(newExpense);
@@ -364,10 +370,10 @@ class _AddTransactionState extends State<AddTransaction> {
                           var newIncome = {
                             "type": "Income",
                             "title": title,
-                            "description": description,
+                            "remarks": description,
                             "amount": amount,
-                            "date": selectedDate,
-                            "category": selectedCategory,
+                            "dateTime": selectedDate.toString(),
+                            "category": selectedCategory.toString(),
                           };
                           if (formKey.currentState!.validate()) {
                             saveIncome(newIncome);

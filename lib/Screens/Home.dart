@@ -54,6 +54,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void initState() {
+    // Call the super.initState() to ensure the state is properly initialized.
+    super.initState();
+
+    // context.read<StateProvider>().getTransactionsFromDb();
+    context.read<StateProvider>().getCategoriesFromDb();
+  }
+
+  @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
 

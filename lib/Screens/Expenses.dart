@@ -15,7 +15,7 @@ class _ExpensesState extends State<Expenses> {
   @override
   void initState() {
     super.initState();
-    context.read<StateProvider>();
+    context.read<StateProvider>().getTransactionsFromDb();
   }
 
   bool _showOverlay = false;
@@ -83,22 +83,23 @@ class _ExpensesState extends State<Expenses> {
                             ),
                           ),
                           child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor:
-                                  transactionList[index]['type'] == 'Expense'
-                                      ? Colors.red[100]
-                                      : Colors.green[100],
-                              child: Icon(
-                                IconData(
-                                  transactionList[index]['category']['icon'],
-                                  fontFamily: 'MaterialIcons',
-                                ),
-                                color:
-                                    transactionList[index]['type'] == 'Expense'
-                                        ? Colors.red
-                                        : Colors.green,
-                              ),
-                            ),
+                            // leading: CircleAvatar(
+                            //   backgroundColor:
+                            //       transactionList[index]['type'] == 'Expense'
+                            //           ? Colors.red[100]
+                            //           : Colors.green[100],
+                            //   child: Icon(
+                            //     IconData(
+                            //       int.parse(transactionList[index]['category']
+                            //           ['icon']),
+                            //       fontFamily: 'MaterialIcons',
+                            //     ),
+                            //     color:
+                            //         transactionList[index]['type'] == 'Expense'
+                            //             ? Colors.red
+                            //             : Colors.green,
+                            //   ),
+                            // ),
                             title: Text(
                               transactionList[index]['title'].toString(),
                               style: const TextStyle(
@@ -111,10 +112,9 @@ class _ExpensesState extends State<Expenses> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const SizedBox(height: 4),
-                                if (transactionList[index]['description'] !=
-                                    null)
+                                if (transactionList[index]['remarks'] != null)
                                   Text(
-                                    transactionList[index]['description']
+                                    transactionList[index]['remarks']
                                         .toString(),
                                     style: TextStyle(
                                       fontSize: 14,
@@ -122,24 +122,26 @@ class _ExpensesState extends State<Expenses> {
                                     ),
                                   ),
                                 const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.access_time,
-                                      size: 16,
-                                      color: Colors.grey[600],
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      convertTime(transactionList[index]['date']
-                                          .toString()),
-                                      style: TextStyle(
-                                        fontSize: 14,
+                                if (transactionList[index]['dateTime'] != null)
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.access_time,
+                                        size: 16,
                                         color: Colors.grey[600],
                                       ),
-                                    ),
-                                  ],
-                                ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        convertTime(transactionList[index]
+                                                ['dateTime']
+                                            .toString()),
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey[600],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                               ],
                             ),
                             trailing: Text(
@@ -154,10 +156,11 @@ class _ExpensesState extends State<Expenses> {
                               ),
                             ),
                             onTap: () {
+                              print(transactionList[index]['category']);
                               // Handle tap action if needed
                             },
                             onLongPress: () {
-                              toDelete = index;
+                              toDelete = transactionList[index]['id'];
                               _toggleOverlay();
                             },
                           ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class StateProvider with ChangeNotifier {
 // Importing the databaseHelper
   final dbHelper = DatabaseHelper.instance;
+  final dbHelperTransactions = DatabaseHelper.tableTransactions;
 
 // App Settings states
   dynamic _appTheme = Colors.green;
@@ -18,38 +19,70 @@ class StateProvider with ChangeNotifier {
   dynamic totalIncome = 0;
 
   // Category States
-  final List<dynamic> _categoryList = [
-    {"type": "Expense", "title": "Food & Drinks", "icon": 0xE390},
-    {"type": "Expense", "title": "Transportation", "icon": 0x0E1D5},
-    {"type": "Expense", "title": "Fuel", "icon": 0xF07B7},
-    {"type": "Expense", "title": "Health", "icon": 0x0E0E3},
-    {"type": "Expense", "title": "Household", "icon": 0x0E328},
-    {"type": "Expense", "title": "Lost", "icon": 0x0E517},
-    {"type": "Income", "title": "Salary", "icon": 0x0E6F2},
-    {"type": "Income", "title": "Dakshina", "icon": 0x0E52F},
-    {"type": "Income", "title": "Cashback", "icon": 0xF04DC},
-    {"type": "Income", "title": "Found", "icon": 0x0E04F},
-  ];
+  // final List<dynamic> _categoryList = [
+  //   {"type": "Expense", "title": "Food & Drinks", "icon": 0xE390},
+  //   {"type": "Expense", "title": "Transportation", "icon": 0x0E1D5},
+  //   {"type": "Expense", "title": "Fuel", "icon": 0xF07B7},
+  //   {"type": "Expense", "title": "Health", "icon": 0x0E0E3},
+  //   {"type": "Expense", "title": "Household", "icon": 0x0E328},
+  //   {"type": "Expense", "title": "Lost", "icon": 0x0E517},
+  //   {"type": "Income", "title": "Salary", "icon": 0x0E6F2},
+  //   {"type": "Income", "title": "Dakshina", "icon": 0x0E52F},
+  //   {"type": "Income", "title": "Cashback", "icon": 0xF04DC},
+  //   {"type": "Income", "title": "Found", "icon": 0x0E04F},
+  // ];
+  final List<dynamic> _categoryList = [];
+
+  void getCategoriesFromDb() async {
+    List<Map<String, dynamic>> cats = await dbHelper.getAllCategories();
+    _categoryList.clear();
+    for (var cat in cats) {
+      var newCategory = {
+        "id": cat[DatabaseHelper.colId],
+        "type": cat[DatabaseHelper.colType],
+        "title": cat[DatabaseHelper.colTitle],
+        "icon": cat[DatabaseHelper.colIcon],
+      };
+      // setCategoryList(newCategory);
+      _categoryList.add(newCategory);
+      notifyListeners();
+    }
+  }
 
   List<dynamic> get categoryList => _categoryList;
 
-  void setCategoryList(dynamic newCategory) {
-    _categoryList.add(newCategory);
-
-// Add the category to the actual database:
-
-    notifyListeners();
+  void setCategoryList(dynamic newCategory) async {
+    try {
+      var category = {
+        DatabaseHelper.colType: newCategory['type'],
+        DatabaseHelper.colTitle: newCategory['title'],
+        DatabaseHelper.colIcon: newCategory['icon'],
+      };
+      int id = await dbHelper.insertCategory(category);
+      // _categoryList.add(category);
+      getCategoriesFromDb();
+      // notifyListeners();
+    } catch (e) {
+      print(e);
+    }
   }
 
-  void deleteCategory(String categoryType, String categoryTitle) {
-    _categoryList.removeWhere(
-      (category) =>
-          category['type'] == categoryType &&
-          category['title'] == categoryTitle,
-    );
+  void deleteCategory(String categoryType, String categoryTitle) async {
+    for (var cat in categoryList) {
+      if (cat['type'] == categoryType && cat['title'] == categoryTitle) {
+        dbHelper.deleteCategory(cat['id']);
+        _categoryList.removeWhere(
+          (category) =>
+              category['type'] == categoryType &&
+              category['title'] == categoryTitle,
+        );
+        notifyListeners();
+      }
+    }
+
     var expenseCheckList = 0;
     var incomeCheckList = 0;
-    for (dynamic category in categoryList) {
+    for (dynamic category in _categoryList) {
       if (category['type'] == "Expense") {
         expenseCheckList++;
       } else {
@@ -57,13 +90,26 @@ class StateProvider with ChangeNotifier {
       }
     }
     if (expenseCheckList == 0) {
-      _categoryList
-          .add({"type": "Expense", "title": "Miscellaneous", "icon": 0x0E517});
+      var newCategory = {
+        "type": "Expense",
+        "title": "Miscellaneous",
+        "icon": 0x0E517
+      };
+      // _categoryList
+      //     .add({"type": "Expense", "title": "Miscellaneous", "icon": 0x0E517});
+      setCategoryList(newCategory);
+      notifyListeners();
     }
     if (incomeCheckList == 0) {
-      _categoryList.add(
-        {"type": "Income", "title": "Miscellaneous", "icon": 0x0E04F},
-      );
+      var newCategory = {
+        "type": "Income",
+        "title": "Miscellaneous",
+        "icon": 0x0E04F
+      };
+      // _categoryList.add(
+      //   {"type": "Income", "title": "Miscellaneous", "icon": 0x0E04F},
+      // );
+      setCategoryList(newCategory);
     }
     notifyListeners();
   }
@@ -112,23 +158,121 @@ class StateProvider with ChangeNotifier {
 
   List<dynamic> get transactionList => _transactionList;
 
-  void setTransactionList(dynamic newTransaction) {
-    _transactionList.add(newTransaction);
-    // totalExpenses += double.parse(newTransaction['amount']);
+  void getTransactionsFromDb() async {
+    List<Map<String, dynamic>> transactions =
+        await dbHelper.getAllTransactions();
+    _transactionList.clear();
+    for (var tran in transactions) {
+      var newTransaction = {
+        "id": tran[DatabaseHelper.colId],
+        "type": tran[DatabaseHelper.colType],
+        "title": tran[DatabaseHelper.colTitle],
+        "amount": tran[DatabaseHelper.colAmount],
+        "remarks": tran[DatabaseHelper.colRemarks],
+        "dateTime": tran[DatabaseHelper.colDateTime],
+        "category": tran[DatabaseHelper.colCategory],
+      };
+      // setCategoryList(newCategory);
+      _transactionList.add(newTransaction);
+      if (newTransaction['type'] == "Expense") {
+        totalExpenses += double.parse(newTransaction['amount']);
+      } else {
+        totalIncome += double.parse(newTransaction['amount']);
+      }
+      notifyListeners();
+    }
+  }
 
+  void setTransactionList(dynamic newTransaction) async {
+    try {
+      var transaction = {
+        DatabaseHelper.colType: newTransaction['type'],
+        DatabaseHelper.colTitle: newTransaction['title'],
+        DatabaseHelper.colAmount: newTransaction['amount'],
+        DatabaseHelper.colRemarks: newTransaction['remarks'],
+        DatabaseHelper.colDateTime: newTransaction['dateTime'],
+        DatabaseHelper.colCategory: newTransaction['category'],
+      };
+      int id = await dbHelper.insertTransaction(transaction);
+      getTransactionsFromDb();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void deleteTransaction(dynamic transactionId) async {
+    // dynamic allTransactions = dbHelper.getAllTransactions();
+    // for (var transaction in allTransactions) {
+    //   print(transaction);
+    //   // if (transaction['id'] == transactionId) {
+    //   //   if (transaction['type'] == "Expense") {
+    //   //     totalExpenses -= double.parse(transaction['amount']);
+    //   //     notifyListeners();
+    //   //   } else {
+    //   //     totalIncome -= double.parse(transaction['amount']);
+    //   //     notifyListeners();
+    //   //   }
+    //   // }
+    // }
+    dbHelper.deleteTransaction(transactionId);
+    getTransactionsFromDb();
     notifyListeners();
   }
 
-  void deleteTransaction(dynamic transactionId) {
-    var transactionToRemove = _transactionList[transactionId];
+  // void getTransactionsFromDb() async {
+  //   List<Map<String, dynamic>> transactions =
+  //       await dbHelperTransactions.getAllTransactions();
+  //   _transactionList.clear();
+  //   for (var transaction in transactions) {
+  //     var newTransaction = {
+  //       "id": transaction[DatabaseHelperTransactions.colId],
+  //       "type": transaction[DatabaseHelperTransactions.colType],
+  //       "title": transaction[DatabaseHelperTransactions.colTitle],
+  //       "amount": transaction[DatabaseHelperTransactions.colAmount],
+  //       "remarks": transaction[DatabaseHelperTransactions.colRemarks],
+  //       "dateTime": transaction[DatabaseHelperTransactions.colDateTime],
+  //       "category": transaction[DatabaseHelperTransactions.colCategory],
+  //     };
+  //     _transactionList.add(newTransaction);
+  //     notifyListeners();
+  //   }
+  //   print(_transactionList);
+  // }
 
-    transactionToRemove['type'] == "Expense"
-        ? totalExpenses -= double.parse(transactionToRemove['amount'])
-        : totalIncome -= double.parse(transactionToRemove['amount']);
-    _transactionList.removeAt(transactionId);
+  // void setTransactionsList(dynamic newTransaction) async {
+  //   try {
+  //     var transaction = {
+  //       DatabaseHelperTransactions.colType: newTransaction['type'],
+  //       DatabaseHelperTransactions.colTitle: newTransaction['title'],
+  //       DatabaseHelperTransactions.colAmount: newTransaction['amount'],
+  //       DatabaseHelperTransactions.colRemarks: newTransaction['remarks'],
+  //       DatabaseHelperTransactions.colDateTime: newTransaction['dateTime'],
+  //       DatabaseHelperTransactions.colCategory: newTransaction['category'],
+  //     };
+  //     int id = await dbHelperTransactions.insert(transaction);
+  //     getTransactionsFromDb();
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
-    notifyListeners();
-  }
+  // void setTransactionList(dynamic newTransaction) {
+  //   _transactionList.add(newTransaction);
+  //   // totalExpenses += double.parse(newTransaction['amount']);
+
+  //   notifyListeners();
+  // }
+
+  // void deleteTransaction(dynamic transactionId) {
+  //   var transactionToRemove = _transactionList[transactionId];
+
+  //   transactionToRemove['type'] == "Expense"
+  //       ? totalExpenses -= double.parse(transactionToRemove['amount'])
+  //       : totalIncome -= double.parse(transactionToRemove['amount']);
+  //   _transactionList.removeAt(transactionId);
+
+  //   notifyListeners();
+  // }
 
 // Expense States
   final List<dynamic> _expenseList = [];

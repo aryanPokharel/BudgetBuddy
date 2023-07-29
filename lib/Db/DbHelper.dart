@@ -5,11 +5,19 @@ class DatabaseHelper {
   static const _databaseName = "budget_buddy.db";
   static const _databaseVersion = 1;
 
-  static const table = 'categories';
+  static const tableCategories = 'categories';
+  static const tableTransactions = 'transactions';
 
   static const colId = '_id';
+  static const colType = 'type';
   static const colTitle = 'title';
   static const colIcon = 'icon';
+
+  // Add constants for the transactions table
+  static const colAmount = 'amount';
+  static const colRemarks = 'remarks';
+  static const colDateTime = 'dateTime';
+  static const colCategory = 'category';
 
   // Make this a singleton class
   DatabaseHelper._privateConstructor();
@@ -33,45 +41,94 @@ class DatabaseHelper {
     );
   }
 
-  // Creates the tasks table
+  // Creates the categories and transactions tables
   Future _onCreate(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE $table (
+      CREATE TABLE $tableCategories (
         $colId INTEGER PRIMARY KEY,
+        $colType TEXT NOT NULL,
         $colTitle TEXT NOT NULL,
-        $colIcon Text NOT NULL
+        $colIcon TEXT NOT NULL
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE $tableTransactions (
+        $colId INTEGER PRIMARY KEY,
+        $colType TEXT NOT NULL,
+        $colTitle TEXT NOT NULL,
+        $colAmount TEXT NOT NULL,
+        $colRemarks TEXT,
+        $colDateTime TEXT,
+         $colCategory INTEGER NOT NULL, -- The new category column
+        FOREIGN KEY ($colCategory) REFERENCES $tableCategories($colId) -- Establish a foreign key constraint
       )
     ''');
   }
 
-  // Insert a new task into the database
-  Future<int> insert(Map<String, dynamic> row) async {
+  // Insert a new category into the database
+  Future<int> insertCategory(Map<String, dynamic> row) async {
     Database? db = await instance.database;
-    return await db!.insert(table, row);
+    return await db!.insert(tableCategories, row);
   }
 
-  // Update a task in the database
-  Future<int> update(Map<String, dynamic> row) async {
+  // Insert a new transaction into the database
+  Future<int> insertTransaction(Map<String, dynamic> row) async {
+    Database? db = await instance.database;
+    return await db!.insert(tableTransactions, row);
+  }
+
+  // Update a category in the database
+  Future<int> updateCategory(Map<String, dynamic> row) async {
     Database? db = await instance.database;
     int id = row[colId];
-    return await db!.update(table, row, where: '$colId = ?', whereArgs: [id]);
+    return await db!
+        .update(tableCategories, row, where: '$colId = ?', whereArgs: [id]);
   }
 
-  // Delete a task from the database
-  Future<int> delete(int id) async {
+  // Update a transaction in the database
+  Future<int> updateTransaction(Map<String, dynamic> row) async {
     Database? db = await instance.database;
-    return await db!.delete(table, where: '$colId = ?', whereArgs: [id]);
+    int id = row[colId];
+    return await db!
+        .update(tableTransactions, row, where: '$colId = ?', whereArgs: [id]);
   }
 
-  // Delete the table
-  Future<int> deleteAll() async {
+  // Delete a category from the database
+  Future<int> deleteCategory(int id) async {
     Database? db = await instance.database;
-    return await db!.delete(table);
+    return await db!
+        .delete(tableCategories, where: '$colId = ?', whereArgs: [id]);
   }
 
-  // Get all tasks from the database
-  Future<List<Map<String, dynamic>>> getAllTasks() async {
+  // Delete a transaction from the database
+  Future<int> deleteTransaction(int id) async {
     Database? db = await instance.database;
-    return await db!.query(table);
+    return await db!
+        .delete(tableTransactions, where: '$colId = ?', whereArgs: [id]);
+  }
+
+  // Delete all categories from the database
+  Future<int> deleteAllCategories() async {
+    Database? db = await instance.database;
+    return await db!.delete(tableCategories);
+  }
+
+  // Delete all transactions from the database
+  Future<int> deleteAllTransactions() async {
+    Database? db = await instance.database;
+    return await db!.delete(tableTransactions);
+  }
+
+  // Get all categories from the database
+  Future<List<Map<String, dynamic>>> getAllCategories() async {
+    Database? db = await instance.database;
+    return await db!.query(tableCategories);
+  }
+
+  // Get all transactions from the database
+  Future<List<Map<String, dynamic>>> getAllTransactions() async {
+    Database? db = await instance.database;
+    return await db!.query(tableTransactions);
   }
 }

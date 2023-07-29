@@ -1,4 +1,3 @@
-import 'package:budget_buddy/Db/DbHelper.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,8 +10,6 @@ class AddCategory extends StatefulWidget {
 }
 
 class _AddCategoryState extends State<AddCategory> {
-  final dbHelper = DatabaseHelper.instance;
-
   var titleController = TextEditingController();
   var iconController = TextEditingController();
 

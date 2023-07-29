@@ -27,6 +27,13 @@ class _CategoriesState extends State<Categories> {
   }
 
   @override
+  void initState() {
+    // Call the super.initState() to ensure the state is properly initialized.
+    super.initState();
+    context.read<StateProvider>().getCategoriesFromDb();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var categoryList = Provider.of<StateProvider>(context).categoryList;
 
@@ -105,13 +112,16 @@ class _CategoriesState extends State<Categories> {
                               ),
                               child: ListTile(
                                 onLongPress: () => {
+                                  print(expenseCategories[index]['icon']),
                                   TypeToDelete = "Expense",
                                   TitleToDelete =
                                       expenseCategories[index]['title'],
                                   _toggleOverlay(),
                                 },
                                 leading: Icon(
-                                  IconData(expenseCategories[index]['icon'],
+                                  IconData(
+                                      int.parse(
+                                          expenseCategories[index]['icon']),
                                       fontFamily: 'MaterialIcons'),
                                   color: Colors.brown,
                                   size: 26,
@@ -239,7 +249,9 @@ class _CategoriesState extends State<Categories> {
                                   _toggleOverlay()
                                 },
                                 leading: Icon(
-                                  IconData(incomeCategories[index]['icon'],
+                                  IconData(
+                                      int.parse(
+                                          incomeCategories[index]['icon']),
                                       fontFamily: 'MaterialIcons'),
                                   color: Colors.brown,
                                   size: 26,

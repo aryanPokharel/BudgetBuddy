@@ -3,6 +3,7 @@ import 'package:budget_buddy/Screens/AddTransaction.dart';
 import 'package:budget_buddy/Screens/Home.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
 
 void main() async {
