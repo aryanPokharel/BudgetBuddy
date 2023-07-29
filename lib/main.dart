@@ -5,8 +5,9 @@ import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   runApp(
     ChangeNotifierProvider<StateProvider>(
       create: (_) => StateProvider(),

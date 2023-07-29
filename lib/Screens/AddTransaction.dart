@@ -356,7 +356,7 @@ class _AddTransactionState extends State<AddTransaction> {
                           if (formKey.currentState!.validate()) {
                             saveExpense(newExpense);
                             sendSnackBar("Expense Added");
-                            clear();
+                            Navigator.of(context).pop();
                           } else {
                             sendSnackBar("Provide necessary info");
                           }
@@ -372,7 +372,7 @@ class _AddTransactionState extends State<AddTransaction> {
                           if (formKey.currentState!.validate()) {
                             saveIncome(newIncome);
                             sendSnackBar("Income Added");
-                            clear();
+                            Navigator.of(context).pop();
                           } else {
                             sendSnackBar("Provide necessary info");
                           }

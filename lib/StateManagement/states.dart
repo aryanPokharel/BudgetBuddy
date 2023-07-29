@@ -1,6 +1,10 @@
+import 'package:budget_buddy/Db/DbHelper.dart';
 import 'package:flutter/material.dart';
 
 class StateProvider with ChangeNotifier {
+// Importing the databaseHelper
+  final dbHelper = DatabaseHelper.instance;
+
 // App Settings states
   dynamic _appTheme = Colors.green;
   dynamic get appTheme => _appTheme;
@@ -31,6 +35,9 @@ class StateProvider with ChangeNotifier {
 
   void setCategoryList(dynamic newCategory) {
     _categoryList.add(newCategory);
+
+// Add the category to the actual database:
+
     notifyListeners();
   }
 

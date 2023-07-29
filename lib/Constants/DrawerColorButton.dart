@@ -22,7 +22,7 @@ class DrawerColorButton extends StatelessWidget {
         ),
         child: const Center(
           child: Text(
-            '', // You can leave this empty or add a text if you want
+            '+',
             style: TextStyle(color: Colors.white, fontSize: 16),
           ),
         ),

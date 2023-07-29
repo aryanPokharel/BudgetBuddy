@@ -1,3 +1,4 @@
+import 'package:budget_buddy/Db/DbHelper.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,8 @@ class AddCategory extends StatefulWidget {
 }
 
 class _AddCategoryState extends State<AddCategory> {
+  final dbHelper = DatabaseHelper.instance;
+
   var titleController = TextEditingController();
   var iconController = TextEditingController();
 
@@ -17,7 +20,7 @@ class _AddCategoryState extends State<AddCategory> {
 
   var title;
 
-  List<IconData> expenseIcons = [
+  List<IconData> iconOptions = [
     Icons.bloodtype,
     Icons.request_quote,
     Icons.directions_bus,
@@ -47,17 +50,9 @@ class _AddCategoryState extends State<AddCategory> {
 
   @override
   Widget build(BuildContext context) {
-    saveCategory(dynamic type, dynamic title, dynamic icon) {
+    saveCategory(dynamic type, dynamic title, dynamic icon) async {
       var newCategory = {"type": type, "title": title, "icon": icon.codePoint};
       context.read<StateProvider>().setCategoryList(newCategory);
-    }
-
-    clear() {
-      titleController.clear();
-      setState(() {
-        selectedIcon = Icons.local_dining;
-        _categoryType = 'Expense';
-      });
     }
 
     sendSnackBar(dynamic message) {
@@ -131,7 +126,7 @@ class _AddCategoryState extends State<AddCategory> {
               const SizedBox(height: 8),
               Wrap(
                 crossAxisAlignment: WrapCrossAlignment.center,
-                children: expenseIcons.map<Widget>((IconData icon) {
+                children: iconOptions.map<Widget>((IconData icon) {
                   return Container(
                     margin: const EdgeInsets.symmetric(horizontal: 8),
                     child: GestureDetector(
@@ -167,7 +162,7 @@ class _AddCategoryState extends State<AddCategory> {
                   if (formKey.currentState!.validate()) {
                     saveCategory(_categoryType, title, selectedIcon);
                     sendSnackBar("Category Added");
-                    clear();
+                    Navigator.of(context).pop();
                   } else {
                     sendSnackBar("Provide the title");
                   }

@@ -128,7 +128,7 @@ class _HomePageState extends State<HomePage> {
                             DrawerColorButton(color: Colors.red),
                             DrawerColorButton(color: Colors.blue),
                             DrawerColorButton(color: Colors.green),
-                            DrawerColorButton(color: Colors.yellow),
+                            DrawerColorButton(color: Colors.amber),
                           ],
                         ),
                         SizedBox(
