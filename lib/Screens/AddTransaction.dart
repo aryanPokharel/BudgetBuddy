@@ -106,6 +106,9 @@ class _AddTransactionState extends State<AddTransaction> {
 
     final formKey = GlobalKey<FormState>();
     return Scaffold(
+      backgroundColor: _transactionType == "Expense"
+          ? const Color.fromARGB(255, 196, 214, 222)
+          : const Color.fromARGB(255, 210, 219, 200),
       appBar: AppBar(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

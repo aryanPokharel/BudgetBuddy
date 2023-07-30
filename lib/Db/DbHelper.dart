@@ -44,26 +44,32 @@ class DatabaseHelper {
   // Creates the categories and transactions tables
   Future _onCreate(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE $tableCategories (
-        $colId INTEGER PRIMARY KEY,
-        $colType TEXT NOT NULL,
-        $colTitle TEXT NOT NULL,
-        $colIcon TEXT NOT NULL
-      )
-    ''');
+    CREATE TABLE $tableCategories (
+      $colId INTEGER PRIMARY KEY,
+      $colType TEXT NOT NULL,
+      $colTitle TEXT NOT NULL,
+      $colIcon TEXT NOT NULL -- Change the data type to INTEGER for icon
+    )
+  ''');
 
-    await db.execute('''
-      CREATE TABLE $tableTransactions (
-        $colId INTEGER PRIMARY KEY,
-        $colType TEXT NOT NULL,
-        $colTitle TEXT NOT NULL,
-        $colAmount TEXT NOT NULL,
-        $colRemarks TEXT,
-        $colDateTime TEXT,
-         $colCategory INTEGER NOT NULL, -- The new category column
-        FOREIGN KEY ($colCategory) REFERENCES $tableCategories($colId) -- Establish a foreign key constraint
-      )
-    ''');
+    // Initial data for categories
+    List<Map<String, dynamic>> initialCategoriesData = [
+      {"type": "Expense", "title": "Food & Drinks", "icon": "0xE390"},
+      {"type": "Expense", "title": "Transportation", "icon": "0x0E1D5"},
+      {"type": "Expense", "title": "Fuel", "icon": "0xF07B7"},
+      {"type": "Expense", "title": "Health", "icon": "0x0E0E3"},
+      {"type": "Expense", "title": "Household", "icon": "0x0E328"},
+      {"type": "Expense", "title": "Lost", "icon": "0x0E517"},
+      {"type": "Income", "title": "Salary", "icon": "0x0E6F2"},
+      {"type": "Income", "title": "Dakshina", "icon": "0x0E52F"},
+      {"type": "Income", "title": "Cashback", "icon": "0xF04DC"},
+      {"type": "Income", "title": "Found", "icon": "0x0E04F"},
+    ];
+
+    // Insert the initial data into the categories table
+    for (var categoryData in initialCategoriesData) {
+      await db.insert(tableCategories, categoryData);
+    }
   }
 
   // Insert a new category into the database

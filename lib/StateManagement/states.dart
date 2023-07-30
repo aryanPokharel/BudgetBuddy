@@ -20,16 +20,16 @@ class StateProvider with ChangeNotifier {
 
   // Category States
   // final List<dynamic> _categoryList = [
-  //   {"type": "Expense", "title": "Food & Drinks", "icon": 0xE390},
-  //   {"type": "Expense", "title": "Transportation", "icon": 0x0E1D5},
-  //   {"type": "Expense", "title": "Fuel", "icon": 0xF07B7},
-  //   {"type": "Expense", "title": "Health", "icon": 0x0E0E3},
-  //   {"type": "Expense", "title": "Household", "icon": 0x0E328},
-  //   {"type": "Expense", "title": "Lost", "icon": 0x0E517},
-  //   {"type": "Income", "title": "Salary", "icon": 0x0E6F2},
-  //   {"type": "Income", "title": "Dakshina", "icon": 0x0E52F},
-  //   {"type": "Income", "title": "Cashback", "icon": 0xF04DC},
-  //   {"type": "Income", "title": "Found", "icon": 0x0E04F},
+  // {"type": "Expense", "title": "Food & Drinks", "icon": 0xE390},
+  // {"type": "Expense", "title": "Transportation", "icon": 0x0E1D5},
+  // {"type": "Expense", "title": "Fuel", "icon": 0xF07B7},
+  // {"type": "Expense", "title": "Health", "icon": 0x0E0E3},
+  // {"type": "Expense", "title": "Household", "icon": 0x0E328},
+  // {"type": "Expense", "title": "Lost", "icon": 0x0E517},
+  // {"type": "Income", "title": "Salary", "icon": 0x0E6F2},
+  // {"type": "Income", "title": "Dakshina", "icon": 0x0E52F},
+  // {"type": "Income", "title": "Cashback", "icon": 0xF04DC},
+  // {"type": "Income", "title": "Found", "icon": 0x0E04F},
   // ];
   final List<dynamic> _categoryList = [];
 
@@ -172,7 +172,6 @@ class StateProvider with ChangeNotifier {
         "dateTime": tran[DatabaseHelper.colDateTime],
         "category": tran[DatabaseHelper.colCategory],
       };
-      // setCategoryList(newCategory);
       _transactionList.add(newTransaction);
       if (newTransaction['type'] == "Expense") {
         totalExpenses += double.parse(newTransaction['amount']);
@@ -289,6 +288,8 @@ class StateProvider with ChangeNotifier {
   void deleteExpense(dynamic expenseId) {
     var expenseToRemove = _expenseList[expenseId];
     totalExpenses -= double.parse(expenseToRemove['amount']);
+    notifyListeners();
+    transactionList.removeAt(expenseId);
     _expenseList.removeAt(expenseId);
 
     notifyListeners();
@@ -309,6 +310,7 @@ class StateProvider with ChangeNotifier {
   void deleteIncome(dynamic incomeId) {
     var incomeToRemove = _incomeList[incomeId];
     totalIncome -= double.parse(incomeToRemove['amount']);
+    transactionList.removeAt(incomeId);
     _incomeList.removeAt(incomeId);
 
     notifyListeners();

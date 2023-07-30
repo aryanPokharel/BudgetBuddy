@@ -61,6 +61,9 @@ class _AddCategoryState extends State<AddCategory> {
 
     final formKey = GlobalKey<FormState>();
     return Scaffold(
+      backgroundColor: _categoryType == "Expense"
+          ? const Color.fromARGB(255, 196, 214, 222)
+          : const Color.fromARGB(255, 210, 219, 200),
       appBar: AppBar(
         title: const Text(
           'Add Category',
