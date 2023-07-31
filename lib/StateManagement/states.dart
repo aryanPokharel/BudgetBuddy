@@ -79,24 +79,16 @@ class StateProvider with ChangeNotifier {
         "title": "Miscellaneous",
         "icon": "0x0E517"
       };
-      // await dbHelper.insertCategory(newCategory);
       setCategoryList(newCategory);
       getCategoriesFromDb();
       notifyListeners();
     }
     if (incomeCheckList == 0) {
-      // var newCategory = {
-      //   "type": "Income",
-      //   "title": "Miscellaneous",
-      //   "icon": "0x0E04F"
-      // };
       var newCategory = {
         "type": "Income",
         "title": "Miscellaneous",
         "icon": "0x0E04F"
       };
-
-      // await dbHelper.insertCategory(newCategory);
       setCategoryList(newCategory);
       getCategoriesFromDb();
       notifyListeners();
@@ -110,6 +102,8 @@ class StateProvider with ChangeNotifier {
   List<dynamic> get transactionList => _transactionList;
 
   void getTransactionsFromDb() async {
+    totalExpenses = 0;
+    totalIncome = 0;
     List<Map<String, dynamic>> transactions =
         await dbHelper.getAllTransactions();
     _transactionList.clear();
@@ -129,8 +123,8 @@ class StateProvider with ChangeNotifier {
       } else {
         totalIncome += double.parse(newTransaction['amount']);
       }
-      notifyListeners();
     }
+    notifyListeners();
   }
 
   void setTransactionList(dynamic newTransaction) async {
@@ -149,7 +143,6 @@ class StateProvider with ChangeNotifier {
   void deleteTransaction(dynamic transactionId) async {
     dbHelper.deleteTransaction(transactionId);
     getTransactionsFromDb();
-    notifyListeners();
   }
 
 // Expense States

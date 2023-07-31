@@ -83,23 +83,24 @@ class _ExpensesState extends State<Expenses> {
                             ),
                           ),
                           child: ListTile(
-                            // leading: CircleAvatar(
-                            //   backgroundColor:
-                            //       transactionList[index]['type'] == 'Expense'
-                            //           ? Colors.red[100]
-                            //           : Colors.green[100],
-                            //   child: Icon(
-                            //     IconData(
-                            //       int.parse(transactionList[index]['category']
-                            //           ['icon']),
-                            //       fontFamily: 'MaterialIcons',
-                            //     ),
-                            //     color:
-                            //         transactionList[index]['type'] == 'Expense'
-                            //             ? Colors.red
-                            //             : Colors.green,
-                            //   ),
-                            // ),
+                            leading: CircleAvatar(
+                              backgroundColor:
+                                  transactionList[index]['type'] == 'Expense'
+                                      ? Colors.red[100]
+                                      : Colors.green[100],
+                              child: Icon(
+                                Icons.currency_rupee,
+                                // IconData(
+                                //   int.parse(transactionList[index]['category']
+                                //       ['icon']),
+                                //   fontFamily: 'MaterialIcons',
+                                // ),
+                                color:
+                                    transactionList[index]['type'] == 'Expense'
+                                        ? Colors.red
+                                        : Colors.green,
+                              ),
+                            ),
                             title: Text(
                               transactionList[index]['title'].toString(),
                               style: const TextStyle(

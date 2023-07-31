@@ -70,6 +70,20 @@ class DatabaseHelper {
     for (var categoryData in initialCategoriesData) {
       await db.insert(tableCategories, categoryData);
     }
+
+    await db.execute('''
+      CREATE TABLE $tableTransactions (
+        $colId INTEGER PRIMARY KEY,
+        $colType TEXT NOT NULL,
+        $colTitle TEXT NOT NULL,
+   
+        $colAmount TEXT NOT NULL,
+        $colRemarks TEXT,
+        $colDateTime TEXT,
+         $colCategory INTEGER NOT NULL, -- The new category column
+        FOREIGN KEY ($colCategory) REFERENCES $tableCategories($colId) -- Establish a foreign key constraint
+      )
+    ''');
   }
 
   // Insert a new category into the database

@@ -163,15 +163,16 @@ class _HomePageState extends State<HomePage> {
               title: const Text('Home'),
               onTap: () {
                 // Handle drawer item tap
+                Navigator.pop(context);
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.info),
-              title: const Text('Insights'),
-              onTap: () {
-                // Handle drawer item tap
-              },
-            ),
+            // ListTile(
+            //   leading: const Icon(Icons.info),
+            //   title: const Text('Insights'),
+            //   onTap: () {
+            //     // Handle drawer item tap
+            //   },
+            // ),
           ],
         ),
       ),
@@ -185,36 +186,105 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         ],
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [appTheme.shade900, appTheme.shade400],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+            ),
+          ),
+        ),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(48.0),
+          preferredSize: const Size.fromHeight(100),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Expense : $totalExpenses",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
+                Card(
+                  color: Colors.red,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.42,
+                    height: 100,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        const Center(
+                          child: Icon(
+                            Icons.arrow_downward,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            const Text(
+                              "Expense",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              "Rs. ${totalExpenses.toStringAsFixed(totalExpenses.truncateToDouble() == totalExpenses ? 0 : 2)}",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                    Text(
-                      "Income   : $totalIncome",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
+                  ),
+                ),
+                Card(
+                  color: Colors.blueGrey,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.42,
+                    height: 100,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        const Center(
+                          child: Icon(
+                            Icons.arrow_upward,
+                            color: Colors.white,
+                          ),
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            const Text(
+                              "Income",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              "Rs. ${totalIncome.toStringAsFixed(totalIncome.truncateToDouble() == totalIncome ? 0 : 2)}",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                  ],
+                  ),
                 ),
               ],
             ),
