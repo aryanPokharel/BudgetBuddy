@@ -57,8 +57,27 @@ class _ExpensesState extends State<Expenses> {
           : Stack(
               children: [
                 ListView.builder(
-                  itemCount: transactionList.length,
+                  itemCount: transactionList.length + 1,
                   itemBuilder: (context, index) {
+                    if (index == transactionList.length) {
+                      // Show an empty card after the last item in the list
+                      return const Padding(
+                        padding: EdgeInsets.all(8),
+                        child: Card(
+                          color: Colors.transparent,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(20),
+                              bottomRight: Radius.circular(20),
+                            ),
+                          ),
+                          child: SizedBox(
+                            height: 70, // Adjust the height as needed
+                          ),
+                        ),
+                      );
+                    }
                     return Padding(
                       padding: const EdgeInsets.all(8),
                       child: Card(
