@@ -1,3 +1,4 @@
+import 'package:budget_buddy/Constants/DateConverter.dart';
 import 'package:budget_buddy/Constants/LooksEmpty.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
@@ -143,22 +144,43 @@ class _ExpensesState extends State<Expenses> {
                                   ),
                                 const SizedBox(height: 8),
                                 if (transactionList[index]['dateTime'] != null)
-                                  Row(
+                                  Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Icon(
-                                        Icons.access_time,
-                                        size: 16,
-                                        color: Colors.grey[600],
+                                      Row(
+                                        children: [
+                                          const Icon(Icons.calendar_month),
+                                          Text(
+                                            formatDateToWordBased(
+                                                transactionList[index]
+                                                    ['dateTime']),
+                                          ),
+                                        ],
                                       ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        convertTime(transactionList[index]
-                                                ['dateTime']
-                                            .toString()),
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.grey[600],
-                                        ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.access_time,
+                                            size: 16,
+                                            color: Colors.grey[600],
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            convertTime(transactionList[index]
+                                                    ['dateTime']
+                                                .toString()),
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.grey[600],
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
