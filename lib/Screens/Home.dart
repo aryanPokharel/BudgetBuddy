@@ -66,9 +66,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
-    final List<String> items = ["Hey", "Hello", "Hola", "Bonjour", "Ciao"];
+    final List<String> items = ["March", "April", "May", "June", "July"];
     // Format the DateTime to a human-friendly string
-    String formattedDateTime = getFormattedDateTime(now);
+    // String formattedDateTime = getFormattedDateTime(now);
 
     dynamic appTheme = Provider.of<StateProvider>(context).appTheme;
     dynamic totalExpenses = Provider.of<StateProvider>(context).totalExpenses;
@@ -192,9 +192,9 @@ class _HomePageState extends State<HomePage> {
               );
             },
             options: CarouselOptions(
-              height: 200.0, // Set the height of the carousel
+              height: 200, // Set the height of the carousel
               enableInfiniteScroll:
-                  false, // Set to true if you want the carousel to loop infinitely
+                  true, // Set to true if you want the carousel to loop infinitely
               enlargeCenterPage:
                   true, // Set to true if you want the current item to be larger
             ),

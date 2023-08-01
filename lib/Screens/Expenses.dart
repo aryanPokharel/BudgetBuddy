@@ -1,9 +1,10 @@
 import 'package:budget_buddy/Constants/DateConverter.dart';
+import 'package:budget_buddy/Constants/FormatDate.dart';
 import 'package:budget_buddy/Constants/LooksEmpty.dart';
+import 'package:budget_buddy/Constants/TimeConverter.dart';
 import 'package:budget_buddy/Db/DbHelper.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class Expenses extends StatefulWidget {
@@ -14,11 +15,7 @@ class Expenses extends StatefulWidget {
 }
 
 class _ExpensesState extends State<Expenses> {
-  @override
-  void initState() {
-    super.initState();
-    context.read<StateProvider>().getTransactionsFromDb();
-  }
+  final dbHelper = DatabaseHelper.instance;
 
   bool _showOverlay = false;
 
@@ -33,18 +30,56 @@ class _ExpensesState extends State<Expenses> {
     context.read<StateProvider>().deleteTransaction(toDelete);
   }
 
-  final dbHelper = DatabaseHelper.instance;
+  @override
+  void initState() {
+    super.initState();
+    context.read<StateProvider>().getTransactionsFromDb();
+  }
 
   @override
   Widget build(BuildContext context) {
     List<dynamic> transactionList =
         Provider.of<StateProvider>(context).transactionList;
-    convertTime(transactionList) {
-      DateTime transactionDate = DateTime.parse(transactionList);
-      String formattedTime = DateFormat('h:mm a').format(transactionDate);
 
-      return formattedTime;
+// working on grouping the transaction based on the day of the month
+
+// Step 1 : sort the transactions on the basis of the date.
+//Get the latest transaction at the top of the list
+    transactionList.sort(
+      (a, b) => b['dateTime'].compareTo(
+        a['dateTime'],
+      ),
+    );
+
+    //  Step 2 : create lists associated to individual days of the month
+    // and insert each transaction on the basis of the common days.
+
+    var referenceDate = DateTime.parse(transactionList[0]['dateTime']);
+    Map<String, List<Map<String, dynamic>>> groupedTransactions = {
+      formatDate(referenceDate): [transactionList[0]]
+    };
+
+    for (var i = 1; i < transactionList.length; i++) {
+      var transactionDate = DateTime.parse(transactionList[i]['dateTime']);
+      var transactionDateFormatted = formatDate(transactionDate);
+
+      if (transactionDateFormatted == formatDate(referenceDate)) {
+        // Add the transaction to the existing list for this date
+        groupedTransactions[transactionDateFormatted]!.add(transactionList[i]);
+      } else {
+        // Create a new list for the new date and add the transaction to it
+        groupedTransactions[transactionDateFormatted] = [transactionList[i]];
+        referenceDate = transactionDate;
+      }
     }
+
+    // Printing the grouped transactions
+    groupedTransactions.forEach((date, transactions) {
+      print('Transactions for $date:');
+      for (var transaction in transactions) {
+        print(transaction);
+      }
+    });
 
     dynamic getCategoryData(dynamic categoryId) async {
       Map<String, dynamic>? categoryData =
@@ -67,41 +102,32 @@ class _ExpensesState extends State<Expenses> {
             )
           : Stack(
               children: [
-                ListView.builder(
-                  itemCount: transactionList.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == transactionList.length) {
-                      // Show an empty card after the last item in the list
-                      return const Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Card(
-                          color: Colors.transparent,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(20),
-                              bottomRight: Radius.circular(20),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: transactionList.length + 1,
+                    itemBuilder: (context, index) {
+                      if (index == transactionList.length) {
+                        return const Padding(
+                          padding: EdgeInsets.all(8),
+                          child: Card(
+                            color: Colors.transparent,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(20),
+                                bottomRight: Radius.circular(20),
+                              ),
+                            ),
+                            child: SizedBox(
+                              height: 70,
                             ),
                           ),
-                          child: SizedBox(
-                            height: 70, // Adjust the height as needed
-                          ),
-                        ),
-                      );
-                    }
-                    return FutureBuilder(
+                        );
+                      }
+                      return FutureBuilder(
                         future:
                             getCategoryData(transactionList[index]['category']),
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            // While the future is still resolving, show a loading indicator or a placeholder widget
-                            return const CircularProgressIndicator(); // Replace with any loading widget you prefer
-                          } else if (snapshot.hasError) {
-                            // If an error occurred during the future execution, handle it here
-                            return Text('Error: ${snapshot.error}');
-                          }
-
                           var iconCodePoint = snapshot.data;
                           return Padding(
                             padding: const EdgeInsets.all(8),
@@ -135,9 +161,7 @@ class _ExpensesState extends State<Expenses> {
                                         : Colors.green[100],
                                     child: Icon(
                                       IconData(
-                                        int.parse(
-                                          iconCodePoint.toString(),
-                                        ),
+                                        int.parse(iconCodePoint.toString()),
                                         fontFamily: 'MaterialIcons',
                                       ),
                                       color: transactionList[index]['type'] ==
@@ -189,53 +213,44 @@ class _ExpensesState extends State<Expenses> {
                                                 ),
                                               ],
                                             ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.access_time,
-                                                  size: 16,
-                                                  color: Colors.grey[600],
-                                                ),
-                                                const SizedBox(width: 4),
-                                                Text(
-                                                  convertTime(
-                                                      transactionList[index]
-                                                              ['dateTime']
-                                                          .toString()),
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.grey[600],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                            const SizedBox(height: 10),
                                           ],
                                         ),
                                     ],
                                   ),
-                                  trailing: Text(
-                                    'Rs. ${transactionList[index]['amount']}',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                      color: transactionList[index]['type'] ==
-                                              'Expense'
-                                          ? Colors.red
-                                          : Colors.green,
-                                    ),
+                                  trailing: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      if (transactionList[index]['dateTime'] !=
+                                          null)
+                                        const SizedBox(width: 4),
+                                      Expanded(
+                                        child: Text(
+                                          convertTime(transactionList[index]
+                                                  ['dateTime']
+                                              .toString()),
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.grey[600],
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'Rs. ${transactionList[index]['amount']}',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                          color: transactionList[index]
+                                                      ['type'] ==
+                                                  'Expense'
+                                              ? Colors.red
+                                              : Colors.green,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  onTap: () async {
-                                    Map<String, dynamic>? categoryData =
-                                        await dbHelper.getCategoryById(
-                                            transactionList[index]['category']);
-                                    if (categoryData != null) {
-                                      print(categoryData[
-                                          'icon']); // Print the category data
-                                    }
-                                  },
                                   onLongPress: () {
                                     toDelete = transactionList[index]['id'];
                                     _toggleOverlay();
@@ -244,8 +259,10 @@ class _ExpensesState extends State<Expenses> {
                               ),
                             ),
                           );
-                        });
-                  },
+                        },
+                      );
+                    },
+                  ),
                 ),
                 if (_showOverlay)
                   GestureDetector(
