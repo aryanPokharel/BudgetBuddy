@@ -4,6 +4,7 @@ import 'package:budget_buddy/Screens/Categories.dart';
 import 'package:budget_buddy/Screens/Expenses.dart';
 import 'package:budget_buddy/Screens/Insights.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -65,7 +66,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
-
+    final List<String> items = ["Hey", "Hello", "Hola", "Bonjour", "Ciao"];
     // Format the DateTime to a human-friendly string
     String formattedDateTime = getFormattedDateTime(now);
 
@@ -177,7 +178,28 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       appBar: AppBar(
-        title: Text(formattedDateTime),
+        title: SizedBox(
+          height: 50,
+          child: CarouselSlider.builder(
+            itemCount: items.length,
+            itemBuilder: (BuildContext context, int index, int realIndex) {
+              return Container(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  items[index],
+                  style: const TextStyle(fontSize: 24.0),
+                ),
+              );
+            },
+            options: CarouselOptions(
+              height: 200.0, // Set the height of the carousel
+              enableInfiniteScroll:
+                  false, // Set to true if you want the carousel to loop infinitely
+              enlargeCenterPage:
+                  true, // Set to true if you want the current item to be larger
+            ),
+          ),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),

@@ -151,4 +151,34 @@ class DatabaseHelper {
     Database? db = await instance.database;
     return await db!.query(tableTransactions);
   }
+
+  // Add the getCategoryById method
+  Future<Map<String, dynamic>?> getCategoryById(int categoryId) async {
+    Database? db = await instance.database;
+    List<Map<String, dynamic>> result = await db!.query(
+      tableCategories,
+      where: '$colId = ?',
+      whereArgs: [categoryId],
+    );
+    if (result.isNotEmpty) {
+      return result.first;
+    } else {
+      return null;
+    }
+  }
+
+  // Add the getTransactionById method
+  Future<Map<String, dynamic>?> getTransactionById(int transactionId) async {
+    Database? db = await instance.database;
+    List<Map<String, dynamic>> result = await db!.query(
+      tableTransactions,
+      where: '$colId = ?',
+      whereArgs: [transactionId],
+    );
+    if (result.isNotEmpty) {
+      return result.first;
+    } else {
+      return null;
+    }
+  }
 }

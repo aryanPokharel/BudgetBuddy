@@ -90,8 +90,8 @@ class _AddTransactionState extends State<AddTransaction> {
         categoryList.where((category) => category['type'] == 'Income').toList();
 
     selectedCategory = _transactionType == 'Expense'
-        ? expenseCategories[0]
-        : incomeCategories[0];
+        ? expenseCategories[0]['id']
+        : incomeCategories[0]['id'];
 
     sendSnackBar(dynamic message) {
       var snackBar = SnackBar(
@@ -360,8 +360,9 @@ class _AddTransactionState extends State<AddTransaction> {
                             "remarks": description,
                             "amount": amount,
                             "dateTime": selectedDate.toString(),
-                            "category": selectedCategory.toString(),
+                            "category": selectedCategory,
                           };
+
                           if (formKey.currentState!.validate()) {
                             saveExpense(newExpense);
                             sendSnackBar("Expense Added");
