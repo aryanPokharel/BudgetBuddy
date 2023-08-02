@@ -8,6 +8,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,6 +16,21 @@ class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
 }
+
+final _navBarItems = [
+  SalomonBottomBarItem(
+    icon: const Icon(Icons.home),
+    title: const Text("Home"),
+  ),
+  SalomonBottomBarItem(
+    icon: const Icon(Icons.category),
+    title: const Text("Categories"),
+  ),
+  SalomonBottomBarItem(
+    icon: const Icon(Icons.calculate),
+    title: const Text("Insights"),
+  ),
+];
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
@@ -69,24 +85,16 @@ class _HomePageState extends State<HomePage> {
     dynamic totalIncome = Provider.of<StateProvider>(context).totalIncome;
 
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.currency_rupee),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.category),
-            label: 'Categories',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calculate_rounded),
-            label: 'Insights',
-          ),
-        ],
-      ),
+      bottomNavigationBar: SalomonBottomBar(
+          currentIndex: _selectedIndex,
+          selectedItemColor: appTheme,
+          unselectedItemColor: const Color(0xff757575),
+          onTap: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+          items: _navBarItems),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -229,7 +237,7 @@ class _HomePageState extends State<HomePage> {
                       "Expenses",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 16,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -237,7 +245,8 @@ class _HomePageState extends State<HomePage> {
                       "Rs. ${totalExpenses.toStringAsFixed(totalExpenses.truncateToDouble() == totalExpenses ? 0 : 2)}",
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 14,
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
                       ),
                     ),
                   ],
@@ -254,7 +263,7 @@ class _HomePageState extends State<HomePage> {
                       "Income",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 16,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -262,7 +271,8 @@ class _HomePageState extends State<HomePage> {
                       "Rs. ${totalIncome.toStringAsFixed(totalIncome.truncateToDouble() == totalIncome ? 0 : 2)}",
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 14,
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
                       ),
                     ),
                     const SizedBox(
