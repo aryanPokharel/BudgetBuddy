@@ -28,3 +28,22 @@ String getAbbreviatedMonthName(String monthNumber, String yearNumber) {
       return "Unknown";
   }
 }
+
+String checkTodayYesterday(String inputDate) {
+  DateTime currentDate = DateTime.now();
+  DateTime currentDateWithoutTime =
+      DateTime(currentDate.year, currentDate.month, currentDate.day);
+  DateTime parsedDate = DateTime.parse(inputDate);
+
+  if (parsedDate == currentDateWithoutTime) {
+    return 'Today';
+  } else if (parsedDate ==
+      currentDateWithoutTime.subtract(const Duration(days: 1))) {
+    return 'Yesterday';
+  } else if (parsedDate ==
+      currentDateWithoutTime.subtract(const Duration(days: 2))) {
+    return 'Day Before';
+  } else {
+    return inputDate;
+  }
+}

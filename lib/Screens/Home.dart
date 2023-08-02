@@ -56,19 +56,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    // Call the super.initState() to ensure the state is properly initialized.
     super.initState();
-
-    // context.read<StateProvider>().getTransactionsFromDb();
     context.read<StateProvider>().getCategoriesFromDb();
   }
 
   @override
   Widget build(BuildContext context) {
-    DateTime now = DateTime.now();
     final List<String> items = ["March", "April", "May", "June", "July"];
-    // Format the DateTime to a human-friendly string
-    // String formattedDateTime = getFormattedDateTime(now);
 
     dynamic appTheme = Provider.of<StateProvider>(context).appTheme;
     dynamic totalExpenses = Provider.of<StateProvider>(context).totalExpenses;
@@ -163,21 +157,14 @@ class _HomePageState extends State<HomePage> {
               leading: const Icon(Icons.home),
               title: const Text('Home'),
               onTap: () {
-                // Handle drawer item tap
                 Navigator.pop(context);
               },
             ),
-            // ListTile(
-            //   leading: const Icon(Icons.info),
-            //   title: const Text('Insights'),
-            //   onTap: () {
-            //     // Handle drawer item tap
-            //   },
-            // ),
           ],
         ),
       ),
       appBar: AppBar(
+        backgroundColor: Colors.deepPurple.shade900,
         title: SizedBox(
           height: 50,
           child: CarouselSlider.builder(
@@ -187,31 +174,37 @@ class _HomePageState extends State<HomePage> {
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   items[index],
-                  style: const TextStyle(fontSize: 24.0),
+                  style: const TextStyle(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               );
             },
             options: CarouselOptions(
-              height: 200, // Set the height of the carousel
-              enableInfiniteScroll:
-                  true, // Set to true if you want the carousel to loop infinitely
-              enlargeCenterPage:
-                  true, // Set to true if you want the current item to be larger
+              height: 200,
+              enableInfiniteScroll: true,
+              enlargeCenterPage: true,
             ),
           ),
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
-            onPressed: () {
-              // Implement search functionality here
-            },
+            onPressed: () {},
           ),
+          // IconButton(
+          //   icon: const Icon(Icons.notifications),
+          //   onPressed: () {
+          //     // Replace this with your custom functionality
+          //   },
+          // ),
         ],
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [appTheme.shade900, appTheme.shade400],
+              colors: [appTheme.shade300, appTheme.shade900],
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
             ),
@@ -224,89 +217,58 @@ class _HomePageState extends State<HomePage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Card(
-                  color: Colors.red,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16.0),
-                  ),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.42,
-                    height: 100,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        const Center(
-                          child: Icon(
-                            Icons.arrow_downward,
-                            color: Colors.white,
-                          ),
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            const Text(
-                              "Expense",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              "Rs. ${totalExpenses.toStringAsFixed(totalExpenses.truncateToDouble() == totalExpenses ? 0 : 2)}",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                Column(
+                  children: [
+                    const Icon(
+                      Icons.arrow_downward,
+                      color: Colors.white,
+                      size: 40,
                     ),
-                  ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      "Expenses",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      "Rs. ${totalExpenses.toStringAsFixed(totalExpenses.truncateToDouble() == totalExpenses ? 0 : 2)}",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
                 ),
-                Card(
-                  color: Colors.blueGrey,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16.0),
-                  ),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.42,
-                    height: 100,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        const Center(
-                          child: Icon(
-                            Icons.arrow_upward,
-                            color: Colors.white,
-                          ),
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            const Text(
-                              "Income",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              "Rs. ${totalIncome.toStringAsFixed(totalIncome.truncateToDouble() == totalIncome ? 0 : 2)}",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                Column(
+                  children: [
+                    const Icon(
+                      Icons.arrow_upward,
+                      color: Colors.white,
+                      size: 40,
                     ),
-                  ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      "Income",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      "Rs. ${totalIncome.toStringAsFixed(totalIncome.truncateToDouble() == totalIncome ? 0 : 2)}",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                  ],
                 ),
               ],
             ),

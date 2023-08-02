@@ -1,3 +1,4 @@
+import 'package:budget_buddy/Constants/DateName.dart';
 import 'package:budget_buddy/Constants/FormatDate.dart';
 import 'package:budget_buddy/Constants/LooksEmpty.dart';
 import 'package:budget_buddy/Constants/TimeConverter.dart';
@@ -96,11 +97,11 @@ class _ExpensesState extends State<Expenses> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Container(
-                          color: Colors.blue[100],
+                          color: const Color.fromARGB(255, 223, 225, 225),
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           child: Center(
                             child: Text(
-                              date,
+                              checkTodayYesterday(date.toString()),
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
@@ -123,6 +124,8 @@ class _ExpensesState extends State<Expenses> {
                                     const EdgeInsets.fromLTRB(10, 5, 10, 5),
                                 child: Container(
                                   decoration: BoxDecoration(
+                                    color: const Color.fromARGB(
+                                        255, 208, 229, 239),
                                     border: Border(
                                       left: BorderSide(
                                         width: 4,
