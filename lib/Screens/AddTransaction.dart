@@ -130,7 +130,7 @@ class _AddTransactionState extends State<AddTransaction> {
                 TextFormField(
                   controller: titleController,
                   onChanged: (val) {
-                    title = val;
+                    title = val.trim();
                   },
                   decoration: const InputDecoration(
                     hintText: "Title",
@@ -146,7 +146,7 @@ class _AddTransactionState extends State<AddTransaction> {
                 TextFormField(
                   controller: amountController,
                   onChanged: (val) {
-                    amount = val;
+                    amount = val.trim();
                   },
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
@@ -163,7 +163,7 @@ class _AddTransactionState extends State<AddTransaction> {
                 TextFormField(
                   controller: descriptionController,
                   onChanged: (val) {
-                    description = val;
+                    description = val.trim();
                   },
                   maxLines: 2,
                   decoration: const InputDecoration(

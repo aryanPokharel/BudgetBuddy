@@ -1,4 +1,3 @@
-import 'package:budget_buddy/Constants/DateConverter.dart';
 import 'package:budget_buddy/Constants/FormatDate.dart';
 import 'package:budget_buddy/Constants/LooksEmpty.dart';
 import 'package:budget_buddy/Constants/TimeConverter.dart';
@@ -40,23 +39,15 @@ class _ExpensesState extends State<Expenses> {
   Widget build(BuildContext context) {
     List<dynamic> transactionList =
         Provider.of<StateProvider>(context).transactionList;
-
+    Map<String, List<Map<String, dynamic>>> groupedTransactions = {};
     if (transactionList.isNotEmpty) {
-      // working on grouping the transaction based on the day of the month
-
-// Step 1 : sort the transactions on the basis of the date.
-//Get the latest transaction at the top of the list
       transactionList.sort(
         (a, b) => b['dateTime'].compareTo(
           a['dateTime'],
         ),
       );
-
-      //  Step 2 : create lists associated to individual days of the month
-      // and insert each transaction on the basis of the common days.
-
       var referenceDate = DateTime.parse(transactionList[0]['dateTime']);
-      Map<String, List<Map<String, dynamic>>> groupedTransactions = {
+      groupedTransactions = {
         formatDate(referenceDate): [transactionList[0]]
       };
 
@@ -65,23 +56,13 @@ class _ExpensesState extends State<Expenses> {
         var transactionDateFormatted = formatDate(transactionDate);
 
         if (transactionDateFormatted == formatDate(referenceDate)) {
-          // Add the transaction to the existing list for this date
           groupedTransactions[transactionDateFormatted]!
               .add(transactionList[i]);
         } else {
-          // Create a new list for the new date and add the transaction to it
           groupedTransactions[transactionDateFormatted] = [transactionList[i]];
           referenceDate = transactionDate;
         }
       }
-
-      // Printing the grouped transactions
-      groupedTransactions.forEach((date, transactions) {
-        print('Transactions for $date:');
-        for (var transaction in transactions) {
-          print(transaction);
-        }
-      });
     }
 
     dynamic getCategoryData(dynamic categoryId) async {
@@ -106,184 +87,126 @@ class _ExpensesState extends State<Expenses> {
           : Stack(
               children: [
                 ListView.builder(
-                  itemCount: transactionList.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == transactionList.length) {
-                      // Show an empty card after the last item in the list
-                      return const Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Card(
-                          color: Colors.transparent,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(20),
-                              bottomRight: Radius.circular(20),
+                  itemCount: groupedTransactions.length,
+                  itemBuilder: ((context, index) {
+                    var date = groupedTransactions.keys.elementAt(index);
+                    var transactions = groupedTransactions[date];
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Container(
+                          color: Colors.blue[100],
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Center(
+                            child: Text(
+                              date,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: Colors.blue[800],
+                              ),
                             ),
                           ),
-                          child: SizedBox(
-                            height: 70, // Adjust the height as needed
-                          ),
                         ),
-                      );
-                    }
-                    return FutureBuilder(
-                        future:
-                            getCategoryData(transactionList[index]['category']),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            // While the future is still resolving, show a loading indicator or a placeholder widget
-                            return const CircularProgressIndicator(); // Replace with any loading widget you prefer
-                          } else if (snapshot.hasError) {
-                            // If an error occurred during the future execution, handle it here
-                            return Text('Error: ${snapshot.error}');
-                          }
+                        ...transactions!.map((transaction) {
+                          return FutureBuilder(
+                            future: getCategoryData(transaction['category']),
+                            builder: (context, snapshot) {
+                              int iconCodePoint = snapshot.hasData
+                                  ? int.tryParse(snapshot.data.toString()) ??
+                                      Icons.error_outline.codePoint
+                                  : Icons.error_outline.codePoint;
 
-                          var iconCodePoint = snapshot.data;
-                          return Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Card(
-                              color: const Color.fromARGB(255, 230, 232, 230),
-                              elevation: 4,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(20),
-                                  bottomRight: Radius.circular(20),
-                                ),
-                              ),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    left: BorderSide(
-                                      width: 4,
-                                      color: transactionList[index]['type'] ==
-                                              'Expense'
-                                          ? Colors.red
-                                          : Colors.green,
-                                    ),
-                                  ),
-                                ),
-                                child: ListTile(
-                                  leading: CircleAvatar(
-                                    backgroundColor: transactionList[index]
-                                                ['type'] ==
-                                            'Expense'
-                                        ? Colors.red[100]
-                                        : Colors.green[100],
-                                    child: Icon(
-                                      IconData(
-                                        int.parse(
-                                          iconCodePoint.toString(),
-                                        ),
-                                        fontFamily: 'MaterialIcons',
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      left: BorderSide(
+                                        width: 4,
+                                        color: transaction['type'] == 'Expense'
+                                            ? Colors.red
+                                            : Colors.green,
                                       ),
-                                      color: transactionList[index]['type'] ==
-                                              'Expense'
-                                          ? Colors.red
-                                          : Colors.green,
                                     ),
                                   ),
-                                  title: Text(
-                                    transactionList[index]['title'].toString(),
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                      color: Colors.black,
+                                  child: ListTile(
+                                    tileColor: Colors.white,
+                                    leading: CircleAvatar(
+                                      backgroundColor:
+                                          transaction['type'] == 'Expense'
+                                              ? Colors.red[100]
+                                              : Colors.green[100],
+                                      child: Icon(
+                                        IconData(
+                                          iconCodePoint,
+                                          fontFamily: 'MaterialIcons',
+                                        ),
+                                        color: transaction['type'] == 'Expense'
+                                            ? Colors.red
+                                            : Colors.green,
+                                      ),
                                     ),
-                                  ),
-                                  subtitle: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      const SizedBox(height: 4),
-                                      if (transactionList[index]['remarks'] !=
-                                          null)
+                                    title: Text(
+                                      transaction['title'],
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    subtitle: transaction['remarks']
+                                            .toString()
+                                            .isNotEmpty
+                                        ? Text(
+                                            transaction['remarks'].toString(),
+                                            style: TextStyle(
+                                              color: Colors.grey[700],
+                                            ),
+                                          )
+                                        : const SizedBox.shrink(),
+                                    trailing: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
                                         Text(
-                                          transactionList[index]['remarks']
+                                          convertTime(transaction['dateTime'])
                                               .toString(),
                                           style: TextStyle(
                                             fontSize: 14,
-                                            color: Colors.grey[600],
+                                            color: Colors.grey[700],
                                           ),
                                         ),
-                                      const SizedBox(height: 8),
-                                      if (transactionList[index]['dateTime'] !=
-                                          null)
-                                        Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                const Icon(
-                                                    Icons.calendar_month),
-                                                Text(
-                                                  formatDateToWordBased(
-                                                      transactionList[index]
-                                                          ['dateTime']),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.access_time,
-                                                  size: 16,
-                                                  color: Colors.grey[600],
-                                                ),
-                                                const SizedBox(width: 4),
-                                                Text(
-                                                  convertTime(
-                                                      transactionList[index]
-                                                              ['dateTime']
-                                                          .toString()),
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.grey[600],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
+                                        const SizedBox(height: 5),
+                                        Text(
+                                          'Rs.${transaction['amount'].toString()}',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                            color:
+                                                transaction['type'] == 'Expense'
+                                                    ? Colors.red
+                                                    : Colors.green,
+                                          ),
                                         ),
-                                    ],
-                                  ),
-                                  trailing: Text(
-                                    'Rs. ${transactionList[index]['amount']}',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                      color: transactionList[index]['type'] ==
-                                              'Expense'
-                                          ? Colors.red
-                                          : Colors.green,
+                                      ],
                                     ),
+                                    onLongPress: () {
+                                      toDelete = transactionList[index]['id'];
+                                      _toggleOverlay();
+                                    },
                                   ),
-                                  onTap: () async {
-                                    Map<String, dynamic>? categoryData =
-                                        await dbHelper.getCategoryById(
-                                            transactionList[index]['category']);
-                                    if (categoryData != null) {
-                                      print(categoryData[
-                                          'icon']); // Print the category data
-                                    }
-                                  },
-                                  onLongPress: () {
-                                    toDelete = transactionList[index]['id'];
-                                    _toggleOverlay();
-                                  },
                                 ),
-                              ),
-                            ),
+                              );
+                            },
                           );
-                        });
-                  },
+                        }).toList(),
+                        Divider(color: Colors.grey[400], thickness: 1),
+                      ],
+                    );
+                  }),
                 ),
                 if (_showOverlay)
                   GestureDetector(

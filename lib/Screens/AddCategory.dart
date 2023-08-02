@@ -92,7 +92,7 @@ class _AddCategoryState extends State<AddCategory> {
                 child: TextFormField(
                   controller: titleController,
                   onChanged: (val) {
-                    title = val;
+                    title = val.trim();
                   },
                   decoration: const InputDecoration(
                     hintText: "Title",

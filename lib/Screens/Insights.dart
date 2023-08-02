@@ -17,6 +17,7 @@ class _InsightsState extends State<Insights> {
   }
 
   final dbHelper = DatabaseHelper.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,11 +32,8 @@ class _InsightsState extends State<Insights> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.construction,
-              size: 60,
-            ),
-            Text("Insights page being built"),
+            Icon(Icons.build),
+            Text("Being built!"),
           ],
         ),
       ),
