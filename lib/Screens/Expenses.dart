@@ -1,8 +1,8 @@
 import 'package:budget_buddy/Constants/DateName.dart';
 import 'package:budget_buddy/Constants/FormatDate.dart';
+import 'package:budget_buddy/Constants/GetCategoryData.dart';
 import 'package:budget_buddy/Constants/LooksEmpty.dart';
 import 'package:budget_buddy/Constants/TimeConverter.dart';
-import 'package:budget_buddy/Db/DbHelper.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,8 +15,6 @@ class Expenses extends StatefulWidget {
 }
 
 class _ExpensesState extends State<Expenses> {
-  final dbHelper = DatabaseHelper.instance;
-
   bool _showOverlay = false;
 
   void _toggleOverlay() {
@@ -66,13 +64,6 @@ class _ExpensesState extends State<Expenses> {
       }
     }
 
-    dynamic getCategoryData(dynamic categoryId) async {
-      Map<String, dynamic>? categoryData =
-          await dbHelper.getCategoryById(categoryId);
-      String iconData = categoryData!['icon'];
-      return iconData;
-    }
-
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
@@ -117,7 +108,7 @@ class _ExpensesState extends State<Expenses> {
                           ),
                           ...transactions!.map((transaction) {
                             return FutureBuilder(
-                              future: getCategoryData(transaction['category']),
+                              future: getCategoryIcon(transaction['category']),
                               builder: (context, snapshot) {
                                 int iconCodePoint = snapshot.hasData
                                     ? int.tryParse(snapshot.data.toString()) ??

@@ -288,9 +288,9 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: IndexedStack(
           index: _selectedIndex,
-          children: const [
-            Expenses(),
-            Categories(),
+          children: [
+            const Expenses(),
+            const Categories(),
             Insights(),
           ],
         ),
