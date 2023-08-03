@@ -149,7 +149,7 @@ class _InsightsState extends State<Insights> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               const SizedBox(
-                height: 10,
+                height: 40,
               ),
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
