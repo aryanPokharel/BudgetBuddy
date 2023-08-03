@@ -78,7 +78,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> items = ["March", "April", "May", "June", "July"];
+    final List<String> items = [
+      "August",
+      "September",
+      "May",
+      "June",
+      "July",
+    ];
 
     dynamic appTheme = Provider.of<StateProvider>(context).appTheme;
     dynamic totalExpenses = Provider.of<StateProvider>(context).totalExpenses;
@@ -237,7 +243,7 @@ class _HomePageState extends State<HomePage> {
                       "Expenses",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 18,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -246,7 +252,7 @@ class _HomePageState extends State<HomePage> {
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
-                        fontWeight: FontWeight.normal,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
@@ -263,7 +269,7 @@ class _HomePageState extends State<HomePage> {
                       "Income",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 18,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -272,7 +278,7 @@ class _HomePageState extends State<HomePage> {
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
-                        fontWeight: FontWeight.normal,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(
@@ -288,9 +294,9 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: IndexedStack(
           index: _selectedIndex,
-          children: [
-            const Expenses(),
-            const Categories(),
+          children: const [
+            Expenses(),
+            Categories(),
             Insights(),
           ],
         ),

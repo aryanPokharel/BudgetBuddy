@@ -138,9 +138,9 @@ class _InsightsState extends State<Insights> {
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          sendSnackBar("Download Report Coming Soon!");
+          sendSnackBar("Download Report Feature Coming Soon!");
         },
-        child: const Icon(Icons.calculate_rounded),
+        child: const Icon(Icons.download),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -189,6 +189,10 @@ class _InsightsState extends State<Insights> {
                 chartType: ChartType.ring,
                 ringStrokeWidth: 62,
                 centerText: "Overall",
+                centerTextStyle: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontSize: 18),
                 legendOptions: const LegendOptions(
                   showLegendsInRow: false,
                   legendPosition: LegendPosition.bottom,
@@ -205,6 +209,7 @@ class _InsightsState extends State<Insights> {
                   decimalPlaces: 1,
                 ),
               ),
+              Divider(color: Colors.grey[400], thickness: 4),
               const SizedBox(
                 height: 40,
               ),
@@ -241,6 +246,10 @@ class _InsightsState extends State<Insights> {
                 chartType: ChartType.ring,
                 ringStrokeWidth: 62,
                 centerText: "EXPENSES",
+                centerTextStyle: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontSize: 18),
                 legendOptions: const LegendOptions(
                   showLegendsInRow: false,
                   legendPosition: LegendPosition.bottom,
@@ -257,6 +266,7 @@ class _InsightsState extends State<Insights> {
                   decimalPlaces: 1,
                 ),
               ),
+              Divider(color: Colors.grey[400], thickness: 4),
               const SizedBox(
                 height: 40,
               ),
@@ -293,6 +303,10 @@ class _InsightsState extends State<Insights> {
                 chartType: ChartType.ring,
                 ringStrokeWidth: 62,
                 centerText: "Incomes",
+                centerTextStyle: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    fontSize: 18),
                 legendOptions: const LegendOptions(
                   showLegendsInRow: false,
                   legendPosition: LegendPosition.bottom,
