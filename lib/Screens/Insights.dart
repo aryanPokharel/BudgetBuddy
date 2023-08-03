@@ -35,39 +35,87 @@ class _InsightsState extends State<Insights> {
     List<dynamic> transactionList =
         Provider.of<StateProvider>(context).transactionList;
 
-    List categoryTypes = [];
+    List expenseCategoryTypes = [];
+    List incomeCategoryTypes = [];
+
+    dynamic totalExpenses = Provider.of<StateProvider>(context).totalExpenses;
+    dynamic totalIncome = Provider.of<StateProvider>(context).totalIncome;
 
     for (var transaction in transactionList) {
-      double categoryTotalAmount = double.parse(transaction['amount']);
-
-      if (categoryTypes.isEmpty) {
-        categoryTypes.add({
-          "id": transaction['category'],
-          "totalAmount": double.parse(transaction['amount'])
-        });
-      } else {
-        bool found = false;
-        for (var category in categoryTypes) {
-          if (transaction['category'] != category['id']) {
-            found = false;
-          } else {
-            found = true;
-            category['totalAmount'] += double.parse(transaction['amount']);
+      if (transaction['type'] == 'Expense') {
+        // For expense categories
+        double expenseCategoryTotalAmount = double.parse(transaction['amount']);
+        if (expenseCategoryTypes.isEmpty) {
+          expenseCategoryTypes.add({
+            "id": transaction['category'],
+            "totalAmount": double.parse(transaction['amount'])
+          });
+        } else {
+          bool found = false;
+          for (var category in expenseCategoryTypes) {
+            if (transaction['category'] != category['id']) {
+              found = false;
+            } else {
+              found = true;
+              category['totalAmount'] += double.parse(transaction['amount']);
+            }
+          }
+          if (!found) {
+            expenseCategoryTypes.add(
+              {
+                "id": transaction['category'],
+                "totalAmount": expenseCategoryTotalAmount
+              },
+            );
           }
         }
-        if (!found) {
-          categoryTypes.add(
-            {"id": transaction['category'], "totalAmount": categoryTotalAmount},
-          );
+      } else {
+        // For income categories
+        double incomeCategoryTotalAmount = double.parse(transaction['amount']);
+        if (incomeCategoryTypes.isEmpty) {
+          incomeCategoryTypes.add({
+            "id": transaction['category'],
+            "totalAmount": double.parse(transaction['amount'])
+          });
+        } else {
+          bool found = false;
+          for (var category in incomeCategoryTypes) {
+            if (transaction['category'] != category['id']) {
+              found = false;
+            } else {
+              found = true;
+              category['totalAmount'] += double.parse(transaction['amount']);
+            }
+          }
+          if (!found) {
+            incomeCategoryTypes.add(
+              {
+                "id": transaction['category'],
+                "totalAmount": incomeCategoryTotalAmount
+              },
+            );
+          }
         }
       }
     }
 
-    Map<String, double> pieChartData = {};
+    Map<String, double> expensePieChartData = {};
 
-    for (var category in categoryTypes) {
-      pieChartData[(category['id']).toString()] = category['totalAmount'];
+    for (var expenseCategory in expenseCategoryTypes) {
+      expensePieChartData[(expenseCategory['id']).toString()] =
+          expenseCategory['totalAmount'];
     }
+    Map<String, double> incomePieChartData = {};
+    for (var incomeCategory in incomeCategoryTypes) {
+      incomePieChartData[(incomeCategory['id']).toString()] =
+          incomeCategory['totalAmount'];
+    }
+
+    // For gross Transactions
+    Map<String, double> grossPieChartData = {
+      "Expense": totalExpenses,
+      "Income": totalIncome,
+    };
 
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
@@ -77,43 +125,173 @@ class _InsightsState extends State<Insights> {
         },
         child: const Icon(Icons.calculate_rounded),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          const Text("Expenditure breakdown"),
-          PieChart(
-            dataMap: pieChartData,
-            animationDuration: const Duration(milliseconds: 800),
-            chartLegendSpacing: 42,
-            chartRadius: MediaQuery.of(context).size.width / 3.2,
-            colorList: const [
-              Colors.red,
-              Colors.blue,
-              Colors.green,
-              Colors.blueGrey
-            ],
-            initialAngleInDegree: 0,
-            chartType: ChartType.ring,
-            ringStrokeWidth: 62,
-            // centerText: "EXPENSES",
-            legendOptions: const LegendOptions(
-              showLegendsInRow: false,
-              legendPosition: LegendPosition.bottom,
-              showLegends: true,
-              // legendShape: _BoxShape.circle,
-              legendTextStyle: TextStyle(
-                fontWeight: FontWeight.bold,
+      body: SingleChildScrollView(
+        child: Container(
+          color: const Color.fromARGB(255, 202, 236, 252),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              const SizedBox(
+                height: 10,
               ),
-            ),
-            chartValuesOptions: const ChartValuesOptions(
-              showChartValueBackground: true,
-              showChartValues: true,
-              showChartValuesInPercentage: false,
-              showChartValuesOutside: false,
-              decimalPlaces: 1,
-            ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Container(
+                  color: const Color.fromARGB(255, 190, 190, 6),
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      "Gross Transactions",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              PieChart(
+                dataMap: grossPieChartData,
+                animationDuration: const Duration(milliseconds: 800),
+                chartLegendSpacing: 42,
+                chartRadius: MediaQuery.of(context).size.width / 1.4,
+                colorList: const [
+                  Colors.red,
+                  Colors.green,
+                ],
+                initialAngleInDegree: 0,
+                chartType: ChartType.ring,
+                ringStrokeWidth: 62,
+                centerText: "Overall",
+                legendOptions: const LegendOptions(
+                  showLegendsInRow: false,
+                  legendPosition: LegendPosition.bottom,
+                  showLegends: true,
+                  legendTextStyle: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                chartValuesOptions: const ChartValuesOptions(
+                  showChartValueBackground: true,
+                  showChartValues: true,
+                  showChartValuesInPercentage: true,
+                  showChartValuesOutside: true,
+                  decimalPlaces: 1,
+                ),
+              ),
+              const SizedBox(
+                height: 40,
+              ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Container(
+                  color: Colors.red,
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      "Expenses breakdown",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              PieChart(
+                dataMap: expensePieChartData,
+                animationDuration: const Duration(milliseconds: 800),
+                chartLegendSpacing: 42,
+                chartRadius: MediaQuery.of(context).size.width / 1.4,
+                colorList: const [
+                  Colors.red,
+                  Colors.blue,
+                  Colors.green,
+                  Colors.blueGrey
+                ],
+                initialAngleInDegree: 0,
+                chartType: ChartType.ring,
+                ringStrokeWidth: 62,
+                centerText: "EXPENSES",
+                legendOptions: const LegendOptions(
+                  showLegendsInRow: false,
+                  legendPosition: LegendPosition.bottom,
+                  showLegends: true,
+                  legendTextStyle: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                chartValuesOptions: const ChartValuesOptions(
+                  showChartValueBackground: true,
+                  showChartValues: true,
+                  showChartValuesInPercentage: true,
+                  showChartValuesOutside: true,
+                  decimalPlaces: 1,
+                ),
+              ),
+              const SizedBox(
+                height: 40,
+              ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Container(
+                  color: const Color.fromARGB(255, 98, 161, 26),
+                  child: const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      "Incomes breakdown",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              PieChart(
+                dataMap: incomePieChartData,
+                animationDuration: const Duration(milliseconds: 800),
+                chartLegendSpacing: 42,
+                chartRadius: MediaQuery.of(context).size.width / 1.4,
+                colorList: const [
+                  Colors.red,
+                  Colors.blue,
+                  Colors.green,
+                  Colors.blueGrey
+                ],
+                initialAngleInDegree: 0,
+                chartType: ChartType.ring,
+                ringStrokeWidth: 62,
+                centerText: "Incomes",
+                legendOptions: const LegendOptions(
+                  showLegendsInRow: false,
+                  legendPosition: LegendPosition.bottom,
+                  showLegends: true,
+                  // legendShape: _BoxShape.circle,
+                  legendTextStyle: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                chartValuesOptions: const ChartValuesOptions(
+                  showChartValueBackground: true,
+                  showChartValues: true,
+                  showChartValuesInPercentage: true,
+                  showChartValuesOutside: true,
+                  decimalPlaces: 1,
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
