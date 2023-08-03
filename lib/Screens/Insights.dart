@@ -30,25 +30,36 @@ class _InsightsState extends State<Insights> {
 
   final dbHelper = DatabaseHelper.instance;
 
+  double tryParseDouble(dynamic value) {
+    try {
+      return double.parse(value.toString());
+    } catch (e) {
+      return 0.0;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     List<dynamic> transactionList =
         Provider.of<StateProvider>(context).transactionList;
 
-    List expenseCategoryTypes = [];
-    List incomeCategoryTypes = [];
+    List<Map<String, dynamic>> expenseCategoryTypes = [];
+    List<Map<String, dynamic>> incomeCategoryTypes = [];
 
-    dynamic totalExpenses = Provider.of<StateProvider>(context).totalExpenses;
-    dynamic totalIncome = Provider.of<StateProvider>(context).totalIncome;
+    double totalExpenses =
+        tryParseDouble(Provider.of<StateProvider>(context).totalExpenses);
+    double totalIncome =
+        tryParseDouble(Provider.of<StateProvider>(context).totalIncome);
 
     for (var transaction in transactionList) {
       if (transaction['type'] == 'Expense') {
         // For expense categories
-        double expenseCategoryTotalAmount = double.parse(transaction['amount']);
+        double expenseCategoryTotalAmount =
+            tryParseDouble(transaction['amount']);
         if (expenseCategoryTypes.isEmpty) {
           expenseCategoryTypes.add({
             "id": transaction['category'],
-            "totalAmount": double.parse(transaction['amount'])
+            "totalAmount": tryParseDouble(transaction['amount'].toString())
           });
         } else {
           bool found = false;
@@ -57,7 +68,8 @@ class _InsightsState extends State<Insights> {
               found = false;
             } else {
               found = true;
-              category['totalAmount'] += double.parse(transaction['amount']);
+              category['totalAmount'] +=
+                  tryParseDouble(transaction['amount'].toString());
             }
           }
           if (!found) {
@@ -71,11 +83,12 @@ class _InsightsState extends State<Insights> {
         }
       } else {
         // For income categories
-        double incomeCategoryTotalAmount = double.parse(transaction['amount']);
+        double incomeCategoryTotalAmount =
+            tryParseDouble(transaction['amount']);
         if (incomeCategoryTypes.isEmpty) {
           incomeCategoryTypes.add({
             "id": transaction['category'],
-            "totalAmount": double.parse(transaction['amount'])
+            "totalAmount": tryParseDouble(transaction['amount'].toString())
           });
         } else {
           bool found = false;
@@ -84,7 +97,8 @@ class _InsightsState extends State<Insights> {
               found = false;
             } else {
               found = true;
-              category['totalAmount'] += double.parse(transaction['amount']);
+              category['totalAmount'] +=
+                  tryParseDouble(transaction['amount'].toString());
             }
           }
           if (!found) {
@@ -117,11 +131,14 @@ class _InsightsState extends State<Insights> {
       "Income": totalIncome,
     };
 
+    // Default data
+    Map<String, double> defaultPieData = {"Empty": 0};
+
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          sendSnackBar("Insights page being built!");
+          sendSnackBar("Download Report Coming Soon!");
         },
         child: const Icon(Icons.calculate_rounded),
       ),
@@ -154,14 +171,20 @@ class _InsightsState extends State<Insights> {
                 height: 30,
               ),
               PieChart(
-                dataMap: grossPieChartData,
+                dataMap:
+                    (incomePieChartData.isEmpty || expensePieChartData.isEmpty)
+                        ? defaultPieData
+                        : grossPieChartData,
                 animationDuration: const Duration(milliseconds: 800),
                 chartLegendSpacing: 42,
                 chartRadius: MediaQuery.of(context).size.width / 1.4,
-                colorList: const [
-                  Colors.red,
-                  Colors.green,
-                ],
+                colorList:
+                    (incomePieChartData.isEmpty || expensePieChartData.isEmpty)
+                        ? [Colors.grey]
+                        : [
+                            Colors.red,
+                            Colors.green,
+                          ],
                 initialAngleInDegree: 0,
                 chartType: ChartType.ring,
                 ringStrokeWidth: 62,
@@ -205,16 +228,15 @@ class _InsightsState extends State<Insights> {
                 height: 30,
               ),
               PieChart(
-                dataMap: expensePieChartData,
+                dataMap: expensePieChartData.isEmpty
+                    ? defaultPieData
+                    : expensePieChartData,
                 animationDuration: const Duration(milliseconds: 800),
                 chartLegendSpacing: 42,
                 chartRadius: MediaQuery.of(context).size.width / 1.4,
-                colorList: const [
-                  Colors.red,
-                  Colors.blue,
-                  Colors.green,
-                  Colors.blueGrey
-                ],
+                colorList: expensePieChartData.isEmpty
+                    ? [const Color.fromARGB(255, 177, 150, 150)]
+                    : [Colors.red, Colors.blue, Colors.green, Colors.blueGrey],
                 initialAngleInDegree: 0,
                 chartType: ChartType.ring,
                 ringStrokeWidth: 62,
@@ -258,16 +280,15 @@ class _InsightsState extends State<Insights> {
                 height: 30,
               ),
               PieChart(
-                dataMap: incomePieChartData,
+                dataMap: incomePieChartData.isEmpty
+                    ? defaultPieData
+                    : incomePieChartData,
                 animationDuration: const Duration(milliseconds: 800),
                 chartLegendSpacing: 42,
                 chartRadius: MediaQuery.of(context).size.width / 1.4,
-                colorList: const [
-                  Colors.red,
-                  Colors.blue,
-                  Colors.green,
-                  Colors.blueGrey
-                ],
+                colorList: incomePieChartData.isEmpty
+                    ? [const Color.fromARGB(255, 177, 150, 150)]
+                    : [Colors.red, Colors.blue, Colors.green, Colors.blueGrey],
                 initialAngleInDegree: 0,
                 chartType: ChartType.ring,
                 ringStrokeWidth: 62,

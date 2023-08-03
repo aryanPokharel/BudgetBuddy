@@ -201,7 +201,7 @@ class _ExpensesState extends State<Expenses> {
                                         ],
                                       ),
                                       onLongPress: () {
-                                        toDelete = transactionList[index]['id'];
+                                        toDelete = transaction['id'];
                                         _toggleOverlay();
                                       },
                                     ),
