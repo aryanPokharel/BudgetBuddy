@@ -36,37 +36,39 @@ class _InsightsState extends State<Insights> {
         Provider.of<StateProvider>(context).transactionList;
 
     List categoryTypes = [];
-    bool found = false;
 
     for (var transaction in transactionList) {
       double categoryTotalAmount = double.parse(transaction['amount']);
 
-      for (var category in categoryTypes) {
-        if (transaction['category'] == category) {
-          found = true;
-          categoryTotalAmount += double.parse(transaction['amount']);
-          break;
+      if (categoryTypes.isEmpty) {
+        categoryTypes.add({
+          "id": transaction['category'],
+          "totalAmount": double.parse(transaction['amount'])
+        });
+      } else {
+        bool found = false;
+        for (var category in categoryTypes) {
+          if (transaction['category'] != category['id']) {
+            found = false;
+          } else {
+            found = true;
+            category['totalAmount'] += double.parse(transaction['amount']);
+          }
         }
-      }
-
-      if (!found) {
-        categoryTypes.add(
-          {"id": transaction['category'], "totalAmount": categoryTotalAmount},
-        );
+        if (!found) {
+          categoryTypes.add(
+            {"id": transaction['category'], "totalAmount": categoryTotalAmount},
+          );
+        }
       }
     }
 
     Map<String, double> pieChartData = {};
 
     for (var category in categoryTypes) {
-      pieChartData[category['id'].toString()] = category['totalAmount'];
+      pieChartData[(category['id']).toString()] = category['totalAmount'];
     }
-    // Map<String, double> pieChartData = {
-    //   "Flutter": 5,
-    //   "React": 3,
-    //   "Xamarin": 2,
-    //   "Ionic": 2,
-    // };
+
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
@@ -75,41 +77,43 @@ class _InsightsState extends State<Insights> {
         },
         child: const Icon(Icons.calculate_rounded),
       ),
-      body: Center(
-        child: PieChart(
-          dataMap: pieChartData,
-          animationDuration: const Duration(milliseconds: 800),
-          chartLegendSpacing: 42,
-          chartRadius: MediaQuery.of(context).size.width / 3.2,
-          colorList: const [
-            Colors.red,
-            Colors.blue,
-            Colors.green,
-            Colors.blueGrey
-          ],
-          initialAngleInDegree: 0,
-          chartType: ChartType.ring,
-          ringStrokeWidth: 62,
-          // centerText: "EXPENSES",
-          legendOptions: const LegendOptions(
-            showLegendsInRow: false,
-            legendPosition: LegendPosition.right,
-            showLegends: true,
-            // legendShape: _BoxShape.circle,
-            legendTextStyle: TextStyle(
-              fontWeight: FontWeight.bold,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          const Text("Expenditure breakdown"),
+          PieChart(
+            dataMap: pieChartData,
+            animationDuration: const Duration(milliseconds: 800),
+            chartLegendSpacing: 42,
+            chartRadius: MediaQuery.of(context).size.width / 3.2,
+            colorList: const [
+              Colors.red,
+              Colors.blue,
+              Colors.green,
+              Colors.blueGrey
+            ],
+            initialAngleInDegree: 0,
+            chartType: ChartType.ring,
+            ringStrokeWidth: 62,
+            // centerText: "EXPENSES",
+            legendOptions: const LegendOptions(
+              showLegendsInRow: false,
+              legendPosition: LegendPosition.bottom,
+              showLegends: true,
+              // legendShape: _BoxShape.circle,
+              legendTextStyle: TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            chartValuesOptions: const ChartValuesOptions(
+              showChartValueBackground: true,
+              showChartValues: true,
+              showChartValuesInPercentage: false,
+              showChartValuesOutside: false,
+              decimalPlaces: 1,
             ),
           ),
-          chartValuesOptions: const ChartValuesOptions(
-            showChartValueBackground: true,
-            showChartValues: true,
-            showChartValuesInPercentage: false,
-            showChartValuesOutside: false,
-            decimalPlaces: 1,
-          ),
-          // gradientList: ---To add gradient colors---
-          // emptyColorGradient: ---Empty Color gradient---
-        ),
+        ],
       ),
     );
   }
