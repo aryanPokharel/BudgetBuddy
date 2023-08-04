@@ -277,6 +277,35 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
+                Column(
+                  children: [
+                    const Icon(
+                      Icons.attach_money,
+                      color: Colors.white,
+                      size: 40,
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      "Gross",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      "Rs. ${(totalIncome - totalExpenses).toStringAsFixed((totalIncome - totalExpenses).truncateToDouble() == (totalIncome - totalExpenses) ? 0 : 2)}",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
