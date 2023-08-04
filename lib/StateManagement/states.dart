@@ -21,6 +21,33 @@ class StateProvider with ChangeNotifier {
 
   void getCategoriesFromDb() async {
     List<Map<String, dynamic>> cats = await dbHelper.getAllCategories();
+    var expenseCheckList = 0;
+    var incomeCheckList = 0;
+    for (dynamic category in cats) {
+      if (category['type'] == "Expense") {
+        expenseCheckList++;
+      } else {
+        incomeCheckList++;
+      }
+    }
+    if (expenseCheckList == 0) {
+      var newCategory = {
+        "type": "Expense",
+        "title": "Miscellaneous",
+        "icon": "0x0E517"
+      };
+      await dbHelper.insertCategory(newCategory);
+      cats = await dbHelper.getAllCategories();
+    } else if (incomeCheckList == 0) {
+      var newCategory = {
+        "type": "Income",
+        "title": "Miscellaneous",
+        "icon": "0x0E04F"
+      };
+      await dbHelper.insertCategory(newCategory);
+      cats = await dbHelper.getAllCategories();
+    }
+
     _categoryList.clear();
     for (var cat in cats) {
       var newCategory = {
@@ -54,35 +81,6 @@ class StateProvider with ChangeNotifier {
       }
     }
 
-    var expenseCheckList = 0;
-    var incomeCheckList = 0;
-    for (dynamic category in categoryList) {
-      if (category['type'] == "Expense") {
-        expenseCheckList++;
-      } else {
-        incomeCheckList++;
-      }
-    }
-    if (expenseCheckList == 0) {
-      var newCategory = {
-        "type": "Expense",
-        "title": "Miscellaneous",
-        "icon": "0x0E517"
-      };
-      setCategoryList(newCategory);
-      getCategoriesFromDb();
-      notifyListeners();
-    }
-    if (incomeCheckList == 0) {
-      var newCategory = {
-        "type": "Income",
-        "title": "Miscellaneous",
-        "icon": "0x0E04F"
-      };
-      setCategoryList(newCategory);
-      getCategoriesFromDb();
-      notifyListeners();
-    }
     notifyListeners();
   }
 
