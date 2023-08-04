@@ -210,7 +210,6 @@ class _ExpensesState extends State<Expenses> {
                               },
                             );
                           }).toList(),
-                          Divider(color: Colors.grey[400], thickness: 4),
                         ],
                       );
                     }

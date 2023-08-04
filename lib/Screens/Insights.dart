@@ -1,7 +1,8 @@
+import 'package:budget_buddy/Charts/PieChart.dart';
+import 'package:budget_buddy/Constants/TitleBadge.dart';
 import 'package:budget_buddy/Db/DbHelper.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
-import 'package:pie_chart/pie_chart.dart';
 import 'package:provider/provider.dart';
 
 class Insights extends StatefulWidget {
@@ -151,179 +152,52 @@ class _InsightsState extends State<Insights> {
               const SizedBox(
                 height: 40,
               ),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Container(
-                  color: const Color.fromARGB(255, 190, 190, 6),
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      "Gross Transactions",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.white),
-                    ),
-                  ),
-                ),
+              const TitleBadge(
+                title: "Gross Transactions",
+                bgColor: Color.fromARGB(255, 193, 175, 15),
               ),
               const SizedBox(
                 height: 30,
               ),
-              PieChart(
-                dataMap:
+              ShowPieChart(
+                pieData:
                     (incomePieChartData.isEmpty || expensePieChartData.isEmpty)
                         ? defaultPieData
                         : grossPieChartData,
-                animationDuration: const Duration(milliseconds: 800),
-                chartLegendSpacing: 42,
-                chartRadius: MediaQuery.of(context).size.width / 1.4,
-                colorList:
-                    (incomePieChartData.isEmpty || expensePieChartData.isEmpty)
-                        ? [Colors.grey]
-                        : [
-                            Colors.red,
-                            Colors.green,
-                          ],
-                initialAngleInDegree: 0,
-                chartType: ChartType.ring,
-                ringStrokeWidth: 62,
-                centerText: "Overall",
-                centerTextStyle: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    fontSize: 18),
-                legendOptions: const LegendOptions(
-                  showLegendsInRow: false,
-                  legendPosition: LegendPosition.bottom,
-                  showLegends: true,
-                  legendTextStyle: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                chartValuesOptions: const ChartValuesOptions(
-                  showChartValueBackground: true,
-                  showChartValues: true,
-                  showChartValuesInPercentage: true,
-                  showChartValuesOutside: true,
-                  decimalPlaces: 1,
-                ),
+                pieTitle: "Overall",
               ),
               Divider(color: Colors.grey[400], thickness: 4),
               const SizedBox(
                 height: 40,
               ),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Container(
-                  color: Colors.red,
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      "Expenses breakdown",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.white),
-                    ),
-                  ),
-                ),
-              ),
+              const TitleBadge(title: "Expense Breakdown", bgColor: Colors.red),
               const SizedBox(
                 height: 30,
               ),
-              PieChart(
-                dataMap: expensePieChartData.isEmpty
+              ShowPieChart(
+                pieData: expensePieChartData.isEmpty
                     ? defaultPieData
                     : expensePieChartData,
-                animationDuration: const Duration(milliseconds: 800),
-                chartLegendSpacing: 42,
-                chartRadius: MediaQuery.of(context).size.width / 1.4,
-                colorList: expensePieChartData.isEmpty
-                    ? [const Color.fromARGB(255, 177, 150, 150)]
-                    : [Colors.red, Colors.blue, Colors.green, Colors.blueGrey],
-                initialAngleInDegree: 0,
-                chartType: ChartType.ring,
-                ringStrokeWidth: 62,
-                centerText: "EXPENSES",
-                centerTextStyle: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    fontSize: 18),
-                legendOptions: const LegendOptions(
-                  showLegendsInRow: false,
-                  legendPosition: LegendPosition.bottom,
-                  showLegends: true,
-                  legendTextStyle: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                chartValuesOptions: const ChartValuesOptions(
-                  showChartValueBackground: true,
-                  showChartValues: true,
-                  showChartValuesInPercentage: true,
-                  showChartValuesOutside: true,
-                  decimalPlaces: 1,
-                ),
+                pieTitle: "Expenses",
               ),
               Divider(color: Colors.grey[400], thickness: 4),
               const SizedBox(
                 height: 40,
               ),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Container(
-                  color: const Color.fromARGB(255, 98, 161, 26),
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      "Incomes breakdown",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.white),
-                    ),
-                  ),
-                ),
-              ),
+              const TitleBadge(
+                  title: "Income Breakdown", bgColor: Colors.green),
               const SizedBox(
                 height: 30,
               ),
-              PieChart(
-                dataMap: incomePieChartData.isEmpty
+              ShowPieChart(
+                pieData: incomePieChartData.isEmpty
                     ? defaultPieData
                     : incomePieChartData,
-                animationDuration: const Duration(milliseconds: 800),
-                chartLegendSpacing: 42,
-                chartRadius: MediaQuery.of(context).size.width / 1.4,
-                colorList: incomePieChartData.isEmpty
-                    ? [const Color.fromARGB(255, 177, 150, 150)]
-                    : [Colors.red, Colors.blue, Colors.green, Colors.blueGrey],
-                initialAngleInDegree: 0,
-                chartType: ChartType.ring,
-                ringStrokeWidth: 62,
-                centerText: "Incomes",
-                centerTextStyle: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    fontSize: 18),
-                legendOptions: const LegendOptions(
-                  showLegendsInRow: false,
-                  legendPosition: LegendPosition.bottom,
-                  showLegends: true,
-                  // legendShape: _BoxShape.circle,
-                  legendTextStyle: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                chartValuesOptions: const ChartValuesOptions(
-                  showChartValueBackground: true,
-                  showChartValues: true,
-                  showChartValuesInPercentage: true,
-                  showChartValuesOutside: true,
-                  decimalPlaces: 1,
-                ),
+                pieTitle: "Incomes",
               ),
+              const SizedBox(
+                height: 30,
+              )
             ],
           ),
         ),
