@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 class StateProvider with ChangeNotifier {
 // Importing the databaseHelper
   final dbHelper = DatabaseHelper.instance;
-  final dbHelperTransactions = DatabaseHelper.tableTransactions;
 
 // App Settings states
   dynamic _appTheme = Colors.green;
@@ -38,29 +37,20 @@ class StateProvider with ChangeNotifier {
   List<dynamic> get categoryList => _categoryList;
 
   void setCategoryList(dynamic newCategory) async {
-    try {
-      var category = {
-        DatabaseHelper.colType: newCategory['type'],
-        DatabaseHelper.colTitle: newCategory['title'],
-        DatabaseHelper.colIcon: newCategory['icon'],
-      };
-      await dbHelper.insertCategory(category);
-      getCategoriesFromDb();
-    } catch (e) {
-      print(e);
-    }
+    var category = {
+      DatabaseHelper.colType: newCategory['type'],
+      DatabaseHelper.colTitle: newCategory['title'],
+      DatabaseHelper.colIcon: newCategory['icon'],
+    };
+    await dbHelper.insertCategory(category);
+    getCategoriesFromDb();
   }
 
   void deleteCategory(String categoryType, String categoryTitle) async {
     for (var cat in categoryList) {
       if (cat['type'] == categoryType && cat['title'] == categoryTitle) {
         dbHelper.deleteCategory(cat['id']);
-        _categoryList.removeWhere(
-          (category) =>
-              category['type'] == categoryType &&
-              category['title'] == categoryTitle,
-        );
-        notifyListeners();
+        getCategoriesFromDb();
       }
     }
 
@@ -143,48 +133,5 @@ class StateProvider with ChangeNotifier {
   void deleteTransaction(dynamic transactionId) async {
     dbHelper.deleteTransaction(transactionId);
     getTransactionsFromDb();
-  }
-
-// Expense States
-  final List<dynamic> _expenseList = [];
-
-  List<dynamic> get expenseList => _expenseList;
-
-  void setExpenseList(dynamic newExpense) {
-    _expenseList.add(newExpense);
-    totalExpenses += double.parse(newExpense['amount']);
-
-    notifyListeners();
-  }
-
-  void deleteExpense(dynamic expenseId) {
-    var expenseToRemove = _expenseList[expenseId];
-    totalExpenses -= double.parse(expenseToRemove['amount']);
-    notifyListeners();
-    transactionList.removeAt(expenseId);
-    _expenseList.removeAt(expenseId);
-
-    notifyListeners();
-  }
-
-// Income States
-  final List<dynamic> _incomeList = [];
-
-  List<dynamic> get incomeList => _incomeList;
-
-  void setIncomeList(dynamic newIncome) {
-    _incomeList.add(newIncome);
-    totalIncome += double.parse(newIncome['amount']);
-
-    notifyListeners();
-  }
-
-  void deleteIncome(dynamic incomeId) {
-    var incomeToRemove = _incomeList[incomeId];
-    totalIncome -= double.parse(incomeToRemove['amount']);
-    transactionList.removeAt(incomeId);
-    _incomeList.removeAt(incomeId);
-
-    notifyListeners();
   }
 }

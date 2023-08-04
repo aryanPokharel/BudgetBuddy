@@ -60,12 +60,12 @@ class _AddTransactionState extends State<AddTransaction> {
   }
 
   saveExpense(dynamic newExpense) {
-    context.read<StateProvider>().setExpenseList(newExpense);
+    // context.read<StateProvider>().setExpenseList(newExpense);
     context.read<StateProvider>().setTransactionList(newExpense);
   }
 
   saveIncome(dynamic newIncome) {
-    context.read<StateProvider>().setIncomeList(newIncome);
+    // context.read<StateProvider>().setIncomeList(newIncome);
     context.read<StateProvider>().setTransactionList(newIncome);
   }
 
