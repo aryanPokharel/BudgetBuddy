@@ -1,3 +1,4 @@
+import 'package:budget_buddy/Constants/ColorList.dart';
 import 'package:budget_buddy/Constants/DateName.dart';
 import 'package:budget_buddy/Constants/DrawerColorButton.dart';
 import 'package:budget_buddy/Screens/Categories.dart';
@@ -77,6 +78,20 @@ class _HomePageState extends State<HomePage> {
       "July",
     ];
 
+    List<DrawerColorButton> firstRow = [];
+    List<DrawerColorButton> secondRow = [];
+
+    for (var i = 0; i < 4; i++) {
+      firstRow.add(DrawerColorButton(
+        color: appThemeColors[i],
+      ));
+    }
+    for (var i = 4; i < 8; i++) {
+      secondRow.add(DrawerColorButton(
+        color: appThemeColors[i],
+      ));
+    }
+
     dynamic appTheme = Provider.of<StateProvider>(context).appTheme;
     dynamic totalExpenses = Provider.of<StateProvider>(context).totalExpenses;
     dynamic totalIncome = Provider.of<StateProvider>(context).totalIncome;
@@ -129,28 +144,18 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                     padding: const EdgeInsets.all(8.0),
-                    child: const Column(
+                    child: Column(
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            DrawerColorButton(color: Colors.red),
-                            DrawerColorButton(color: Colors.blue),
-                            DrawerColorButton(color: Colors.green),
-                            DrawerColorButton(color: Colors.amber),
-                          ],
+                          children: firstRow.toList(),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 8,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            DrawerColorButton(color: Colors.lightGreen),
-                            DrawerColorButton(color: Colors.blueGrey),
-                            DrawerColorButton(color: Colors.purple),
-                            DrawerColorButton(color: Colors.pink),
-                          ],
+                          children: secondRow.toList(),
                         ),
                       ],
                     ),
