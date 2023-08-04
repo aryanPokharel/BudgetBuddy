@@ -44,6 +44,7 @@ dependencies:
   salomon_bottom_bar: ^3.3.2
   pie_chart: ^5.3.2
   fl_chart: ^0.63.0
+  flutter_launcher_icons: ^0.13.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
