@@ -27,22 +27,13 @@ final _navBarItems = [
     title: const Text("Categories"),
   ),
   SalomonBottomBarItem(
-    icon: const Icon(Icons.calculate),
+    icon: const Icon(Icons.info),
     title: const Text("Insights"),
   ),
 ];
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-
-  // dynamic totalExpenses = 0;
-  dynamic totalIncome = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
 
   String getFormattedDateTime(DateTime dateTime) {
     DateTime today = DateTime.now();
