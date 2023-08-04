@@ -1,4 +1,5 @@
 import 'package:budget_buddy/Charts/PieChart.dart';
+import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:budget_buddy/Constants/TitleBadge.dart';
 import 'package:budget_buddy/Db/DbHelper.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
@@ -20,13 +21,6 @@ class _InsightsState extends State<Insights> {
     } else {
       return null;
     }
-  }
-
-  sendSnackBar(dynamic message) {
-    var snackBar = SnackBar(
-      content: Text(message),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   final dbHelper = DatabaseHelper.instance;
@@ -139,7 +133,7 @@ class _InsightsState extends State<Insights> {
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          sendSnackBar("Download Report Feature Coming Soon!");
+          sendSnackBar(context, "Download Report Feature Coming Soon!");
         },
         child: const Icon(Icons.download),
       ),

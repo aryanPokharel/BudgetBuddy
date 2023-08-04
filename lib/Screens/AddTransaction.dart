@@ -1,3 +1,4 @@
+import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -92,13 +93,6 @@ class _AddTransactionState extends State<AddTransaction> {
     selectedCategory = _transactionType == 'Expense'
         ? expenseCategories[0]['id']
         : incomeCategories[0]['id'];
-
-    sendSnackBar(dynamic message) {
-      var snackBar = SnackBar(
-        content: Text(message),
-      );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    }
 
     DateTime now = DateTime.now();
     DateTime yesterday = now.subtract(const Duration(days: 1));
@@ -365,10 +359,10 @@ class _AddTransactionState extends State<AddTransaction> {
 
                           if (formKey.currentState!.validate()) {
                             saveExpense(newExpense);
-                            sendSnackBar("Expense Added");
+                            sendSnackBar(context, "Expense Added");
                             Navigator.of(context).pop();
                           } else {
-                            sendSnackBar("Provide necessary info");
+                            sendSnackBar(context, "Provide necessary info");
                           }
                         } else {
                           var newIncome = {
@@ -381,10 +375,10 @@ class _AddTransactionState extends State<AddTransaction> {
                           };
                           if (formKey.currentState!.validate()) {
                             saveIncome(newIncome);
-                            sendSnackBar("Income Added");
+                            sendSnackBar(context, "Income Added");
                             Navigator.of(context).pop();
                           } else {
-                            sendSnackBar("Provide necessary info");
+                            sendSnackBar(context, "Provide necessary info");
                           }
                         }
                       },

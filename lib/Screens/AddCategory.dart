@@ -1,3 +1,5 @@
+import 'package:budget_buddy/Constants/IconList.dart';
+import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,32 +19,6 @@ class _AddCategoryState extends State<AddCategory> {
 
   var title;
 
-  List<IconData> iconOptions = [
-    Icons.bloodtype,
-    Icons.request_quote,
-    Icons.directions_bus,
-    Icons.local_dining,
-    Icons.work,
-    Icons.currency_rupee,
-    Icons.currency_pound,
-    Icons.build,
-    Icons.monetization_on,
-    Icons.oil_barrel,
-    Icons.train,
-    Icons.kitchen,
-    Icons.house,
-    Icons.phone,
-    Icons.cake,
-    Icons.flight,
-    Icons.payment,
-    Icons.money,
-    Icons.directions_bike,
-    Icons.remove_circle,
-    Icons.add_circle,
-    Icons.find_replace,
-    Icons.question_mark,
-  ];
-
   IconData selectedIcon = Icons.local_dining;
 
   @override
@@ -50,13 +26,6 @@ class _AddCategoryState extends State<AddCategory> {
     saveCategory(dynamic type, dynamic title, dynamic icon) async {
       var newCategory = {"type": type, "title": title, "icon": icon.codePoint};
       context.read<StateProvider>().setCategoryList(newCategory);
-    }
-
-    sendSnackBar(dynamic message) {
-      var snackBar = SnackBar(
-        content: Text(message),
-      );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
 
     final formKey = GlobalKey<FormState>();
@@ -124,31 +93,34 @@ class _AddCategoryState extends State<AddCategory> {
                 ),
               ),
               const SizedBox(height: 8),
-              Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: iconOptions.map<Widget>((IconData icon) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 8),
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedIcon = icon;
-                        });
-                      },
-                      child: CircleAvatar(
-                        backgroundColor: selectedIcon == icon
-                            ? Colors.lightBlue
-                            : Colors.transparent,
-                        child: Icon(
-                          icon,
-                          color: selectedIcon == icon
-                              ? Colors.white
-                              : Colors.green,
-                        ),
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 6,
+                  crossAxisSpacing: 10,
+                ),
+                itemCount: iconList.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedIcon = iconList[index];
+                      });
+                    },
+                    child: CircleAvatar(
+                      backgroundColor: selectedIcon == iconList[index]
+                          ? Colors.lightBlue
+                          : Colors.transparent,
+                      child: Icon(
+                        iconList[index],
+                        color: selectedIcon == iconList[index]
+                            ? Colors.white
+                            : Colors.black,
                       ),
                     ),
                   );
-                }).toList(),
+                },
               ),
               const SizedBox(height: 24),
               ElevatedButton(
@@ -161,10 +133,10 @@ class _AddCategoryState extends State<AddCategory> {
                 onPressed: () {
                   if (formKey.currentState!.validate()) {
                     saveCategory(_categoryType, title, selectedIcon);
-                    sendSnackBar("Category Added");
+                    sendSnackBar(context, "Category Added");
                     Navigator.of(context).pop();
                   } else {
-                    sendSnackBar("Provide the title");
+                    sendSnackBar(context, "Provide the title");
                   }
                 },
                 child: const Row(

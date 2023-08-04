@@ -1,6 +1,7 @@
 import 'package:budget_buddy/Constants/ColorList.dart';
 import 'package:budget_buddy/Constants/DateName.dart';
 import 'package:budget_buddy/Constants/DrawerColorButton.dart';
+import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:budget_buddy/Screens/Categories.dart';
 import 'package:budget_buddy/Screens/Expenses.dart';
 import 'package:budget_buddy/Screens/Insights.dart';
@@ -201,15 +202,11 @@ class _HomePageState extends State<HomePage> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {},
+            icon: const Icon(Icons.cloud_upload),
+            onPressed: () {
+              sendSnackBar(context, "Cloud backup comming soon!");
+            },
           ),
-          // IconButton(
-          //   icon: const Icon(Icons.notifications),
-          //   onPressed: () {
-          //     // Replace this with your custom functionality
-          //   },
-          // ),
         ],
         flexibleSpace: Container(
           decoration: BoxDecoration(
