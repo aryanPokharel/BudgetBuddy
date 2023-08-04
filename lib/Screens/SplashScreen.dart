@@ -26,25 +26,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.calculate,
-              color: Colors.green,
-              size: 48,
-            ),
-
-            // Image.asset(
-            //   'assets/splash_image.png', // Replace with your splash image file
-            //   height: 150,
-            //   width: 150,
-            // ),
-            SizedBox(height: 16),
-            LinearProgressIndicator(),
-          ],
+        child: Image.asset(
+          'assets/gifs/doge.gif',
+          height: 150,
+          width: 150,
         ),
       ),
     );
