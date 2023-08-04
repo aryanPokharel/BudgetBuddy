@@ -32,7 +32,10 @@ class _ShowPieChartState extends State<ShowPieChart> {
               Colors.deepPurple,
               Colors.yellow,
               Colors.purple,
-              Colors.blueGrey
+              Colors.blueGrey,
+              Colors.black45,
+              Colors.white,
+              Colors.amberAccent
             ],
       initialAngleInDegree: 0,
       chartType: ChartType.ring,
