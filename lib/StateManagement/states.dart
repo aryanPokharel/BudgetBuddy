@@ -103,6 +103,7 @@ class StateProvider with ChangeNotifier {
         "amount": tran[DatabaseHelper.colAmount],
         "remarks": tran[DatabaseHelper.colRemarks],
         "dateTime": tran[DatabaseHelper.colDateTime],
+        "time": tran[DatabaseHelper.colTime],
         "category": tran[DatabaseHelper.colCategory],
       };
       _transactionList.add(newTransaction);
@@ -122,8 +123,10 @@ class StateProvider with ChangeNotifier {
       DatabaseHelper.colAmount: newTransaction['amount'],
       DatabaseHelper.colRemarks: newTransaction['remarks'],
       DatabaseHelper.colDateTime: newTransaction['dateTime'],
+      DatabaseHelper.colTime: newTransaction['time'],
       DatabaseHelper.colCategory: newTransaction['category'],
     };
+
     await dbHelper.insertTransaction(transaction);
     getTransactionsFromDb();
   }

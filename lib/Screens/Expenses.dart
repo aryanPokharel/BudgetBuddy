@@ -1,8 +1,8 @@
 import 'package:budget_buddy/Constants/DateName.dart';
 import 'package:budget_buddy/Constants/FormatDate.dart';
+import 'package:budget_buddy/Constants/FormatTimeOfDay.dart';
 import 'package:budget_buddy/Constants/GetCategoryData.dart';
 import 'package:budget_buddy/Constants/LooksEmpty.dart';
-import 'package:budget_buddy/Constants/TimeConverter.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -178,8 +178,8 @@ class _ExpensesState extends State<Expenses> {
                                             CrossAxisAlignment.end,
                                         children: [
                                           Text(
-                                            convertTime(transaction['dateTime'])
-                                                .toString(),
+                                            formatTimeOfDay(
+                                                transaction['time']),
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 14,
@@ -200,6 +200,12 @@ class _ExpensesState extends State<Expenses> {
                                           ),
                                         ],
                                       ),
+                                      // onTap: () {
+                                      //   print("Printing time");
+                                      //   print(
+                                      //     (transaction).toString(),
+                                      //   );
+                                      // },
                                       onLongPress: () {
                                         toDelete = transaction['id'];
                                         _toggleOverlay();

@@ -18,6 +18,7 @@ class DatabaseHelper {
   static const colRemarks = 'remarks';
   static const colDateTime = 'dateTime';
   static const colCategory = 'category';
+  static const colTime = 'time';
 
   // Make this a singleton class
   DatabaseHelper._privateConstructor();
@@ -76,10 +77,10 @@ class DatabaseHelper {
         $colId INTEGER PRIMARY KEY,
         $colType TEXT NOT NULL,
         $colTitle TEXT NOT NULL,
-   
         $colAmount TEXT NOT NULL,
         $colRemarks TEXT,
         $colDateTime TEXT,
+        $colTime TEXT,
          $colCategory INTEGER NOT NULL, -- The new category column
         FOREIGN KEY ($colCategory) REFERENCES $tableCategories($colId) -- Establish a foreign key constraint
       )

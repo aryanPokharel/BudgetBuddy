@@ -60,12 +60,10 @@ class _AddTransactionState extends State<AddTransaction> {
   }
 
   saveExpense(dynamic newExpense) {
-    // context.read<StateProvider>().setExpenseList(newExpense);
     context.read<StateProvider>().setTransactionList(newExpense);
   }
 
   saveIncome(dynamic newIncome) {
-    // context.read<StateProvider>().setIncomeList(newIncome);
     context.read<StateProvider>().setTransactionList(newIncome);
   }
 
@@ -79,7 +77,7 @@ class _AddTransactionState extends State<AddTransaction> {
   }
 
   dynamic selectedCategory;
-
+  TimeOfDay selectedTime = TimeOfDay.now();
   @override
   Widget build(BuildContext context) {
     var categoryList = Provider.of<StateProvider>(context).categoryList;
@@ -99,6 +97,20 @@ class _AddTransactionState extends State<AddTransaction> {
     DateTime dayBeforeYesterday = now.subtract(const Duration(days: 2));
 
     final formKey = GlobalKey<FormState>();
+
+    Future<void> _selectTime(BuildContext context) async {
+      final TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: selectedTime,
+      );
+
+      if (pickedTime != null && pickedTime != selectedTime) {
+        setState(() {
+          selectedTime = pickedTime;
+        });
+      }
+    }
+
     return Scaffold(
       backgroundColor: _transactionType == "Expense"
           ? const Color.fromARGB(255, 196, 214, 222)
@@ -183,6 +195,7 @@ class _AddTransactionState extends State<AddTransaction> {
                       onPressed: () {
                         setState(() {
                           selectedDate = now;
+                          selectedTime = TimeOfDay.now();
                         });
                       },
                       child: const Text(
@@ -205,6 +218,7 @@ class _AddTransactionState extends State<AddTransaction> {
                       onPressed: () {
                         setState(() {
                           selectedDate = yesterday;
+                          selectedTime = TimeOfDay.now();
                         });
                       },
                       child: const Text(
@@ -228,6 +242,7 @@ class _AddTransactionState extends State<AddTransaction> {
                       onPressed: () {
                         setState(() {
                           selectedDate = dayBeforeYesterday;
+                          selectedTime = TimeOfDay.now();
                         });
                       },
                       child: const Text(
@@ -277,6 +292,43 @@ class _AddTransactionState extends State<AddTransaction> {
                   ),
                 ),
                 const SizedBox(height: 10),
+                GestureDetector(
+                  onTap: () => _selectTime(context),
+                  child: Container(
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 14, 100, 139),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Icon(
+                          Icons.alarm,
+                          color: Colors.white,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            selectedDate == null
+                                ? 'Please select time'
+                                : selectedTime.format(context),
+                            style: const TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        const Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
                 DropdownButtonFormField<dynamic>(
                   value: _transactionType == "Expense"
                       ? expenseCategories[0]
@@ -354,6 +406,7 @@ class _AddTransactionState extends State<AddTransaction> {
                             "remarks": description,
                             "amount": amount,
                             "dateTime": selectedDate.toString(),
+                            "time": selectedTime.toString(),
                             "category": selectedCategory,
                           };
 
@@ -371,8 +424,10 @@ class _AddTransactionState extends State<AddTransaction> {
                             "remarks": description,
                             "amount": amount,
                             "dateTime": selectedDate.toString(),
+                            "time": selectedTime.toString(),
                             "category": selectedCategory.toString(),
                           };
+
                           if (formKey.currentState!.validate()) {
                             saveIncome(newIncome);
                             sendSnackBar(context, "Income Added");
