@@ -26,6 +26,7 @@ class MyApp extends StatelessWidget {
     dynamic appTheme = Provider.of<StateProvider>(context).appTheme;
     return MaterialApp(
       theme: ThemeData(
+        // for default, use defalutAppTheme
         primarySwatch: appTheme,
       ),
       initialRoute: '/',

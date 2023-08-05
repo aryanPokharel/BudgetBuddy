@@ -20,12 +20,6 @@ class DrawerColorButton extends StatelessWidget {
           shape: BoxShape.circle,
           color: color,
         ),
-        child: const Center(
-          child: Text(
-            '+',
-            style: TextStyle(color: Colors.white, fontSize: 16),
-          ),
-        ),
       ),
     );
   }

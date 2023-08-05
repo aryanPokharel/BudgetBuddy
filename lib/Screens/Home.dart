@@ -129,7 +129,6 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple.shade900,
         title: SizedBox(
           height: 50,
           child: CarouselSlider.builder(
@@ -163,13 +162,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
         flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [appTheme.shade300, appTheme.shade900],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            ),
-          ),
+          decoration: BoxDecoration(color: appTheme),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(100),
@@ -183,14 +176,14 @@ class _HomePageState extends State<HomePage> {
                     const Icon(
                       Icons.arrow_downward,
                       color: Colors.white,
-                      size: 40,
+                      size: 25,
                     ),
                     const SizedBox(height: 10),
                     const Text(
                       "Expenses",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 20,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -198,7 +191,7 @@ class _HomePageState extends State<HomePage> {
                       "Rs. ${totalExpenses.toStringAsFixed(totalExpenses.truncateToDouble() == totalExpenses ? 0 : 2)}",
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -209,14 +202,14 @@ class _HomePageState extends State<HomePage> {
                     const Icon(
                       Icons.arrow_upward,
                       color: Colors.white,
-                      size: 40,
+                      size: 25,
                     ),
                     const SizedBox(height: 10),
                     const Text(
                       "Income",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 20,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -224,7 +217,7 @@ class _HomePageState extends State<HomePage> {
                       "Rs. ${totalIncome.toStringAsFixed(totalIncome.truncateToDouble() == totalIncome ? 0 : 2)}",
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -238,14 +231,14 @@ class _HomePageState extends State<HomePage> {
                     const Icon(
                       Icons.attach_money,
                       color: Colors.white,
-                      size: 40,
+                      size: 30,
                     ),
                     const SizedBox(height: 10),
                     const Text(
                       "Gross",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 20,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -253,7 +246,7 @@ class _HomePageState extends State<HomePage> {
                       "Rs. ${(totalIncome - totalExpenses).toStringAsFixed((totalIncome - totalExpenses).truncateToDouble() == (totalIncome - totalExpenses) ? 0 : 2)}",
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 16,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

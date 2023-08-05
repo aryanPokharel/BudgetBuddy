@@ -1,6 +1,9 @@
 import 'package:budget_buddy/Constants/ColorList.dart';
+import 'package:budget_buddy/Constants/ConstantValues.dart';
 import 'package:budget_buddy/Constants/DrawerColorButton.dart';
+import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -13,6 +16,7 @@ class _SettingsPageState extends State<SettingsPage> {
   String selectedLanguage = 'English';
   String selectedTheme = 'Light';
   bool notificationsEnabled = true;
+  bool darkModeEnabled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -60,35 +64,41 @@ class _SettingsPageState extends State<SettingsPage> {
             leading: const Icon(Icons.dark_mode),
             title: const Text('Dark Mode'),
             trailing: Switch(
-              value: notificationsEnabled,
+              value: darkModeEnabled,
               onChanged: (value) {
                 setState(() {
-                  notificationsEnabled = value;
+                  darkModeEnabled = value;
+                  if (darkModeEnabled) {
+                    context.read<StateProvider>().setAppTheme(Colors.blueGrey);
+                  } else {
+                    context.read<StateProvider>().setAppTheme(defaultAppTheme);
+                  }
                 });
               },
             ),
           ),
           const Divider(),
-          ExpansionTile(
-            leading: const Icon(Icons.color_lens),
-            title: const Text('Theme'),
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: firstRow.toList(),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: secondRow.toList(),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-            ],
-          ),
+          if (!darkModeEnabled)
+            ExpansionTile(
+              leading: const Icon(Icons.color_lens),
+              title: const Text('Theme'),
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: firstRow.toList(),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: secondRow.toList(),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+              ],
+            ),
           const Divider(),
         ],
       ),

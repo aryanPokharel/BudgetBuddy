@@ -1,3 +1,4 @@
+import 'package:budget_buddy/Constants/ConstantValues.dart';
 import 'package:budget_buddy/Db/DbHelper.dart';
 import 'package:flutter/material.dart';
 
@@ -6,7 +7,7 @@ class StateProvider with ChangeNotifier {
   final dbHelper = DatabaseHelper.instance;
 
 // App Settings states
-  dynamic _appTheme = Colors.green;
+  dynamic _appTheme = defaultAppTheme;
   dynamic get appTheme => _appTheme;
 
   void setAppTheme(dynamic theme) {

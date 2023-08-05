@@ -6,7 +6,7 @@ List<Color> appThemeColors = [
   Colors.green,
   Colors.amber,
   Colors.lightGreen,
-  Colors.blueGrey,
+  Colors.orange,
   Colors.purple,
   Colors.pink,
 ];
