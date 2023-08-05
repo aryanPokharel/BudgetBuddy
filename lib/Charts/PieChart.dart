@@ -23,16 +23,17 @@ class _ShowPieChartState extends State<ShowPieChart> {
       chartLegendSpacing: 42,
       chartRadius: MediaQuery.of(context).size.width / 1.4,
       colorList: widget.pieData.isEmpty
-          ? [const Color.fromARGB(255, 177, 150, 150)]
+          ? [Colors.black]
           : [
-              Colors.red,
-              Colors.green,
+              Colors.blueGrey,
               Colors.blue,
+              Colors.green,
+              Colors.red,
               Colors.deepOrange,
               Colors.deepPurple,
               Colors.yellow,
               Colors.purple,
-              Colors.blueGrey,
+              Colors.grey,
               Colors.black45,
               Colors.white,
               Colors.amberAccent
@@ -42,12 +43,14 @@ class _ShowPieChartState extends State<ShowPieChart> {
       ringStrokeWidth: 62,
       centerText: widget.pieTitle,
       centerTextStyle: const TextStyle(
-          fontWeight: FontWeight.bold, color: Colors.black, fontSize: 18),
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+        fontSize: 18,
+      ),
       legendOptions: const LegendOptions(
         showLegendsInRow: false,
         legendPosition: LegendPosition.bottom,
         showLegends: true,
-        // legendShape: _BoxShape.circle,
         legendTextStyle: TextStyle(
           fontWeight: FontWeight.bold,
         ),

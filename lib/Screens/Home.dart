@@ -1,6 +1,4 @@
-import 'package:budget_buddy/Constants/ColorList.dart';
 import 'package:budget_buddy/Constants/DateName.dart';
-import 'package:budget_buddy/Constants/DrawerColorButton.dart';
 import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:budget_buddy/Screens/Categories.dart';
 import 'package:budget_buddy/Screens/Expenses.dart';
@@ -79,20 +77,6 @@ class _HomePageState extends State<HomePage> {
       "July",
     ];
 
-    List<DrawerColorButton> firstRow = [];
-    List<DrawerColorButton> secondRow = [];
-
-    for (var i = 0; i < 4; i++) {
-      firstRow.add(DrawerColorButton(
-        color: appThemeColors[i],
-      ));
-    }
-    for (var i = 4; i < 8; i++) {
-      secondRow.add(DrawerColorButton(
-        color: appThemeColors[i],
-      ));
-    }
-
     dynamic appTheme = Provider.of<StateProvider>(context).appTheme;
     dynamic totalExpenses = Provider.of<StateProvider>(context).totalExpenses;
     dynamic totalIncome = Provider.of<StateProvider>(context).totalIncome;
@@ -115,52 +99,15 @@ class _HomePageState extends State<HomePage> {
             DrawerHeader(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [appTheme.shade800, Colors.blue.shade200],
+                  colors: [appTheme.shade800, appTheme.shade200],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),
               ),
-              child: Column(
+              child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    "Choose Theme",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: firstRow.toList(),
-                        ),
-                        const SizedBox(
-                          height: 8,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: secondRow.toList(),
-                        ),
-                      ],
-                    ),
-                  ),
+                  SizedBox(height: 20),
                 ],
               ),
             ),
@@ -169,6 +116,13 @@ class _HomePageState extends State<HomePage> {
               title: const Text('Home'),
               onTap: () {
                 Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
+              onTap: () {
+                Navigator.pushNamed(context, '/settings');
               },
             ),
           ],

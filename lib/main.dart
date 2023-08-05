@@ -1,5 +1,6 @@
 import 'package:budget_buddy/Screens/AddCategory.dart';
 import 'package:budget_buddy/Screens/AddTransaction.dart';
+import 'package:budget_buddy/Screens/Settings.dart';
 import 'package:budget_buddy/Screens/SplashScreen.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const SplashScreen(),
         '/addTransaction': (context) => const AddTransaction(),
         '/addCategory': (context) => const AddCategory(),
+        '/settings': (context) => const SettingsPage(),
       },
       debugShowCheckedModeBanner: false,
     );
