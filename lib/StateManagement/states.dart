@@ -86,6 +86,35 @@ class StateProvider with ChangeNotifier {
   }
 
   // Transaction States
+// Constant values
+  dynamic toUpdateTransactionId = 0;
+
+  var transactionToUpdate = {};
+  dynamic toUpdateType = "";
+  dynamic toUpdateTitle = "";
+  dynamic toUpdateAmount = "";
+  dynamic toUpdateRemarks = "";
+  dynamic toUpdateDate = "";
+
+  dynamic toUpdateTime = "";
+  dynamic toUpdateCategory = "";
+
+  Future setTransactionToUpdate(dynamic transactionId) async {
+    toUpdateTransactionId = transactionId;
+    var receivedTransaction =
+        await dbHelper.getTransactionById(toUpdateTransactionId);
+
+    transactionToUpdate['type'] = receivedTransaction!['type'];
+    transactionToUpdate['title'] = receivedTransaction['title'];
+    transactionToUpdate['amount'] = receivedTransaction['amount'];
+    transactionToUpdate['remarks'] = receivedTransaction['remarks'];
+    transactionToUpdate['dateTime'] = receivedTransaction['dateTime'];
+    transactionToUpdate['time'] = receivedTransaction['time'];
+    transactionToUpdate['category'] = receivedTransaction['category'];
+
+    notifyListeners();
+  }
+
   final List<dynamic> _transactionList = [];
 
   List<dynamic> get transactionList => _transactionList;
@@ -131,6 +160,12 @@ class StateProvider with ChangeNotifier {
     await dbHelper.insertTransaction(transaction);
     getTransactionsFromDb();
   }
+
+  // void updateTransaction(transactionToUpdate) async {
+  //   dbHelper.updateTransaction(
+  //     transactionToUpdate(transactionToUpdate),
+  //   );
+  // }
 
   void deleteTransaction(dynamic transactionId) async {
     dbHelper.deleteTransaction(transactionId);

@@ -1,7 +1,7 @@
 import 'package:budget_buddy/Constants/DateName.dart';
 import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:budget_buddy/Screens/Categories.dart';
-import 'package:budget_buddy/Screens/Expenses.dart';
+import 'package:budget_buddy/Screens/Transactions.dart';
 import 'package:budget_buddy/Screens/Insights.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -231,7 +231,7 @@ class _HomePageState extends State<HomePage> {
                     const Icon(
                       Icons.attach_money,
                       color: Colors.white,
-                      size: 30,
+                      size: 25,
                     ),
                     const SizedBox(height: 10),
                     const Text(

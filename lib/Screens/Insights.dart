@@ -155,7 +155,7 @@ class _InsightsState extends State<Insights> {
               ),
               ShowPieChart(
                 pieData:
-                    (incomePieChartData.isEmpty || expensePieChartData.isEmpty)
+                    (incomePieChartData.isEmpty && expensePieChartData.isEmpty)
                         ? defaultPieData
                         : grossPieChartData,
                 pieTitle: "Overall",

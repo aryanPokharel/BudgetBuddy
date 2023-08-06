@@ -200,12 +200,14 @@ class _ExpensesState extends State<Expenses> {
                                           ),
                                         ],
                                       ),
-                                      // onTap: () {
-                                      //   print("Printing time");
-                                      //   print(
-                                      //     (transaction).toString(),
-                                      //   );
-                                      // },
+                                      onTap: () async {
+                                        var test = await context
+                                            .read<StateProvider>()
+                                            .setTransactionToUpdate(
+                                                transaction['id']);
+                                        Navigator.pushNamed(
+                                            context, '/updateTransaction');
+                                      },
                                       onLongPress: () {
                                         toDelete = transaction['id'];
                                         _toggleOverlay();
