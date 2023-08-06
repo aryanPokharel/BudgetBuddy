@@ -3,6 +3,7 @@ import 'package:budget_buddy/Constants/FormatDate.dart';
 import 'package:budget_buddy/Constants/FormatTimeOfDay.dart';
 import 'package:budget_buddy/Constants/GetCategoryData.dart';
 import 'package:budget_buddy/Constants/LooksEmpty.dart';
+import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -78,6 +79,10 @@ class _ExpensesState extends State<Expenses> {
             )
           : Stack(
               children: [
+                Container(
+                  height: MediaQuery.of(context).size.height,
+                  color: Color.fromARGB(255, 222, 222, 222),
+                ),
                 ListView.builder(
                   itemCount: groupedTransactions.length + 1,
                   itemBuilder: ((context, index) {
@@ -121,10 +126,8 @@ class _ExpensesState extends State<Expenses> {
                                   child: Container(
                                     decoration: BoxDecoration(
                                       color: transaction['type'] == 'Expense'
-                                          ? const Color.fromARGB(
-                                              255, 250, 224, 223)
-                                          : const Color.fromARGB(
-                                              255, 229, 241, 215),
+                                          ? Color.fromARGB(255, 255, 242, 241)
+                                          : Color.fromARGB(255, 245, 255, 234),
                                       border: Border(
                                         left: BorderSide(
                                           width: 4,
@@ -149,8 +152,10 @@ class _ExpensesState extends State<Expenses> {
                                           ),
                                           color:
                                               transaction['type'] == 'Expense'
-                                                  ? Colors.red
-                                                  : Colors.green,
+                                                  ? const Color.fromARGB(
+                                                      255, 243, 97, 87)
+                                                  : Color.fromARGB(
+                                                      255, 113, 189, 115),
                                         ),
                                       ),
                                       title: Text(
@@ -201,12 +206,14 @@ class _ExpensesState extends State<Expenses> {
                                         ],
                                       ),
                                       onTap: () async {
-                                        var test = await context
-                                            .read<StateProvider>()
-                                            .setTransactionToUpdate(
-                                                transaction['id']);
-                                        Navigator.pushNamed(
-                                            context, '/updateTransaction');
+                                        sendSnackBar(context,
+                                            "Update feature comming soon");
+                                        // var test = await context
+                                        //     .read<StateProvider>()
+                                        //     .setTransactionToUpdate(
+                                        //         transaction['id']);
+                                        // Navigator.pushNamed(
+                                        //     context, '/updateTransaction');
                                       },
                                       onLongPress: () {
                                         toDelete = transaction['id'];

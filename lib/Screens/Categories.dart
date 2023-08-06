@@ -125,7 +125,7 @@ class _CategoriesState extends State<Categories> {
                           return Padding(
                             padding: const EdgeInsets.all(8),
                             child: Card(
-                              color: Colors.green[100],
+                              color: Colors.blue[50],
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -267,7 +267,7 @@ class _CategoriesState extends State<Categories> {
                                   ),
                                 ),
                                 child: SizedBox(
-                                  height: 70, // Adjust the height as needed
+                                  height: 70,
                                 ),
                               ),
                             );
@@ -275,7 +275,7 @@ class _CategoriesState extends State<Categories> {
                           return Padding(
                             padding: const EdgeInsets.all(8),
                             child: Card(
-                              color: Colors.blue[100],
+                              color: Colors.green[50],
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),

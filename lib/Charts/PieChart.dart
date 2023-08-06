@@ -26,11 +26,11 @@ class _ShowPieChartState extends State<ShowPieChart> {
           ? [Colors.black]
           : [
               Colors.blueGrey,
-              Colors.blue,
+              Colors.deepPurple,
               Colors.green,
               Colors.red,
+              Colors.blue,
               Colors.deepOrange,
-              Colors.deepPurple,
               Colors.yellow,
               Colors.purple,
               Colors.grey,
