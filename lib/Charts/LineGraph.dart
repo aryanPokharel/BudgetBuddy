@@ -21,35 +21,113 @@ class _FlLineGraphState extends State<FlLineGraph> {
 
     for (var transaction in transactionList) {
       if (transaction['type'] == 'Expense') {
-        print(stringToDate(transaction['dateTime']).day);
-        expenseSpots.add(FlSpot(
+        expenseSpots.add(
+          FlSpot(
             double.parse(stringToDate(transaction['dateTime']).day.toString()),
-            double.parse(transaction['amount'])));
+            double.parse(
+              transaction['amount'],
+            ),
+          ),
+        );
       } else {
-        incomeSpots.add(FlSpot(
+        incomeSpots.add(
+          FlSpot(
             double.parse(stringToDate(transaction['dateTime']).day.toString()),
-            double.parse(transaction['amount'])));
+            double.parse(
+              transaction['amount'],
+            ),
+          ),
+        );
       }
     }
-    return SizedBox(
-      height: 400,
-      child: LineChart(
-        LineChartData(
-          gridData: FlGridData(show: false),
-          titlesData: FlTitlesData(show: true),
-          borderData: FlBorderData(show: true),
-          lineBarsData: [
-            LineChartBarData(
-              spots: expenseSpots,
-              color: Colors.red,
-            ),
-            LineChartBarData(
-              spots: incomeSpots,
-              color: Colors.green,
+
+    List<Map<String, dynamic>> data = [
+      {"color": Colors.green, "title": "Income"},
+      {"color": Colors.red, "title": "Expense"},
+    ];
+    return Column(
+      children: [
+        Text(
+          "Expense vs Income over time",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        SizedBox(
+          height: 10,
+        ),
+        SizedBox(
+          height: 400,
+          child: transactionList.length > 0
+              ? LineChart(
+                  LineChartData(
+                    gridData: FlGridData(show: false),
+                    titlesData: FlTitlesData(show: true),
+                    borderData: FlBorderData(show: true),
+                    lineBarsData: [
+                      LineChartBarData(
+                        spots: expenseSpots,
+                        color: Colors.red,
+                      ),
+                      LineChartBarData(
+                        spots: incomeSpots,
+                        color: Colors.green,
+                      ),
+                    ],
+                  ),
+                )
+              : Center(
+                  child: Text(
+                    "Insert a transaction",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (int i = 0; i < data.length; i++)
+                  Row(
+                    children: [
+                      Container(
+                        width: 12,
+                        height: 12,
+                        color: data[i]["color"],
+                      ),
+                      SizedBox(width: 4),
+                      i == 0
+                          ? Text(
+                              "${data[i]["title"]}",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            )
+                          : Text(
+                              "${data[i]["title"]}",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                    ],
+                  ),
+                SizedBox(
+                  height: 10,
+                ),
+              ],
             ),
           ],
         ),
-      ),
+      ],
     );
   }
 }

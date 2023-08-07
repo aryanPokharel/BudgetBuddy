@@ -42,7 +42,6 @@ dependencies:
   path: ^1.8.3
   carousel_slider: ^4.2.1
   salomon_bottom_bar: ^3.3.2
-  pie_chart: ^5.3.2 
   fl_chart: ^0.63.0
   
   

@@ -1,206 +1,48 @@
-import 'package:budget_buddy/Charts/PieChart.dart';
-import 'package:budget_buddy/Constants/SendSnackBar.dart';
-import 'package:budget_buddy/Constants/TitleBadge.dart';
-import 'package:budget_buddy/Db/DbHelper.dart';
-import 'package:budget_buddy/StateManagement/states.dart';
+import 'package:budget_buddy/Charts/BarGraph.dart';
+import 'package:budget_buddy/Charts/LineGraph.dart';
+import 'package:budget_buddy/Charts/PieGraph.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-class Insights extends StatefulWidget {
-  const Insights({super.key});
-
+class InsightsPage extends StatefulWidget {
   @override
-  State<Insights> createState() => _InsightsState();
+  _InsightsPageState createState() => _InsightsPageState();
 }
 
-class _InsightsState extends State<Insights> {
-  var currentTitle;
-  getCategoryInformation(var categoryId) async {
-    Map<String, dynamic>? category = await dbHelper.getCategoryById(categoryId);
-    if (category != null) {
-      currentTitle = await category['title'];
-
-      return currentTitle;
-    } else {
-      return null;
-    }
-  }
-
-  final dbHelper = DatabaseHelper.instance;
-
-  double tryParseDouble(dynamic value) {
-    try {
-      return double.parse(value.toString());
-    } catch (e) {
-      return 0.0;
-    }
-  }
-
+class _InsightsPageState extends State<InsightsPage> {
   @override
   Widget build(BuildContext context) {
-    List<dynamic> transactionList =
-        Provider.of<StateProvider>(context).transactionList;
-
-    List<Map<String, dynamic>> expenseCategoryTypes = [];
-    List<Map<String, dynamic>> incomeCategoryTypes = [];
-
-    double totalExpenses =
-        tryParseDouble(Provider.of<StateProvider>(context).totalExpenses);
-    double totalIncome =
-        tryParseDouble(Provider.of<StateProvider>(context).totalIncome);
-
-    for (var transaction in transactionList) {
-      if (transaction['type'] == 'Expense') {
-        // For expense categories
-        double expenseCategoryTotalAmount =
-            tryParseDouble(transaction['amount']);
-        if (expenseCategoryTypes.isEmpty) {
-          expenseCategoryTypes.add({
-            "id": transaction['category'],
-            "totalAmount": tryParseDouble(transaction['amount'].toString())
-          });
-        } else {
-          bool found = false;
-          for (var category in expenseCategoryTypes) {
-            if (transaction['category'] != category['id']) {
-              found = false;
-            } else {
-              found = true;
-              category['totalAmount'] +=
-                  tryParseDouble(transaction['amount'].toString());
-            }
-          }
-          if (!found) {
-            expenseCategoryTypes.add(
-              {
-                "id": transaction['category'],
-                "totalAmount": expenseCategoryTotalAmount
-              },
-            );
-          }
-        }
-      } else {
-        // For income categories
-        double incomeCategoryTotalAmount =
-            tryParseDouble(transaction['amount']);
-        if (incomeCategoryTypes.isEmpty) {
-          incomeCategoryTypes.add({
-            "id": transaction['category'],
-            "totalAmount": tryParseDouble(transaction['amount'].toString())
-          });
-        } else {
-          bool found = false;
-          for (var category in incomeCategoryTypes) {
-            if (transaction['category'] != category['id']) {
-              found = false;
-            } else {
-              found = true;
-              category['totalAmount'] +=
-                  tryParseDouble(transaction['amount'].toString());
-            }
-          }
-          if (!found) {
-            incomeCategoryTypes.add(
-              {
-                "id": transaction['category'],
-                "totalAmount": incomeCategoryTotalAmount
-              },
-            );
-          }
-        }
-      }
-    }
-    Map<String, double> expensePieChartData = {};
-    Map<String, double> incomePieChartData = {};
-    setUpCategories() async {
-      for (var expenseCategory in expenseCategoryTypes) {
-        // var title = await dbHelper.getCategoryById(expenseCategory['id']);
-        // print(title!['title']);
-
-        expensePieChartData[(expenseCategory['id']).toString()] =
-            expenseCategory['totalAmount'];
-      }
-
-      for (var incomeCategory in incomeCategoryTypes) {
-        incomePieChartData[(incomeCategory['id']).toString()] =
-            incomeCategory['totalAmount'];
-      }
-    }
-
-    setUpCategories();
-
-    // For gross Transactions
-    Map<String, double> grossPieChartData = {
-      "Expense": totalExpenses,
-      "Income": totalIncome,
-    };
-
-    // Default data
-    Map<String, double> defaultPieData = {"Empty": 0};
-
     return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          sendSnackBar(context, "Download Report Feature Coming Soon!");
-        },
-        child: const Icon(Icons.download),
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          color: const Color.fromARGB(255, 202, 236, 252),
+      body: Center(
+        child: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(
-                height: 40,
+              FlPieGraph(),
+              Divider(
+                thickness: 2,
               ),
-              const TitleBadge(
-                title: "Gross Transactions",
-                bgColor: Color.fromARGB(255, 193, 175, 15),
+              SizedBox(
+                height: 60,
               ),
-              const SizedBox(
-                height: 30,
+              FlBarGraph(
+                type: "Expense",
               ),
-              ShowPieChart(
-                pieData:
-                    (incomePieChartData.isEmpty && expensePieChartData.isEmpty)
-                        ? defaultPieData
-                        : grossPieChartData,
-                pieTitle: "Overall",
+              Divider(
+                thickness: 2,
               ),
-              Divider(color: Colors.grey[400], thickness: 4),
-              const SizedBox(
-                height: 40,
+              SizedBox(
+                height: 20,
               ),
-              const TitleBadge(title: "Expense Breakdown", bgColor: Colors.red),
-              const SizedBox(
-                height: 30,
+              FlBarGraph(
+                type: "Income",
               ),
-              ShowPieChart(
-                pieData: expensePieChartData.isEmpty
-                    ? defaultPieData
-                    : expensePieChartData,
-                pieTitle: "Expenses",
+              Divider(
+                thickness: 2,
               ),
-              Divider(color: Colors.grey[400], thickness: 4),
-              const SizedBox(
-                height: 40,
+              SizedBox(
+                height: 20,
               ),
-              const TitleBadge(
-                  title: "Income Breakdown", bgColor: Colors.green),
-              const SizedBox(
-                height: 30,
-              ),
-              ShowPieChart(
-                pieData: incomePieChartData.isEmpty
-                    ? defaultPieData
-                    : incomePieChartData,
-                pieTitle: "Incomes",
-              ),
-              const SizedBox(
-                height: 30,
-              )
+              FlLineGraph(),
             ],
           ),
         ),

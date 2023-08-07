@@ -1,4 +1,5 @@
 import 'package:budget_buddy/Constants/ConstantValues.dart';
+import 'package:budget_buddy/Constants/TryParseDouble.dart';
 import 'package:budget_buddy/Db/DbHelper.dart';
 import 'package:flutter/material.dart';
 
@@ -145,6 +146,7 @@ class StateProvider with ChangeNotifier {
         notifyListeners();
       }
     }
+    categorizeTransactions();
     notifyListeners();
   }
 
@@ -173,4 +175,75 @@ class StateProvider with ChangeNotifier {
     dbHelper.deleteTransaction(transactionId);
     getTransactionsFromDb();
   }
+
+  var expenseCategoryTypes = [];
+  var incomeCategoryTypes = [];
+  categorizeTransactions() {
+    for (var transaction in transactionList) {
+      if (transaction['type'] == 'Expense') {
+        // For expense categories
+        double expenseCategoryTotalAmount =
+            tryParseDouble(transaction['amount']);
+        if (expenseCategoryTypes.isEmpty) {
+          expenseCategoryTypes.add({
+            "id": transaction['category'],
+            "totalAmount": tryParseDouble(transaction['amount'].toString())
+          });
+        } else {
+          bool found = false;
+          for (var category in expenseCategoryTypes) {
+            if (transaction['category'] != category['id']) {
+              found = false;
+            } else {
+              found = true;
+              category['totalAmount'] +=
+                  tryParseDouble(transaction['amount'].toString());
+            }
+          }
+          if (!found) {
+            expenseCategoryTypes.add(
+              {
+                "id": transaction['category'],
+                "totalAmount": expenseCategoryTotalAmount
+              },
+            );
+          }
+        }
+      } else {
+        // For income categories
+        double incomeCategoryTotalAmount =
+            tryParseDouble(transaction['amount']);
+        if (incomeCategoryTypes.isEmpty) {
+          incomeCategoryTypes.add({
+            "id": transaction['category'],
+            "totalAmount": tryParseDouble(transaction['amount'].toString())
+          });
+        } else {
+          bool found = false;
+          for (var category in incomeCategoryTypes) {
+            if (transaction['category'] != category['id']) {
+              found = false;
+            } else {
+              found = true;
+              category['totalAmount'] +=
+                  tryParseDouble(transaction['amount'].toString());
+            }
+          }
+          if (!found) {
+            incomeCategoryTypes.add(
+              {
+                "id": transaction['category'],
+                "totalAmount": incomeCategoryTotalAmount
+              },
+            );
+          }
+        }
+      }
+      notifyListeners();
+    }
+    print("Transactions categoriezed!");
+    notifyListeners();
+  }
+
+  // End of Transaction States
 }

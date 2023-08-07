@@ -1,7 +1,7 @@
 import 'package:budget_buddy/Constants/DateName.dart';
 import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:budget_buddy/Screens/Categories.dart';
-import 'package:budget_buddy/Screens/Insights2.dart';
+import 'package:budget_buddy/Screens/Insights.dart';
 import 'package:budget_buddy/Screens/Transactions.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:carousel_slider/carousel_slider.dart';
