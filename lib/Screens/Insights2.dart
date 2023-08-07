@@ -1,3 +1,5 @@
+import 'package:budget_buddy/Charts/BarGraph.dart';
+import 'package:budget_buddy/Charts/LineGraph.dart';
 import 'package:budget_buddy/Constants/ColorList.dart';
 import 'package:budget_buddy/Constants/TryParseDouble.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
@@ -42,8 +44,11 @@ class _InsightsPageState extends State<InsightsPage> {
     }
     // Bar graph data entry
     List<BarChartGroupData> expenseBarGraphData = [];
+    List<BarChartGroupData> incomeBarGraphData = [];
     List<Map<String, dynamic>> expenseCategoryTypes = [];
     List<Map<String, dynamic>> incomeCategoryTypes = [];
+    var highestExpenseAmount = 0.0;
+    var highestIncomeAmount = 0.0;
     for (var transaction in transactionList) {
       if (transaction['type'] == 'Expense') {
         // For expense categories
@@ -54,6 +59,7 @@ class _InsightsPageState extends State<InsightsPage> {
             "id": transaction['category'],
             "totalAmount": tryParseDouble(transaction['amount'].toString())
           });
+          highestExpenseAmount = double.parse(transaction['amount']);
         } else {
           bool found = false;
           for (var category in expenseCategoryTypes) {
@@ -63,6 +69,9 @@ class _InsightsPageState extends State<InsightsPage> {
               found = true;
               category['totalAmount'] +=
                   tryParseDouble(transaction['amount'].toString());
+              if (double.parse(transaction['amount']) > highestExpenseAmount) {
+                highestExpenseAmount = transaction['amount'];
+              }
             }
           }
           if (!found) {
@@ -74,37 +83,40 @@ class _InsightsPageState extends State<InsightsPage> {
             );
           }
         }
+      } else {
+        // For income categories
+        double incomeCategoryTotalAmount =
+            tryParseDouble(transaction['amount']);
+        if (incomeCategoryTypes.isEmpty) {
+          incomeCategoryTypes.add({
+            "id": transaction['category'],
+            "totalAmount": tryParseDouble(transaction['amount'].toString())
+          });
+          highestIncomeAmount = double.parse(transaction['amount']);
+        } else {
+          bool found = false;
+          for (var category in incomeCategoryTypes) {
+            if (transaction['category'] != category['id']) {
+              found = false;
+            } else {
+              found = true;
+              category['totalAmount'] +=
+                  tryParseDouble(transaction['amount'].toString());
+              if (double.parse(transaction['amount']) > highestIncomeAmount) {
+                highestIncomeAmount = transaction['amount'];
+              }
+            }
+          }
+          if (!found) {
+            incomeCategoryTypes.add(
+              {
+                "id": transaction['category'],
+                "totalAmount": incomeCategoryTotalAmount
+              },
+            );
+          }
+        }
       }
-      // else {
-      //   // For income categories
-      //   double incomeCategoryTotalAmount =
-      //       tryParseDouble(transaction['amount']);
-      //   if (incomeCategoryTypes.isEmpty) {
-      //     incomeCategoryTypes.add({
-      //       "id": transaction['category'],
-      //       "totalAmount": tryParseDouble(transaction['amount'].toString())
-      //     });
-      //   } else {
-      //     bool found = false;
-      //     for (var category in incomeCategoryTypes) {
-      //       if (transaction['category'] != category['id']) {
-      //         found = false;
-      //       } else {
-      //         found = true;
-      //         category['totalAmount'] +=
-      //             tryParseDouble(transaction['amount'].toString());
-      //       }
-      //     }
-      //     if (!found) {
-      //       incomeCategoryTypes.add(
-      //         {
-      //           "id": transaction['category'],
-      //           "totalAmount": incomeCategoryTotalAmount
-      //         },
-      //       );
-      //     }
-      //   }
-      // }
     }
 
     int i = 0;
@@ -122,6 +134,23 @@ class _InsightsPageState extends State<InsightsPage> {
         ),
       );
       i++;
+    }
+
+    int j = 0;
+    for (var incomeCategory in incomeCategoryTypes) {
+      incomeBarGraphData.add(
+        BarChartGroupData(
+          x: incomeCategory['id'],
+          barRods: [
+            BarChartRodData(
+              toY: incomeCategory['totalAmount'],
+              color: appThemeColors[j],
+              width: 16,
+            ),
+          ],
+        ),
+      );
+      j++;
     }
 
     List<Map<String, dynamic>> data = [
@@ -218,18 +247,22 @@ class _InsightsPageState extends State<InsightsPage> {
                   fontSize: 18,
                 ),
               ),
+              FlBarGraph(
+                  barGraphData: expenseBarGraphData,
+                  highestAmount: highestExpenseAmount),
               SizedBox(
-                height: 300,
-                child: BarChart(
-                  BarChartData(
-                    alignment: BarChartAlignment.spaceAround,
-                    maxY: totalExpenses,
-                    titlesData: FlTitlesData(show: true),
-                    borderData: FlBorderData(show: false),
-                    barGroups: expenseBarGraphData,
-                  ),
+                height: 20,
+              ),
+              Text(
+                "Income Breakdown",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
                 ),
               ),
+              FlBarGraph(
+                  barGraphData: incomeBarGraphData,
+                  highestAmount: highestIncomeAmount),
               SizedBox(
                 height: 20,
               ),
@@ -243,28 +276,7 @@ class _InsightsPageState extends State<InsightsPage> {
               SizedBox(
                 height: 10,
               ),
-              SizedBox(
-                height: 300,
-                child: LineChart(
-                  LineChartData(
-                    gridData: FlGridData(show: false),
-                    titlesData: FlTitlesData(show: true),
-                    borderData: FlBorderData(show: true),
-                    lineBarsData: [
-                      LineChartBarData(
-                        spots: [
-                          FlSpot(0, 50),
-                          FlSpot(1, 70),
-                          FlSpot(2, 40),
-                          FlSpot(3, 90),
-                          FlSpot(4, 60),
-                        ],
-                        color: Colors.blue,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              FlLineGraph(),
             ],
           ),
         ),

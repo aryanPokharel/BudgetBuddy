@@ -6,9 +6,9 @@ String formatDate(DateTime dateTime) {
   return DateFormat('yyyy-MM-dd').format(dateTime);
 }
 
-// Usage example
-void main() {
-  DateTime dateTime = DateTime.now();
-  String formattedDate = formatDate(dateTime);
-  print(formattedDate); // Output: e.g., '2023-08-02'
+DateTime stringToDate(String dateString) {
+  // Replace 'yyyy-MM-dd' with your desired date format
+  DateFormat format = DateFormat('yyyy-MM-dd');
+  DateTime dateTime = format.parse(dateString);
+  return dateTime;
 }
