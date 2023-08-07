@@ -1,8 +1,8 @@
 import 'package:budget_buddy/Constants/DateName.dart';
 import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:budget_buddy/Screens/Categories.dart';
+import 'package:budget_buddy/Screens/Insights2.dart';
 import 'package:budget_buddy/Screens/Transactions.dart';
-import 'package:budget_buddy/Screens/Insights.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
@@ -65,6 +65,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     context.read<StateProvider>().getCategoriesFromDb();
+    context.read<StateProvider>().getTransactionsFromDb();
   }
 
   @override
@@ -263,10 +264,10 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: IndexedStack(
           index: _selectedIndex,
-          children: const [
+          children: [
             Expenses(),
             Categories(),
-            Insights(),
+            InsightsPage(),
           ],
         ),
       ),

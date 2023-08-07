@@ -139,8 +139,10 @@ class StateProvider with ChangeNotifier {
       _transactionList.add(newTransaction);
       if (newTransaction['type'] == "Expense") {
         totalExpenses += double.parse(newTransaction['amount']);
+        notifyListeners();
       } else {
         totalIncome += double.parse(newTransaction['amount']);
+        notifyListeners();
       }
     }
     notifyListeners();

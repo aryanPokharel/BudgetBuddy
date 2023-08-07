@@ -2,6 +2,7 @@ import 'package:budget_buddy/Screens/AddCategory.dart';
 import 'package:budget_buddy/Screens/AddTransaction.dart';
 import 'package:budget_buddy/Screens/Settings.dart';
 import 'package:budget_buddy/Screens/SplashScreen.dart';
+import 'package:budget_buddy/Screens/UpdateTransaction.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
 
@@ -35,7 +36,7 @@ class MyApp extends StatelessWidget {
         '/addTransaction': (context) => const AddTransaction(),
         '/addCategory': (context) => const AddCategory(),
         '/settings': (context) => const SettingsPage(),
-        // '/updateTransaction': (context) => const UpdateTransaction(),
+        '/updateTransaction': (context) => UpdateTransaction(),
       },
       debugShowCheckedModeBanner: false,
       // darkTheme: true ? ThemeData.dark() : ThemeData.light(),

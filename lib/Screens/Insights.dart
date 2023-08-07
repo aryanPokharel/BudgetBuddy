@@ -14,10 +14,13 @@ class Insights extends StatefulWidget {
 }
 
 class _InsightsState extends State<Insights> {
+  var currentTitle;
   getCategoryInformation(var categoryId) async {
     Map<String, dynamic>? category = await dbHelper.getCategoryById(categoryId);
     if (category != null) {
-      return category;
+      currentTitle = await category['title'];
+
+      return currentTitle;
     } else {
       return null;
     }
@@ -107,18 +110,24 @@ class _InsightsState extends State<Insights> {
         }
       }
     }
-
     Map<String, double> expensePieChartData = {};
-
-    for (var expenseCategory in expenseCategoryTypes) {
-      expensePieChartData[(expenseCategory['id']).toString()] =
-          expenseCategory['totalAmount'];
-    }
     Map<String, double> incomePieChartData = {};
-    for (var incomeCategory in incomeCategoryTypes) {
-      incomePieChartData[(incomeCategory['id']).toString()] =
-          incomeCategory['totalAmount'];
+    setUpCategories() async {
+      for (var expenseCategory in expenseCategoryTypes) {
+        // var title = await dbHelper.getCategoryById(expenseCategory['id']);
+        // print(title!['title']);
+
+        expensePieChartData[(expenseCategory['id']).toString()] =
+            expenseCategory['totalAmount'];
+      }
+
+      for (var incomeCategory in incomeCategoryTypes) {
+        incomePieChartData[(incomeCategory['id']).toString()] =
+            incomeCategory['totalAmount'];
+      }
     }
+
+    setUpCategories();
 
     // For gross Transactions
     Map<String, double> grossPieChartData = {
