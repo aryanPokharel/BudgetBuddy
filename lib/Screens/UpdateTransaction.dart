@@ -1,4 +1,3 @@
-import 'package:budget_buddy/Constants/FormatTimeOfDay.dart';
 import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,18 @@ class UpdateTransaction extends StatefulWidget {
 }
 
 class _UpdateTransactionState extends State<UpdateTransaction> {
-  DateTime? selectedDate;
+  late String _transactionType;
+
+  var title;
+  var amount;
+  var description;
+
+  DateTime? selectedDate = DateTime.now();
+  dynamic dateToSend;
+
+  var titleController = TextEditingController();
+  var amountController = TextEditingController();
+  var descriptionController = TextEditingController();
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -43,27 +53,47 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
       setState(
         () {
           selectedDate = pickedDate;
+          dateToSend = "${picked.year}-${picked.month}-${picked.day}";
         },
       );
     }
   }
 
-  String _transactionType = "";
-  late dynamic selectedCategory;
-  late TimeOfDay selectedTime;
+  saveExpense(dynamic newExpense) {
+    // context.read<StateProvider>().setTransactionList(newExpense);
+  }
+
+  saveIncome(dynamic newIncome) {
+    // context.read<StateProvider>().setTransactionList(newIncome);
+  }
+
+  clear() {
+    setState(() {
+      titleController.clear();
+      amountController.clear();
+      descriptionController.clear();
+      selectedDate = null;
+    });
+  }
+
+  dynamic selectedCategory;
+  TimeOfDay selectedTime = TimeOfDay.now();
   @override
   Widget build(BuildContext context) {
     dynamic transactionToUpdate =
         Provider.of<StateProvider>(context).transactionToUpdate;
 
-    var title = transactionToUpdate['title'];
-    var amount = transactionToUpdate['amount'];
-    var remarks = transactionToUpdate['remarks'];
-
+    _transactionType = transactionToUpdate['type'];
+    titleController.text = transactionToUpdate['title'];
+    amountController.text = transactionToUpdate['amount'].toString();
+    descriptionController.text =
+        transactionToUpdate['remarks'].toString().length > 0
+            ? transactionToUpdate['remarks'].toString()
+            : "";
     selectedDate = DateTime.parse(transactionToUpdate['dateTime']);
-
-    _transactionType =
-        transactionToUpdate['type'] == "Expense" ? "Expense" : "Income";
+    // selectedTime = TimeOfDay(
+    //     hour: int.parse(transactionToUpdate['time'].split(":")[0]),
+    //     minute: int.parse(transactionToUpdate['time'].split(":")[1]));
 
     var categoryList = Provider.of<StateProvider>(context).categoryList;
     var expenseCategories = categoryList
@@ -73,14 +103,15 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
     var incomeCategories =
         categoryList.where((category) => category['type'] == 'Income').toList();
 
-    selectedCategory = transactionToUpdate['category'];
+    selectedCategory = _transactionType == 'Expense'
+        ? expenseCategories[0]['id']
+        : incomeCategories[0]['id'];
 
     DateTime now = DateTime.now();
     DateTime yesterday = now.subtract(const Duration(days: 1));
     DateTime dayBeforeYesterday = now.subtract(const Duration(days: 2));
 
     final formKey = GlobalKey<FormState>();
-    selectedTime = parseStringToTimeOfDay(transactionToUpdate['time']);
 
     Future<void> _selectTime(BuildContext context) async {
       final TimeOfDay? pickedTime = await showTimePicker(
@@ -93,10 +124,6 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
           selectedTime = pickedTime;
         });
       }
-    }
-
-    clear() {
-      print("Selected Type Is ${_transactionType}");
     }
 
     return Scaffold(
@@ -122,8 +149,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
-                  initialValue: title,
-                  // controller: titleController,
+                  controller: titleController,
                   onChanged: (val) {
                     title = val.trim();
                   },
@@ -139,8 +165,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
-                  initialValue: amount,
-                  // controller: amountController,
+                  controller: amountController,
                   onChanged: (val) {
                     amount = val.trim();
                   },
@@ -157,10 +182,9 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
-                  initialValue: remarks,
-                  // controller: descriptionController,
+                  controller: descriptionController,
                   onChanged: (val) {
-                    remarks = val.trim();
+                    description = val.trim();
                   },
                   maxLines: 2,
                   decoration: const InputDecoration(
@@ -302,7 +326,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
-                            selectedTime == null
+                            selectedDate == null
                                 ? 'Please select time'
                                 : selectedTime.format(context),
                             style: const TextStyle(
@@ -321,11 +345,6 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                 ),
                 const SizedBox(height: 20),
                 DropdownButtonFormField<dynamic>(
-                  // value: _transactionType == transactionToUpdate['type']
-                  //     ? transactionToUpdate['category']
-                  //     : _transactionType == "Expense"
-                  //         ? expenseCategories[0]
-                  //         : incomeCategories[0],
                   value: _transactionType == "Expense"
                       ? expenseCategories[0]
                       : incomeCategories[0],
@@ -399,7 +418,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                           var newExpense = {
                             "type": "Expense",
                             "title": title,
-                            "remarks": remarks,
+                            "remarks": description,
                             "amount": amount,
                             "dateTime": selectedDate.toString(),
                             "time": selectedTime.toString(),
@@ -407,8 +426,8 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                           };
 
                           if (formKey.currentState!.validate()) {
-                            // saveExpense(newExpense);
-                            sendSnackBar(context, "Expense Updated");
+                            saveExpense(newExpense);
+                            sendSnackBar(context, "Expense Added");
                             Navigator.of(context).pop();
                           } else {
                             sendSnackBar(context, "Provide necessary info");
@@ -417,7 +436,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                           var newIncome = {
                             "type": "Income",
                             "title": title,
-                            "remarks": remarks,
+                            "remarks": description,
                             "amount": amount,
                             "dateTime": selectedDate.toString(),
                             "time": selectedTime.toString(),
@@ -425,7 +444,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                           };
 
                           if (formKey.currentState!.validate()) {
-                            // saveIncome(newIncome);
+                            saveIncome(newIncome);
                             sendSnackBar(context, "Income Added");
                             Navigator.of(context).pop();
                           } else {
@@ -462,7 +481,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
   }
 
   Widget _buildRadioOption(String option) {
-    return GestureDetector(
+    return InkWell(
       onTap: () {
         setState(() {
           _transactionType = option;
