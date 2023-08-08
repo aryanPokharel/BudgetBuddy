@@ -96,13 +96,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
     }
 
     clear() {
-      setState(() {
-        // titleController.clear();
-        // amountController.clear();
-        // descriptionController.clear();
-        // selectedDate = null;
-        print("Selected Type Is ${transactionToUpdate['category']}");
-      });
+      print("Selected Type Is ${transactionToUpdate['category']}");
     }
 
     return Scaffold(
