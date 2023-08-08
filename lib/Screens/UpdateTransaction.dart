@@ -48,7 +48,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
     }
   }
 
-  late String _transactionType;
+  String _transactionType = "";
   late dynamic selectedCategory;
   late TimeOfDay selectedTime;
   @override
@@ -96,7 +96,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
     }
 
     clear() {
-      print("Selected Type Is ${transactionToUpdate['category']}");
+      print("Selected Type Is ${_transactionType}");
     }
 
     return Scaffold(

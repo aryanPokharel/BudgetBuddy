@@ -200,9 +200,6 @@ class StateProvider with ChangeNotifier {
     // Set the main lists after collecting all titles
     expenseCategoryTypesTitles = tempExpenseTitles;
     incomeCategoryTypesTitles = tempIncomeTitles;
-
-    print("Expense titles : $expenseCategoryTypesTitles");
-    print("Income titles : $incomeCategoryTypesTitles");
   }
 
   var expenseCategoryTypes = [];
