@@ -1,5 +1,4 @@
 import 'package:budget_buddy/Constants/ColorList.dart';
-import 'package:budget_buddy/Constants/TryParseDouble.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -22,76 +21,24 @@ class _FlBarGraphState extends State<FlBarGraph> {
     // Bar graph data entry
     List<BarChartGroupData> expenseBarGraphData = [];
     List<BarChartGroupData> incomeBarGraphData = [];
-    List<Map<String, dynamic>> expenseCategoryTypes = [];
-    List<Map<String, dynamic>> incomeCategoryTypes = [];
+    List<dynamic> expenseCategoryTypes =
+        Provider.of<StateProvider>(context).expenseCategoryTypes;
+    List<dynamic> incomeCategoryTypes =
+        Provider.of<StateProvider>(context).incomeCategoryTypes;
+
+    var expenseCateogoryTypesTitles =
+        Provider.of<StateProvider>(context).expenseCategoryTypesTitles;
+    var incomeCateogoryTypesTitles =
+        Provider.of<StateProvider>(context).incomeCategoryTypesTitles;
     var highestExpenseAmount = 0.0;
     var highestIncomeAmount = 0.0;
-    for (var transaction in transactionList) {
-      if (transaction['type'] == 'Expense') {
-        // For expense categories
-        double expenseCategoryTotalAmount =
-            tryParseDouble(transaction['amount']);
-        if (expenseCategoryTypes.isEmpty) {
-          expenseCategoryTypes.add({
-            "id": transaction['category'],
-            "totalAmount": tryParseDouble(transaction['amount'].toString())
-          });
-        } else {
-          bool found = false;
-          for (var category in expenseCategoryTypes) {
-            if (transaction['category'] != category['id']) {
-              found = false;
-            } else {
-              found = true;
-              category['totalAmount'] +=
-                  tryParseDouble(transaction['amount'].toString());
-            }
-          }
-          if (!found) {
-            expenseCategoryTypes.add(
-              {
-                "id": transaction['category'],
-                "totalAmount": expenseCategoryTotalAmount
-              },
-            );
-          }
-        }
-      } else {
-        // For income categories
-        double incomeCategoryTotalAmount =
-            tryParseDouble(transaction['amount']);
-        if (incomeCategoryTypes.isEmpty) {
-          incomeCategoryTypes.add({
-            "id": transaction['category'],
-            "totalAmount": tryParseDouble(transaction['amount'].toString())
-          });
-        } else {
-          bool found = false;
-          for (var category in incomeCategoryTypes) {
-            if (transaction['category'] != category['id']) {
-              found = false;
-            } else {
-              found = true;
-              category['totalAmount'] +=
-                  tryParseDouble(transaction['amount'].toString());
-            }
-          }
-          if (!found) {
-            incomeCategoryTypes.add(
-              {
-                "id": transaction['category'],
-                "totalAmount": incomeCategoryTotalAmount
-              },
-            );
-          }
-        }
-      }
-    }
 
+    int i = 0;
     for (var expenseCategory in expenseCategoryTypes) {
       if (expenseCategory['totalAmount'] > highestExpenseAmount) {
         highestExpenseAmount = expenseCategory['totalAmount'];
       }
+      i++;
     }
 
     for (var incomeCategory in incomeCategoryTypes) {
@@ -100,7 +47,7 @@ class _FlBarGraphState extends State<FlBarGraph> {
       }
     }
 
-    int i = 0;
+    int j = 0;
     for (var expenseCategory in expenseCategoryTypes) {
       expenseBarGraphData.add(
         BarChartGroupData(
@@ -108,23 +55,6 @@ class _FlBarGraphState extends State<FlBarGraph> {
           barRods: [
             BarChartRodData(
               toY: expenseCategory['totalAmount'],
-              color: appThemeColors[i],
-              width: 16,
-            ),
-          ],
-        ),
-      );
-      i++;
-    }
-
-    int j = 0;
-    for (var incomeCategory in incomeCategoryTypes) {
-      incomeBarGraphData.add(
-        BarChartGroupData(
-          x: incomeCategory['id'],
-          barRods: [
-            BarChartRodData(
-              toY: incomeCategory['totalAmount'],
               color: appThemeColors[j],
               width: 16,
             ),
@@ -134,26 +64,46 @@ class _FlBarGraphState extends State<FlBarGraph> {
       j++;
     }
 
-    List<Map<String, dynamic>> expenseIndices = [];
+    int k = 0;
+    for (var incomeCategory in incomeCategoryTypes) {
+      incomeBarGraphData.add(
+        BarChartGroupData(
+          x: incomeCategory['id'],
+          barRods: [
+            BarChartRodData(
+              toY: incomeCategory['totalAmount'],
+              color: appThemeColors[k],
+              width: 16,
+            ),
+          ],
+        ),
+      );
+      k++;
+    }
 
+    List<Map<String, dynamic>> expenseIndices = [];
+    int l = 0;
     for (var expenseCategory in expenseCategoryTypes) {
       expenseIndices.add(
         {
           "color":
               appThemeColors[expenseCategoryTypes.indexOf(expenseCategory)],
-          "title": expenseCategory['id']
+          "title": expenseCateogoryTypesTitles[l]
         },
       );
+      l++;
     }
 
     List<Map<String, dynamic>> incomeIndices = [];
+    int m = 0;
     for (var incomeCategory in incomeCategoryTypes) {
       incomeIndices.add(
         {
           "color": appThemeColors[incomeCategoryTypes.indexOf(incomeCategory)],
-          "title": incomeCategory['id']
+          "title": incomeCateogoryTypesTitles[m]
         },
       );
+      m++;
     }
     return Column(
       children: [

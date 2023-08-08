@@ -176,72 +176,81 @@ class StateProvider with ChangeNotifier {
     getTransactionsFromDb();
   }
 
+  var expenseCategoryTypesTitles = [];
+  var incomeCategoryTypesTitles = [];
+  giveTitlesToCategoryTypes() async {
+    // Temporary lists for expense and income titles
+    List<String> tempExpenseTitles = [];
+    List<String> tempIncomeTitles = [];
+
+    // Expense categories
+    for (var expenseCategoryType in expenseCategoryTypes) {
+      var category = await dbHelper.getCategoryById(expenseCategoryType['id']);
+      var title = category![DatabaseHelper.colTitle];
+      tempExpenseTitles.add(title);
+    }
+
+    // Income categories
+    for (var incomeCategoryType in incomeCategoryTypes) {
+      var category = await dbHelper.getCategoryById(incomeCategoryType['id']);
+      var title = category![DatabaseHelper.colTitle];
+      tempIncomeTitles.add(title);
+    }
+
+    // Set the main lists after collecting all titles
+    expenseCategoryTypesTitles = tempExpenseTitles;
+    incomeCategoryTypesTitles = tempIncomeTitles;
+
+    print("Expense titles : $expenseCategoryTypesTitles");
+    print("Income titles : $incomeCategoryTypesTitles");
+  }
+
   var expenseCategoryTypes = [];
   var incomeCategoryTypes = [];
   categorizeTransactions() {
+    expenseCategoryTypes = [];
+    incomeCategoryTypes = [];
     for (var transaction in transactionList) {
       if (transaction['type'] == 'Expense') {
         // For expense categories
         double expenseCategoryTotalAmount =
             tryParseDouble(transaction['amount']);
-        if (expenseCategoryTypes.isEmpty) {
+        bool found = false;
+        for (var category in expenseCategoryTypes) {
+          if (transaction['category'] == category['id']) {
+            found = true;
+            category['totalAmount'] += expenseCategoryTotalAmount;
+            break; // Exit the loop once a match is found
+          }
+        }
+        if (!found) {
           expenseCategoryTypes.add({
             "id": transaction['category'],
-            "totalAmount": tryParseDouble(transaction['amount'].toString())
+            "totalAmount": expenseCategoryTotalAmount,
           });
-        } else {
-          bool found = false;
-          for (var category in expenseCategoryTypes) {
-            if (transaction['category'] != category['id']) {
-              found = false;
-            } else {
-              found = true;
-              category['totalAmount'] +=
-                  tryParseDouble(transaction['amount'].toString());
-            }
-          }
-          if (!found) {
-            expenseCategoryTypes.add(
-              {
-                "id": transaction['category'],
-                "totalAmount": expenseCategoryTotalAmount
-              },
-            );
-          }
         }
       } else {
         // For income categories
         double incomeCategoryTotalAmount =
             tryParseDouble(transaction['amount']);
-        if (incomeCategoryTypes.isEmpty) {
+        bool found = false;
+        for (var category in incomeCategoryTypes) {
+          if (transaction['category'] == category['id']) {
+            found = true;
+            category['totalAmount'] += incomeCategoryTotalAmount;
+            break; // Exit the loop once a match is found
+          }
+        }
+        if (!found) {
           incomeCategoryTypes.add({
             "id": transaction['category'],
-            "totalAmount": tryParseDouble(transaction['amount'].toString())
+            "totalAmount": incomeCategoryTotalAmount,
           });
-        } else {
-          bool found = false;
-          for (var category in incomeCategoryTypes) {
-            if (transaction['category'] != category['id']) {
-              found = false;
-            } else {
-              found = true;
-              category['totalAmount'] +=
-                  tryParseDouble(transaction['amount'].toString());
-            }
-          }
-          if (!found) {
-            incomeCategoryTypes.add(
-              {
-                "id": transaction['category'],
-                "totalAmount": incomeCategoryTotalAmount
-              },
-            );
-          }
         }
       }
       notifyListeners();
     }
-    print("Transactions categoriezed!");
+    giveTitlesToCategoryTypes();
     notifyListeners();
   }
 

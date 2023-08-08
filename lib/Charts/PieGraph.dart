@@ -45,7 +45,7 @@ class _FlPieGraphState extends State<FlPieGraph> {
         Provider.of<StateProvider>(context, listen: false).expenseCategoryTypes;
     var incomeCategoryTypes =
         Provider.of<StateProvider>(context, listen: false).incomeCategoryTypes;
-    print(expenseCategoryTypes);
+    // print(expenseCategoryTypes);
     // getExCatTitle(expenseCategoryTypes.length);
     // getInCatTitle(incomeCategoryTypes.length);
   }
