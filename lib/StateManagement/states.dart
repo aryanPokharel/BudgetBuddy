@@ -104,8 +104,8 @@ class StateProvider with ChangeNotifier {
     toUpdateTransactionId = transactionId;
     var receivedTransaction =
         await dbHelper.getTransactionById(toUpdateTransactionId);
-
-    transactionToUpdate['type'] = receivedTransaction!['type'];
+    transactionToUpdate['id'] = receivedTransaction!['_id'];
+    transactionToUpdate['type'] = receivedTransaction['type'];
     transactionToUpdate['title'] = receivedTransaction['title'];
     transactionToUpdate['amount'] = receivedTransaction['amount'];
     transactionToUpdate['remarks'] = receivedTransaction['remarks'];
@@ -170,6 +170,13 @@ class StateProvider with ChangeNotifier {
   //     transactionToUpdate(transactionToUpdate),
   //   );
   // }
+
+  void updateTransaction(updatedTransaction) async {
+    await dbHelper.updateTransaction(updatedTransaction);
+    notifyListeners();
+    getTransactionsFromDb();
+    notifyListeners();
+  }
 
   void deleteTransaction(dynamic transactionId) async {
     dbHelper.deleteTransaction(transactionId);

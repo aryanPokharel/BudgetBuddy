@@ -1,4 +1,5 @@
 import 'package:budget_buddy/Constants/FormatTimeOfDay.dart';
+import 'package:budget_buddy/Constants/GetCategoryData.dart';
 import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +24,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
 
   var titleController = TextEditingController();
   var amountController = TextEditingController();
-  var descriptionController = TextEditingController();
+  var remarksController = TextEditingController();
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -60,22 +61,21 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
     }
   }
 
-  saveExpense(dynamic newExpense) {
-    // context.read<StateProvider>().setTransactionList(newExpense);
+  updateExpense(dynamic updatedExpense) {
+    dbHelper.updateTransaction(updatedExpense);
   }
 
-  saveIncome(dynamic newIncome) {
-    // context.read<StateProvider>().setTransactionList(newIncome);
+  updateIncome(dynamic updatedIncome) {
+    dbHelper.updateTransaction(updatedIncome);
   }
 
   clear() {
     setState(() {
-      // titleController.clear();
-      // amountController.clear();
-      // descriptionController.clear();
+      titleController.clear();
+      amountController.clear();
+      remarksController.clear();
       // selectedDate = null;
       // print(titleController.text);
-      print(selectedCategory);
     });
   }
 
@@ -89,7 +89,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
     _transactionType = transactionToUpdate['type'];
     titleController.text = transactionToUpdate['title'];
     amountController.text = transactionToUpdate['amount'].toString();
-    descriptionController.text =
+    remarksController.text =
         transactionToUpdate['remarks'].toString().length > 0
             ? transactionToUpdate['remarks'].toString()
             : "";
@@ -165,9 +165,6 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: titleController,
-                  onChanged: (val) {
-                    title = val.trim();
-                  },
                   decoration: const InputDecoration(
                     hintText: "Title",
                   ),
@@ -181,9 +178,6 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: amountController,
-                  onChanged: (val) {
-                    amount = val.trim();
-                  },
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     hintText: "Amount",
@@ -197,10 +191,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
-                  controller: descriptionController,
-                  onChanged: (val) {
-                    description = val.trim();
-                  },
+                  controller: remarksController,
                   maxLines: 2,
                   decoration: const InputDecoration(
                     hintText: "Description",
@@ -428,37 +419,41 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                     ElevatedButton(
                       onPressed: () {
                         if (_transactionType == "Expense") {
-                          var newExpense = {
+                          var updatedExpense = {
+                            "_id": transactionToUpdate['id'],
                             "type": "Expense",
-                            "title": title,
-                            "remarks": description,
-                            "amount": amount,
+                            "title": titleController.text,
+                            "remarks": remarksController.text,
+                            "amount": amountController.text,
                             "dateTime": selectedDate.toString(),
                             "time": selectedTime.toString(),
                             "category": selectedCategory,
                           };
 
                           if (formKey.currentState!.validate()) {
-                            saveExpense(newExpense);
-                            sendSnackBar(context, "Expense Added");
+                            updateExpense(updatedExpense);
+
+                            sendSnackBar(context, "Transaction Updated");
                             Navigator.of(context).pop();
                           } else {
                             sendSnackBar(context, "Provide necessary info");
                           }
                         } else {
-                          var newIncome = {
+                          var updatedIncome = {
+                            "_id": transactionToUpdate['id'],
                             "type": "Income",
-                            "title": title,
-                            "remarks": description,
-                            "amount": amount,
+                            "title": titleController.text,
+                            "remarks": remarksController.text,
+                            "amount": amountController.text,
                             "dateTime": selectedDate.toString(),
                             "time": selectedTime.toString(),
                             "category": selectedCategory.toString(),
                           };
 
                           if (formKey.currentState!.validate()) {
-                            saveIncome(newIncome);
-                            sendSnackBar(context, "Income Added");
+                            updateIncome(updatedIncome);
+
+                            sendSnackBar(context, "Transaction Updated");
                             Navigator.of(context).pop();
                           } else {
                             sendSnackBar(context, "Provide necessary info");
