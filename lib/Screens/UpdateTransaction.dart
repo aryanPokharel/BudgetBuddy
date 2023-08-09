@@ -1,5 +1,4 @@
 import 'package:budget_buddy/Constants/FormatTimeOfDay.dart';
-import 'package:budget_buddy/Constants/GetCategoryData.dart';
 import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
@@ -62,11 +61,11 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
   }
 
   updateExpense(dynamic updatedExpense) {
-    dbHelper.updateTransaction(updatedExpense);
+    context.read<StateProvider>().updateTransaction(updatedExpense);
   }
 
   updateIncome(dynamic updatedIncome) {
-    dbHelper.updateTransaction(updatedIncome);
+    context.read<StateProvider>().updateTransaction(updatedIncome);
   }
 
   clear() {
@@ -420,7 +419,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                       onPressed: () {
                         if (_transactionType == "Expense") {
                           var updatedExpense = {
-                            "_id": transactionToUpdate['id'],
+                            "_id": transactionToUpdate['id'] as int,
                             "type": "Expense",
                             "title": titleController.text,
                             "remarks": remarksController.text,
@@ -440,7 +439,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                           }
                         } else {
                           var updatedIncome = {
-                            "_id": transactionToUpdate['id'],
+                            "_id": transactionToUpdate['id'] as int,
                             "type": "Income",
                             "title": titleController.text,
                             "remarks": remarksController.text,

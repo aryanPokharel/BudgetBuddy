@@ -120,7 +120,7 @@ class StateProvider with ChangeNotifier {
 
   List<dynamic> get transactionList => _transactionList;
 
-  void getTransactionsFromDb() async {
+  getTransactionsFromDb() async {
     totalExpenses = 0;
     totalIncome = 0;
     List<Map<String, dynamic>> transactions =
@@ -165,21 +165,13 @@ class StateProvider with ChangeNotifier {
     getTransactionsFromDb();
   }
 
-  // void updateTransaction(transactionToUpdate) async {
-  //   dbHelper.updateTransaction(
-  //     transactionToUpdate(transactionToUpdate),
-  //   );
-  // }
-
-  void updateTransaction(updatedTransaction) async {
+  updateTransaction(dynamic updatedTransaction) async {
     await dbHelper.updateTransaction(updatedTransaction);
-    notifyListeners();
     getTransactionsFromDb();
-    notifyListeners();
   }
 
-  void deleteTransaction(dynamic transactionId) async {
-    dbHelper.deleteTransaction(transactionId);
+  deleteTransaction(dynamic transactionId) async {
+    await dbHelper.deleteTransaction(transactionId);
     getTransactionsFromDb();
   }
 

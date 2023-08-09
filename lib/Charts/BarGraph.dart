@@ -68,7 +68,7 @@ class _FlBarGraphState extends State<FlBarGraph> {
     for (var incomeCategory in incomeCategoryTypes) {
       incomeBarGraphData.add(
         BarChartGroupData(
-          x: incomeCategory['id'],
+          x: k,
           barRods: [
             BarChartRodData(
               toY: incomeCategory['totalAmount'],
