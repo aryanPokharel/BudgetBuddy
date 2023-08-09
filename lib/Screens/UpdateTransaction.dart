@@ -18,7 +18,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
   var amount;
   var description;
 
-  DateTime? selectedDate = DateTime.now();
+  late DateTime selectedDate;
   dynamic dateToSend;
 
   var titleController = TextEditingController();
@@ -70,16 +70,17 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
 
   clear() {
     setState(() {
-      titleController.clear();
-      amountController.clear();
-      descriptionController.clear();
-      selectedDate = null;
+      // titleController.clear();
+      // amountController.clear();
+      // descriptionController.clear();
+      // selectedDate = null;
+      // print(titleController.text);
+      print(selectedCategory);
     });
   }
 
   dynamic selectedCategory;
   late TimeOfDay selectedTime;
-
   @override
   void initState() {
     super.initState();
@@ -92,28 +93,16 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
         transactionToUpdate['remarks'].toString().length > 0
             ? transactionToUpdate['remarks'].toString()
             : "";
-    selectedDate = DateTime.parse(transactionToUpdate['dateTime']);
 
+    selectedDate = DateTime.parse(transactionToUpdate['dateTime']);
     selectedTime = parseStringToTimeOfDay(transactionToUpdate['time']);
   }
 
   @override
   Widget build(BuildContext context) {
-    dynamic transactionToUpdate =
-        Provider.of<StateProvider>(context).transactionToUpdate;
-
-    // _transactionType = transactionToUpdate['type'];
-    // titleController.text = transactionToUpdate['title'];
-    // amountController.text = transactionToUpdate['amount'].toString();
-    // descriptionController.text =
-    //     transactionToUpdate['remarks'].toString().length > 0
-    //         ? transactionToUpdate['remarks'].toString()
-    //         : "";
-    // selectedDate = DateTime.parse(transactionToUpdate['dateTime']);
-
-    // selectedTime = parseStringToTimeOfDay(transactionToUpdate['time']);
-
     var categoryList = Provider.of<StateProvider>(context).categoryList;
+    dynamic transactionToUpdate =
+        Provider.of<StateProvider>(context, listen: false).transactionToUpdate;
     var expenseCategories = categoryList
         .where((category) => category['type'] == 'Expense')
         .toList();
@@ -121,9 +110,17 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
     var incomeCategories =
         categoryList.where((category) => category['type'] == 'Income').toList();
 
-    selectedCategory = _transactionType == 'Expense'
-        ? expenseCategories[0]['id']
-        : incomeCategories[0]['id'];
+    setState(() {
+      selectedCategory = _transactionType == 'Expense'
+          ? expenseCategories.firstWhere(
+              (element) => element['id'] == transactionToUpdate['category'],
+              orElse: () => null,
+            )
+          : incomeCategories.firstWhere(
+              (element) => element['id'] == transactionToUpdate['category'],
+              orElse: () => null,
+            );
+    });
 
     DateTime now = DateTime.now();
     DateTime yesterday = now.subtract(const Duration(days: 1));
@@ -309,7 +306,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                           child: Text(
                             selectedDate == null
                                 ? 'Please select a date'
-                                : "${selectedDate!.year}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.day.toString().padLeft(2, '0')}",
+                                : "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}",
                             style: const TextStyle(
                               fontSize: 18,
                               color: Colors.white,
@@ -363,9 +360,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                 ),
                 const SizedBox(height: 20),
                 DropdownButtonFormField<dynamic>(
-                  value: _transactionType == "Expense"
-                      ? expenseCategories[0]
-                      : incomeCategories[0],
+                  value: selectedCategory,
                   items: _transactionType == "Expense"
                       ? expenseCategories.map((dynamic category) {
                           final Map<String, dynamic> categoryData =
