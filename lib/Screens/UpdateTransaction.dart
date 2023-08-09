@@ -73,8 +73,6 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
       titleController.clear();
       amountController.clear();
       remarksController.clear();
-      // selectedDate = null;
-      // print(titleController.text);
     });
   }
 
@@ -88,10 +86,10 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
     _transactionType = transactionToUpdate['type'];
     titleController.text = transactionToUpdate['title'];
     amountController.text = transactionToUpdate['amount'].toString();
-    remarksController.text =
-        transactionToUpdate['remarks'].toString().length > 0
-            ? transactionToUpdate['remarks'].toString()
-            : "";
+    remarksController.text = transactionToUpdate['remarks'] != null &&
+            transactionToUpdate['remarks'].toString().isNotEmpty
+        ? transactionToUpdate['remarks'].toString()
+        : "";
 
     selectedDate = DateTime.parse(transactionToUpdate['dateTime']);
     selectedTime = parseStringToTimeOfDay(transactionToUpdate['time']);
@@ -139,6 +137,8 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
         });
       }
     }
+
+    bool typeChanged = false;
 
     return Scaffold(
       backgroundColor: _transactionType == "Expense"
@@ -193,7 +193,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                   controller: remarksController,
                   maxLines: 2,
                   decoration: const InputDecoration(
-                    hintText: "Description",
+                    hintText: "Remarks",
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -294,9 +294,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
-                            selectedDate == null
-                                ? 'Please select a date'
-                                : "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}",
+                            "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}",
                             style: const TextStyle(
                               fontSize: 18,
                               color: Colors.white,
@@ -331,9 +329,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
-                            selectedDate == null
-                                ? 'Please select time'
-                                : selectedTime.format(context),
+                            selectedTime.format(context),
                             style: const TextStyle(
                               fontSize: 18,
                               color: Colors.white,
@@ -403,11 +399,18 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                           );
                         }).toList(),
                   onChanged: (value) {
+                    typeChanged = true;
                     selectedCategory = value['id'];
                   },
                   decoration: const InputDecoration(
                     hintText: "Select category",
                   ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Select a category';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(
                   height: 16,
@@ -426,9 +429,10 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                             "amount": amountController.text,
                             "dateTime": selectedDate.toString(),
                             "time": selectedTime.toString(),
-                            "category": selectedCategory,
+                            "category": typeChanged
+                                ? selectedCategory.toString()
+                                : selectedCategory['id'].toString(),
                           };
-
                           if (formKey.currentState!.validate()) {
                             updateExpense(updatedExpense);
 
@@ -446,7 +450,9 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                             "amount": amountController.text,
                             "dateTime": selectedDate.toString(),
                             "time": selectedTime.toString(),
-                            "category": selectedCategory.toString(),
+                            "category": typeChanged
+                                ? selectedCategory.toString()
+                                : selectedCategory['id'].toString(),
                           };
 
                           if (formKey.currentState!.validate()) {

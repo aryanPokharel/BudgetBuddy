@@ -1,4 +1,5 @@
 import 'package:budget_buddy/Constants/FormatDate.dart';
+import 'package:budget_buddy/Constants/LooksEmpty.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -48,7 +49,7 @@ class _FlLineGraphState extends State<FlLineGraph> {
     return Column(
       children: [
         Text(
-          "Expense vs Income over time",
+          "Through The Month",
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 18,
@@ -77,15 +78,7 @@ class _FlLineGraphState extends State<FlLineGraph> {
                     ],
                   ),
                 )
-              : Center(
-                  child: Text(
-                    "Insert a transaction",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
+              : EmptyListWidget(),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
