@@ -1,3 +1,4 @@
+import 'package:budget_buddy/Constants/FormatTimeOfDay.dart';
 import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
@@ -77,12 +78,13 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
   }
 
   dynamic selectedCategory;
-  TimeOfDay selectedTime = TimeOfDay.now();
-  @override
-  Widget build(BuildContext context) {
-    dynamic transactionToUpdate =
-        Provider.of<StateProvider>(context).transactionToUpdate;
+  late TimeOfDay selectedTime;
 
+  @override
+  void initState() {
+    super.initState();
+    dynamic transactionToUpdate =
+        Provider.of<StateProvider>(context, listen: false).transactionToUpdate;
     _transactionType = transactionToUpdate['type'];
     titleController.text = transactionToUpdate['title'];
     amountController.text = transactionToUpdate['amount'].toString();
@@ -91,9 +93,25 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
             ? transactionToUpdate['remarks'].toString()
             : "";
     selectedDate = DateTime.parse(transactionToUpdate['dateTime']);
-    // selectedTime = TimeOfDay(
-    //     hour: int.parse(transactionToUpdate['time'].split(":")[0]),
-    //     minute: int.parse(transactionToUpdate['time'].split(":")[1]));
+
+    selectedTime = parseStringToTimeOfDay(transactionToUpdate['time']);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    dynamic transactionToUpdate =
+        Provider.of<StateProvider>(context).transactionToUpdate;
+
+    // _transactionType = transactionToUpdate['type'];
+    // titleController.text = transactionToUpdate['title'];
+    // amountController.text = transactionToUpdate['amount'].toString();
+    // descriptionController.text =
+    //     transactionToUpdate['remarks'].toString().length > 0
+    //         ? transactionToUpdate['remarks'].toString()
+    //         : "";
+    // selectedDate = DateTime.parse(transactionToUpdate['dateTime']);
+
+    // selectedTime = parseStringToTimeOfDay(transactionToUpdate['time']);
 
     var categoryList = Provider.of<StateProvider>(context).categoryList;
     var expenseCategories = categoryList
