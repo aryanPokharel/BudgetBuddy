@@ -52,14 +52,14 @@ dev_dependencies:
 flutter_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/icons/infographicLogo.png"
-  adaptive_icon_background: "assets/icons/infographicLogo.png"
-  adaptive_icon_foreground: "assets/icons/infographicLogo.png"
-  android_mdpi: "assets/icons/infographicLogo.png"
-  android_hdpi: "assets/icons/infographicLogo.png"
-  android_xhdpi: "assets/icons/infographicLogo.png"
-  android_xxhdpi: "assets/icons/infographicLogo.png"
-  android_xxxhdpi: "assets/icons/infographicLogo.png"
+  image_path: "assets/icons/finalLogo.png"
+  adaptive_icon_background: "assets/icons/finalLogo.png"
+  adaptive_icon_foreground: "assets/icons/finalLogo.png"
+  android_mdpi: "assets/icons/finalLogo.png"
+  android_hdpi: "assets/icons/finalLogo.png"
+  android_xhdpi: "assets/icons/finalLogo.png"
+  android_xxhdpi: "assets/icons/finalLogo.png"
+  android_xxxhdpi: "assets/icons/finalLogo.png"
   ios_size: 200
 
   
