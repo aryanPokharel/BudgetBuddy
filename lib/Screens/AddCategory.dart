@@ -134,7 +134,6 @@ class _AddCategoryState extends State<AddCategory> {
                   if (formKey.currentState!.validate()) {
                     String hexCodePoint =
                         '0x${selectedIcon.codePoint.toRadixString(16).toUpperCase()}';
-                    print(hexCodePoint);
 
                     saveCategory(_categoryType, title, hexCodePoint);
 

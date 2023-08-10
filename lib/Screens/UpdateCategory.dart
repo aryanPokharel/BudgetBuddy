@@ -13,24 +13,31 @@ class UpdateCategory extends StatefulWidget {
 }
 
 class _UpdateCategoryState extends State<UpdateCategory> {
+  late dynamic categoryToUpdate;
   var titleController = TextEditingController();
   var iconController = TextEditingController();
   late String _categoryType;
-  late IconData selectedIcon = Icons.local_dining;
+  late IconData selectedIcon;
   updateCategory(dynamic updatedCategory) {
+    print("Updating category");
     context.read<StateProvider>().updateCategory(updatedCategory);
+    print("Category Updated");
   }
 
   @override
-  Widget build(BuildContext context) {
-    dynamic categoryToUpdate =
+  void initState() {
+    super.initState();
+    categoryToUpdate =
         Provider.of<StateProvider>(context, listen: false).categoryToUpdate;
     ;
 
     _categoryType = categoryToUpdate['type'] as String;
     titleController.text = categoryToUpdate['title'] as String;
     selectedIcon = getReadableIconData(categoryToUpdate['icon']);
+  }
 
+  @override
+  Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
     return Scaffold(
       backgroundColor: _categoryType == "Expense"
@@ -138,12 +145,15 @@ class _UpdateCategoryState extends State<UpdateCategory> {
                   if (formKey.currentState!.validate()) {
                     // saveCategory(
                     //     _categoryType, titleController.text, selectedIcon);
-                    // var updatedCategory = {
-                    //    "_id": categoryToUpdate['id'] as int,
-                    //         "type": "Income",
-                    //         "title": titleController.text.trim(),
-                    // }
-                    // updateCategory(updatedCategory);
+                    String hexCodePoint =
+                        '0x${selectedIcon.codePoint.toRadixString(16).toUpperCase()}';
+                    var updatedCategory = {
+                      "_id": categoryToUpdate['id'],
+                      "type": _categoryType,
+                      "title": titleController.text.trim(),
+                      "icon": hexCodePoint,
+                    };
+                    updateCategory(updatedCategory);
                     sendSnackBar(context, "Category Updated");
                     Navigator.of(context).pop();
                   } else {
