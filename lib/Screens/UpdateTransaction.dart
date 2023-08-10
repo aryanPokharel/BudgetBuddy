@@ -14,10 +14,6 @@ class UpdateTransaction extends StatefulWidget {
 class _UpdateTransactionState extends State<UpdateTransaction> {
   late String _transactionType;
 
-  var title;
-  var amount;
-  var description;
-
   late DateTime selectedDate;
   dynamic dateToSend;
 
@@ -424,9 +420,9 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                           var updatedExpense = {
                             "_id": transactionToUpdate['id'] as int,
                             "type": "Expense",
-                            "title": titleController.text,
-                            "remarks": remarksController.text,
-                            "amount": amountController.text,
+                            "title": titleController.text.trim(),
+                            "remarks": remarksController.text.trim(),
+                            "amount": amountController.text.trim(),
                             "dateTime": selectedDate.toString(),
                             "time": selectedTime.toString(),
                             "category": typeChanged
@@ -445,9 +441,9 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                           var updatedIncome = {
                             "_id": transactionToUpdate['id'] as int,
                             "type": "Income",
-                            "title": titleController.text,
-                            "remarks": remarksController.text,
-                            "amount": amountController.text,
+                            "title": titleController.text.trim(),
+                            "remarks": remarksController.text.trim(),
+                            "amount": amountController.text.trim(),
                             "dateTime": selectedDate.toString(),
                             "time": selectedTime.toString(),
                             "category": typeChanged

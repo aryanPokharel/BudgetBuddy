@@ -24,6 +24,7 @@ class _InsightsPageState extends State<InsightsPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              IconButton(onPressed: () {}, icon: Icon(Icons.dining)),
               SizedBox(
                 height: 20,
               ),

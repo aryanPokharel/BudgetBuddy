@@ -44,7 +44,8 @@ class DatabaseHelper {
 
   // Creates the categories and transactions tables
   Future _onCreate(Database db, int version) async {
-    await db.execute('''
+    await db.execute(
+        '''
     CREATE TABLE $tableCategories (
       $colId INTEGER PRIMARY KEY,
       $colType TEXT NOT NULL,
@@ -72,7 +73,8 @@ class DatabaseHelper {
       await db.insert(tableCategories, categoryData);
     }
 
-    await db.execute('''
+    await db.execute(
+        '''
       CREATE TABLE $tableTransactions (
         $colId INTEGER PRIMARY KEY,
         $colType TEXT NOT NULL,

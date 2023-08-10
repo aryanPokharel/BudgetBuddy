@@ -1,32 +1,35 @@
 import 'package:budget_buddy/Constants/IconList.dart';
+import 'package:budget_buddy/Constants/ParseIconData.dart';
 import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class AddCategory extends StatefulWidget {
-  const AddCategory({super.key});
+class UpdateCategory extends StatefulWidget {
+  const UpdateCategory({super.key});
 
   @override
-  State<AddCategory> createState() => _AddCategoryState();
+  State<UpdateCategory> createState() => _UpdateCategoryState();
 }
 
-class _AddCategoryState extends State<AddCategory> {
+class _UpdateCategoryState extends State<UpdateCategory> {
   var titleController = TextEditingController();
   var iconController = TextEditingController();
-
-  String _categoryType = "Expense";
-
-  var title;
-
-  IconData selectedIcon = Icons.local_dining;
+  late String _categoryType;
+  late IconData selectedIcon = Icons.local_dining;
+  updateCategory(dynamic updatedCategory) {
+    context.read<StateProvider>().updateCategory(updatedCategory);
+  }
 
   @override
   Widget build(BuildContext context) {
-    saveCategory(dynamic type, dynamic title, dynamic icon) async {
-      var newCategory = {"type": type, "title": title, "icon": icon};
-      context.read<StateProvider>().setCategoryList(newCategory);
-    }
+    dynamic categoryToUpdate =
+        Provider.of<StateProvider>(context, listen: false).categoryToUpdate;
+    ;
+
+    _categoryType = categoryToUpdate['type'] as String;
+    titleController.text = categoryToUpdate['title'] as String;
+    selectedIcon = getReadableIconData(categoryToUpdate['icon']);
 
     final formKey = GlobalKey<FormState>();
     return Scaffold(
@@ -47,6 +50,7 @@ class _AddCategoryState extends State<AddCategory> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // myIcon,
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -61,7 +65,7 @@ class _AddCategoryState extends State<AddCategory> {
                 child: TextFormField(
                   controller: titleController,
                   onChanged: (val) {
-                    title = val.trim();
+                    titleController.text = val.trim();
                   },
                   decoration: const InputDecoration(
                     hintText: "Title",
@@ -132,11 +136,15 @@ class _AddCategoryState extends State<AddCategory> {
                 ),
                 onPressed: () {
                   if (formKey.currentState!.validate()) {
-                    String hexCodePoint =
-                        '0x${selectedIcon.codePoint.toRadixString(16).toUpperCase()}';
-                    saveCategory(_categoryType, title, hexCodePoint);
-
-                    sendSnackBar(context, "Category Added");
+                    // saveCategory(
+                    //     _categoryType, titleController.text, selectedIcon);
+                    // var updatedCategory = {
+                    //    "_id": categoryToUpdate['id'] as int,
+                    //         "type": "Income",
+                    //         "title": titleController.text.trim(),
+                    // }
+                    // updateCategory(updatedCategory);
+                    sendSnackBar(context, "Category Updated");
                     Navigator.of(context).pop();
                   } else {
                     sendSnackBar(context, "Provide the title");
@@ -148,7 +156,7 @@ class _AddCategoryState extends State<AddCategory> {
                     Icon(Icons.save),
                     SizedBox(width: 8),
                     Text(
-                      'Save Category',
+                      'Update Category',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,

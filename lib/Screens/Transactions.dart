@@ -67,6 +67,7 @@ class _ExpensesState extends State<Expenses> {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
+        heroTag: "addTransaction",
         onPressed: () {
           Navigator.pushNamed(context, "/addTransaction");
         },
@@ -205,8 +206,6 @@ class _ExpensesState extends State<Expenses> {
                                         ],
                                       ),
                                       onTap: () async {
-                                        // sendSnackBar(context,
-                                        //     "Update feature comming soon");
                                         var test = await context
                                             .read<StateProvider>()
                                             .setTransactionToUpdate(

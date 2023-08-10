@@ -19,6 +19,8 @@ class StateProvider with ChangeNotifier {
   dynamic totalExpenses = 0;
   dynamic totalIncome = 0;
 
+// Category states
+  dynamic toUpdateCategoryId = 0;
   final List<dynamic> _categoryList = [];
 
   void getCategoriesFromDb() async {
@@ -59,6 +61,7 @@ class StateProvider with ChangeNotifier {
         "icon": cat[DatabaseHelper.colIcon],
       };
       _categoryList.add(newCategory);
+
       notifyListeners();
     }
   }
@@ -75,7 +78,23 @@ class StateProvider with ChangeNotifier {
     getCategoriesFromDb();
   }
 
-  void deleteCategory(String categoryType, String categoryTitle) async {
+  dynamic categoryToUpdate = {};
+  updateCategory(dynamic updatedCategory) async {
+    await dbHelper.updateCategory(updatedCategory);
+    getCategoriesFromDb();
+  }
+
+  Future setCategoryToUpdate(dynamic categoryId) async {
+    toUpdateCategoryId = categoryId;
+    var receivedCategory = await dbHelper.getCategoryById(categoryId);
+    categoryToUpdate['id'] = receivedCategory!['_id'];
+    categoryToUpdate['type'] = receivedCategory['type'];
+    categoryToUpdate['title'] = receivedCategory['title'];
+    categoryToUpdate['icon'] = receivedCategory['icon'];
+    notifyListeners();
+  }
+
+  deleteCategory(String categoryType, String categoryTitle) async {
     for (var cat in categoryList) {
       if (cat['type'] == categoryType && cat['title'] == categoryTitle) {
         dbHelper.deleteCategory(cat['id']);

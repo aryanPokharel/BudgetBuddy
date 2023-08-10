@@ -53,6 +53,7 @@ class _CategoriesState extends State<Categories> {
       child: Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         floatingActionButton: FloatingActionButton(
+          heroTag: "addCategory",
           onPressed: () {
             Navigator.pushNamed(context, "/addCategory");
           },
@@ -130,8 +131,15 @@ class _CategoriesState extends State<Categories> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: ListTile(
+                                onTap: () async {
+                                  var test = await context
+                                      .read<StateProvider>()
+                                      .setCategoryToUpdate(
+                                          expenseCategories[index]['id']);
+                                  Navigator.pushNamed(
+                                      context, '/updateCategory');
+                                },
                                 onLongPress: () => {
-                                  print(expenseCategories[index]['icon']),
                                   TypeToDelete = "Expense",
                                   TitleToDelete =
                                       expenseCategories[index]['title'],
@@ -280,6 +288,14 @@ class _CategoriesState extends State<Categories> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: ListTile(
+                                onTap: () async {
+                                  var test = await context
+                                      .read<StateProvider>()
+                                      .setCategoryToUpdate(
+                                          incomeCategories[index]['id']);
+                                  Navigator.pushNamed(
+                                      context, '/updateCategory');
+                                },
                                 onLongPress: () => {
                                   TypeToDelete = "Income",
                                   TitleToDelete =

@@ -13,10 +13,6 @@ class AddTransaction extends StatefulWidget {
 class _AddTransactionState extends State<AddTransaction> {
   String _transactionType = "Expense";
 
-  var title;
-  var amount;
-  var description;
-
   DateTime? selectedDate = DateTime.now();
   dynamic dateToSend;
 
@@ -135,9 +131,6 @@ class _AddTransactionState extends State<AddTransaction> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: titleController,
-                  onChanged: (val) {
-                    title = val.trim();
-                  },
                   decoration: const InputDecoration(
                     hintText: "Title",
                   ),
@@ -151,9 +144,6 @@ class _AddTransactionState extends State<AddTransaction> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: amountController,
-                  onChanged: (val) {
-                    amount = val.trim();
-                  },
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
                     hintText: "Amount",
@@ -168,9 +158,6 @@ class _AddTransactionState extends State<AddTransaction> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: descriptionController,
-                  onChanged: (val) {
-                    description = val.trim();
-                  },
                   maxLines: 2,
                   decoration: const InputDecoration(
                     hintText: "Description",
@@ -402,9 +389,9 @@ class _AddTransactionState extends State<AddTransaction> {
                         if (_transactionType == "Expense") {
                           var newExpense = {
                             "type": "Expense",
-                            "title": title,
-                            "remarks": description,
-                            "amount": amount,
+                            "title": titleController.text.trim(),
+                            "remarks": descriptionController.text.trim(),
+                            "amount": amountController.text.trim(),
                             "dateTime": selectedDate.toString(),
                             "time": selectedTime.toString(),
                             "category": selectedCategory,
@@ -420,9 +407,9 @@ class _AddTransactionState extends State<AddTransaction> {
                         } else {
                           var newIncome = {
                             "type": "Income",
-                            "title": title,
-                            "remarks": description,
-                            "amount": amount,
+                            "title": titleController.text.trim(),
+                            "remarks": descriptionController.text.trim(),
+                            "amount": amountController.text.trim(),
                             "dateTime": selectedDate.toString(),
                             "time": selectedTime.toString(),
                             "category": selectedCategory.toString(),
