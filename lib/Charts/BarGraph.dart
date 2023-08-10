@@ -120,22 +120,29 @@ class _FlBarGraphState extends State<FlBarGraph> {
                   fontSize: 18,
                 ),
               ),
-              SizedBox(
-                height: 300,
-                child: BarChart(
-                  BarChartData(
-                    alignment: BarChartAlignment.spaceAround,
-                    maxY: widget.type == "Expense"
-                        ? highestExpenseAmount + 100
-                        : highestIncomeAmount + 100,
-                    titlesData: FlTitlesData(show: true),
-                    borderData: FlBorderData(show: true),
-                    barGroups: widget.type == "Expense"
-                        ? expenseBarGraphData
-                        : incomeBarGraphData,
-                  ),
-                ),
-              ),
+              ((widget.type == "Expense" && expenseCategoryTypes.length < 1) ||
+                      (widget.type == "Income" &&
+                          incomeCategoryTypes.length < 1))
+                  ? SizedBox(
+                      height: 300,
+                      child: DancingDoge(),
+                    )
+                  : SizedBox(
+                      height: 300,
+                      child: BarChart(
+                        BarChartData(
+                          alignment: BarChartAlignment.spaceAround,
+                          maxY: widget.type == "Expense"
+                              ? highestExpenseAmount + 100
+                              : highestIncomeAmount + 100,
+                          titlesData: FlTitlesData(show: true),
+                          borderData: FlBorderData(show: true),
+                          barGroups: widget.type == "Expense"
+                              ? expenseBarGraphData
+                              : incomeBarGraphData,
+                        ),
+                      ),
+                    ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
