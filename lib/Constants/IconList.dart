@@ -21,6 +21,7 @@ List<IconData> iconList = [
   Icons.money,
   Icons.directions_bike,
   Icons.remove_circle,
+  Icons.currency_exchange,
   Icons.add_circle,
   Icons.find_replace,
   Icons.question_mark,
