@@ -31,8 +31,8 @@ class _UpdateCategoryState extends State<UpdateCategory> {
         Provider.of<StateProvider>(context, listen: false).categoryToUpdate;
     ;
 
-    _categoryType = categoryToUpdate['type'] as String;
-    titleController.text = categoryToUpdate['title'] as String;
+    _categoryType = categoryToUpdate['type'];
+    titleController.text = categoryToUpdate['title'];
     selectedIcon = getReadableIconData(categoryToUpdate['icon']);
   }
 
@@ -57,7 +57,6 @@ class _UpdateCategoryState extends State<UpdateCategory> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // myIcon,
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -71,9 +70,6 @@ class _UpdateCategoryState extends State<UpdateCategory> {
                 key: formKey,
                 child: TextFormField(
                   controller: titleController,
-                  onChanged: (val) {
-                    titleController.text = val.trim();
-                  },
                   decoration: const InputDecoration(
                     hintText: "Title",
                     border: OutlineInputBorder(
@@ -143,8 +139,6 @@ class _UpdateCategoryState extends State<UpdateCategory> {
                 ),
                 onPressed: () {
                   if (formKey.currentState!.validate()) {
-                    // saveCategory(
-                    //     _categoryType, titleController.text, selectedIcon);
                     String hexCodePoint =
                         '0x${selectedIcon.codePoint.toRadixString(16).toUpperCase()}';
                     var updatedCategory = {
