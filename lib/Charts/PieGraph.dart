@@ -1,4 +1,5 @@
 import 'package:budget_buddy/Constants/GetCategoryData.dart';
+import 'package:budget_buddy/Constants/LooksEmpty.dart';
 import 'package:budget_buddy/Constants/TryParseDouble.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -21,8 +22,6 @@ class _FlPieGraphState extends State<FlPieGraph> {
         expenseCategoryTitles.add(category['title']);
       }
     }
-    print("Expense categories titles");
-    print(expenseCategoryTitles);
   }
 
   List<String> incomeCategoryTitles = [];
@@ -33,21 +32,6 @@ class _FlPieGraphState extends State<FlPieGraph> {
         incomeCategoryTitles.add(category['title']);
       }
     }
-    print("Income categories titles");
-    print(incomeCategoryTitles);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    var expenseCategoryTypes =
-        Provider.of<StateProvider>(context, listen: false).expenseCategoryTypes;
-    var incomeCategoryTypes =
-        Provider.of<StateProvider>(context, listen: false).incomeCategoryTypes;
-    // print(expenseCategoryTypes);
-    // getExCatTitle(expenseCategoryTypes.length);
-    // getInCatTitle(incomeCategoryTypes.length);
   }
 
   @override
@@ -91,72 +75,67 @@ class _FlPieGraphState extends State<FlPieGraph> {
         "title": "Expense"
       },
     ];
-    return Column(
-      children: [
-        SizedBox(
-          height: 10,
-        ),
-        Text(
-          "Income vs Expense",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-        ),
-        SizedBox(
-          height: 300,
-          child: PieChart(
-            PieChartData(
-              sections: pieChartData,
-              borderData: FlBorderData(
-                show: false,
+    return (totalExpenses == 0 && totalIncome == 0)
+        ? SizedBox(height: 300, child: EmptyListWidget())
+        : Column(
+            children: [
+              SizedBox(
+                height: 10,
               ),
-              centerSpaceRadius: 40,
-              sectionsSpace: 2,
-            ),
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                for (int i = 0; i < data.length; i++)
-                  Row(
+              SizedBox(
+                height: 300,
+                child: PieChart(
+                  PieChartData(
+                    sections: pieChartData,
+                    borderData: FlBorderData(
+                      show: false,
+                    ),
+                    centerSpaceRadius: 40,
+                    sectionsSpace: 2,
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        width: 12,
-                        height: 12,
-                        color: data[i]["color"],
-                      ),
-                      SizedBox(width: 4),
-                      i == 0
-                          ? Text(
-                              "${data[i]["title"]}  : ${data[i]["value"]}%",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            )
-                          : Text(
-                              "${data[i]["title"]} : ${data[i]["value"]}%",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
+                      for (int i = 0; i < data.length; i++)
+                        Row(
+                          children: [
+                            Container(
+                              width: 12,
+                              height: 12,
+                              color: data[i]["color"],
                             ),
+                            SizedBox(width: 4),
+                            i == 0
+                                ? Text(
+                                    "${data[i]["title"]}  : ${data[i]["value"]}%",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  )
+                                : Text(
+                                    "${data[i]["title"]} : ${data[i]["value"]}%",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                          ],
+                        ),
+                      SizedBox(
+                        height: 10,
+                      ),
                     ],
                   ),
-                SizedBox(
-                  height: 10,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ],
-    );
+                ],
+              ),
+            ],
+          );
   }
 }

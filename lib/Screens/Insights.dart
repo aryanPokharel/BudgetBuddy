@@ -24,7 +24,6 @@ class _InsightsPageState extends State<InsightsPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              IconButton(onPressed: () {}, icon: Icon(Icons.dining)),
               SizedBox(
                 height: 20,
               ),
@@ -38,6 +37,16 @@ class _InsightsPageState extends State<InsightsPage> {
               ),
               SizedBox(
                 height: 20,
+              ),
+              Text(
+                "Income vs Expense",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+              SizedBox(
+                height: 10,
               ),
               graphType == "Pie" ? FlPieGraph() : FlLineGraph(),
               Divider(

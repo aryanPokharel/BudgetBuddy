@@ -46,22 +46,16 @@ class _FlLineGraphState extends State<FlLineGraph> {
       {"color": Colors.green, "title": "Income"},
       {"color": Colors.red, "title": "Expense"},
     ];
-    return Column(
-      children: [
-        Text(
-          "Through The Month",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 18,
-          ),
-        ),
-        SizedBox(
-          height: 10,
-        ),
-        SizedBox(
-          height: 400,
-          child: transactionList.length > 0
-              ? LineChart(
+    return (transactionList.length < 1)
+        ? SizedBox(height: 300, child: EmptyListWidget())
+        : Column(
+            children: [
+              SizedBox(
+                height: 10,
+              ),
+              SizedBox(
+                height: 400,
+                child: LineChart(
                   LineChartData(
                     gridData: FlGridData(show: false),
                     titlesData: FlTitlesData(show: true),
@@ -77,50 +71,49 @@ class _FlLineGraphState extends State<FlLineGraph> {
                       ),
                     ],
                   ),
-                )
-              : EmptyListWidget(),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                for (int i = 0; i < data.length; i++)
-                  Row(
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        width: 12,
-                        height: 12,
-                        color: data[i]["color"],
-                      ),
-                      SizedBox(width: 4),
-                      i == 0
-                          ? Text(
-                              "${data[i]["title"]}",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            )
-                          : Text(
-                              "${data[i]["title"]}",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
+                      for (int i = 0; i < data.length; i++)
+                        Row(
+                          children: [
+                            Container(
+                              width: 12,
+                              height: 12,
+                              color: data[i]["color"],
                             ),
+                            SizedBox(width: 4),
+                            i == 0
+                                ? Text(
+                                    "${data[i]["title"]}",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  )
+                                : Text(
+                                    "${data[i]["title"]}",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                          ],
+                        ),
+                      SizedBox(
+                        height: 10,
+                      ),
                     ],
                   ),
-                SizedBox(
-                  height: 10,
-                ),
-              ],
-            ),
-          ],
-        ),
-      ],
-    );
+                ],
+              ),
+            ],
+          );
   }
 }
