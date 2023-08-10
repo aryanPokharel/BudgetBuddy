@@ -1,5 +1,5 @@
+import 'package:budget_buddy/Constants/DancingDoge.dart';
 import 'package:budget_buddy/Constants/GetCategoryData.dart';
-import 'package:budget_buddy/Constants/LooksEmpty.dart';
 import 'package:budget_buddy/Constants/TryParseDouble.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -76,7 +76,7 @@ class _FlPieGraphState extends State<FlPieGraph> {
       },
     ];
     return (totalExpenses == 0 && totalIncome == 0)
-        ? SizedBox(height: 300, child: EmptyListWidget())
+        ? SizedBox(height: 300, child: DancingDoge())
         : Column(
             children: [
               SizedBox(

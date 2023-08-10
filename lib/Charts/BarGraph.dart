@@ -1,5 +1,5 @@
 import 'package:budget_buddy/Constants/ColorList.dart';
-import 'package:budget_buddy/Constants/LooksEmpty.dart';
+import 'package:budget_buddy/Constants/DancingDoge.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -107,7 +107,7 @@ class _FlBarGraphState extends State<FlBarGraph> {
     return (transactionList.length < 1)
         ? SizedBox(
             height: 300,
-            child: EmptyListWidget(),
+            child: DancingDoge(),
           )
         : Column(
             children: [

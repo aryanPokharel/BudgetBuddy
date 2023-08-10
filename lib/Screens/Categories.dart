@@ -66,7 +66,7 @@ class _CategoriesState extends State<Categories> {
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(40),
             child: Container(
-              color: Colors.white,
+              color: Color.fromARGB(255, 227, 227, 227),
               child: const TabBar(
                 indicatorColor: Colors.green,
                 tabs: [
@@ -99,317 +99,325 @@ class _CategoriesState extends State<Categories> {
           children: [
             expenseCategories.isEmpty
                 ? const EmptyListWidget()
-                : Stack(
-                    children: [
-                      ListView.builder(
-                        itemCount: expenseCategories.length + 1,
-                        itemBuilder: (context, index) {
-                          if (index == expenseCategories.length) {
-                            // Show an empty card after the last item in the list
-                            return const Padding(
-                              padding: EdgeInsets.all(8),
-                              child: Card(
-                                color: Colors.transparent,
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(20),
-                                    bottomRight: Radius.circular(20),
-                                  ),
-                                ),
-                                child: SizedBox(
-                                  height: 70, // Adjust the height as needed
-                                ),
-                              ),
-                            );
-                          }
-                          return Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Card(
-                              color: Colors.blue[50],
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: ListTile(
-                                onTap: () async {
-                                  var test = await context
-                                      .read<StateProvider>()
-                                      .setCategoryToUpdate(
-                                          expenseCategories[index]['id']);
-                                  Navigator.pushNamed(
-                                      context, '/updateCategory');
-                                },
-                                onLongPress: () => {
-                                  TypeToDelete = "Expense",
-                                  TitleToDelete =
-                                      expenseCategories[index]['title'],
-                                  _toggleOverlay(),
-                                },
-                                leading: Icon(
-                                  IconData(
-                                      int.parse(
-                                          expenseCategories[index]['icon']),
-                                      fontFamily: 'MaterialIcons'),
-                                  color: Colors.brown,
-                                  size: 26,
-                                ),
-                                title: Center(
-                                  child: Text(
-                                    expenseCategories[index]['title'],
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
+                : Container(
+                    color: Color.fromARGB(255, 203, 203, 203),
+                    child: Stack(
+                      children: [
+                        ListView.builder(
+                          itemCount: expenseCategories.length + 1,
+                          itemBuilder: (context, index) {
+                            if (index == expenseCategories.length) {
+                              // Show an empty card after the last item in the list
+                              return const Padding(
+                                padding: EdgeInsets.all(8),
+                                child: Card(
+                                  color: Colors.transparent,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(20),
+                                      bottomRight: Radius.circular(20),
                                     ),
                                   ),
-                                ),
-                                trailing: IconButton(
-                                  icon: const Icon(
-                                    Icons.delete,
-                                    color: Color.fromARGB(255, 190, 42, 32),
+                                  child: SizedBox(
+                                    height: 70, // Adjust the height as needed
                                   ),
-                                  onPressed: () {
-                                    TypeToDelete = "Expense";
-                                    TitleToDelete =
-                                        expenseCategories[index]['title'];
-                                    _toggleOverlay();
-                                  },
                                 ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                      if (_showOverlay)
-                        GestureDetector(
-                          onTap: _toggleOverlay,
-                          child: Container(
-                            color: Colors.black.withOpacity(0.5),
-                            alignment: Alignment.center,
-                            child: SizedBox(
-                              height: MediaQuery.of(context).size.height / 4,
+                              );
+                            }
+                            return Padding(
+                              padding: const EdgeInsets.all(8),
                               child: Card(
-                                color: Colors.white,
-                                elevation: 4,
-                                margin: const EdgeInsets.all(16.0),
+                                color: Colors.blue[50],
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Text(
-                                      'Deleting Item!',
-                                      style: TextStyle(
-                                        fontSize: 18.0,
+                                child: ListTile(
+                                  onTap: () async {
+                                    var test = await context
+                                        .read<StateProvider>()
+                                        .setCategoryToUpdate(
+                                            expenseCategories[index]['id']);
+                                    Navigator.pushNamed(
+                                        context, '/updateCategory');
+                                  },
+                                  onLongPress: () => {
+                                    TypeToDelete = "Expense",
+                                    TitleToDelete =
+                                        expenseCategories[index]['title'],
+                                    _toggleOverlay(),
+                                  },
+                                  leading: Icon(
+                                    IconData(
+                                        int.parse(
+                                            expenseCategories[index]['icon']),
+                                        fontFamily: 'MaterialIcons'),
+                                    color: Colors.brown,
+                                    size: 26,
+                                  ),
+                                  title: Center(
+                                    child: Text(
+                                      expenseCategories[index]['title'],
+                                      style: const TextStyle(
+                                        fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    const SizedBox(height: 4.0),
-                                    const Text(
-                                      'Are you sure?',
-                                      style: TextStyle(fontSize: 14.0),
+                                  ),
+                                  trailing: IconButton(
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Color.fromARGB(255, 190, 42, 32),
                                     ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: [
-                                        ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.green,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                          ),
-                                          onPressed: () {
-                                            deleteCategory();
-                                            _toggleOverlay();
-                                          },
-                                          child: const Text('Yes'),
+                                    onPressed: () {
+                                      TypeToDelete = "Expense";
+                                      TitleToDelete =
+                                          expenseCategories[index]['title'];
+                                      _toggleOverlay();
+                                    },
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        if (_showOverlay)
+                          GestureDetector(
+                            onTap: _toggleOverlay,
+                            child: Container(
+                              color: Colors.black.withOpacity(0.5),
+                              alignment: Alignment.center,
+                              child: SizedBox(
+                                height: MediaQuery.of(context).size.height / 4,
+                                child: Card(
+                                  color: Colors.white,
+                                  elevation: 4,
+                                  margin: const EdgeInsets.all(16.0),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      const Text(
+                                        'Deleting Item!',
+                                        style: TextStyle(
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                        ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.red,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
+                                      ),
+                                      const SizedBox(height: 4.0),
+                                      const Text(
+                                        'Are you sure?',
+                                        style: TextStyle(fontSize: 14.0),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.green,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
                                             ),
+                                            onPressed: () {
+                                              deleteCategory();
+                                              _toggleOverlay();
+                                            },
+                                            child: const Text('Yes'),
                                           ),
-                                          onPressed: () {
-                                            _toggleOverlay();
-                                          },
-                                          child: const Text('No'),
-                                        ),
-                                      ],
-                                    )
-                                  ],
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.red,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              _toggleOverlay();
+                                            },
+                                            child: const Text('No'),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
             incomeCategories.isEmpty
                 ? const EmptyListWidget()
-                : Stack(
-                    children: [
-                      ListView.builder(
-                        itemCount: incomeCategories.length + 1,
-                        itemBuilder: (context, index) {
-                          if (index == incomeCategories.length) {
-                            // Show an empty card after the last item in the list
-                            return const Padding(
-                              padding: EdgeInsets.all(8),
-                              child: Card(
-                                color: Colors.transparent,
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(20),
-                                    bottomRight: Radius.circular(20),
-                                  ),
-                                ),
-                                child: SizedBox(
-                                  height: 70,
-                                ),
-                              ),
-                            );
-                          }
-                          return Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Card(
-                              color: Colors.green[50],
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: ListTile(
-                                onTap: () async {
-                                  var test = await context
-                                      .read<StateProvider>()
-                                      .setCategoryToUpdate(
-                                          incomeCategories[index]['id']);
-                                  Navigator.pushNamed(
-                                      context, '/updateCategory');
-                                },
-                                onLongPress: () => {
-                                  TypeToDelete = "Income",
-                                  TitleToDelete =
-                                      incomeCategories[index]['title'],
-                                  _toggleOverlay()
-                                },
-                                leading: Icon(
-                                  IconData(
-                                      int.parse(
-                                          incomeCategories[index]['icon']),
-                                      fontFamily: 'MaterialIcons'),
-                                  color: Colors.brown,
-                                  size: 26,
-                                ),
-                                title: Center(
-                                  child: Text(
-                                    incomeCategories[index]['title'],
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
+                : Container(
+                    color: Color.fromARGB(255, 203, 203, 203),
+                    child: Stack(
+                      children: [
+                        ListView.builder(
+                          itemCount: incomeCategories.length + 1,
+                          itemBuilder: (context, index) {
+                            if (index == incomeCategories.length) {
+                              // Show an empty card after the last item in the list
+                              return const Padding(
+                                padding: EdgeInsets.all(8),
+                                child: Card(
+                                  color: Colors.transparent,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(20),
+                                      bottomRight: Radius.circular(20),
                                     ),
                                   ),
-                                ),
-                                trailing: IconButton(
-                                  icon: const Icon(
-                                    Icons.delete,
-                                    color: Color.fromARGB(255, 190, 42, 32),
+                                  child: SizedBox(
+                                    height: 70,
                                   ),
-                                  onPressed: () {
-                                    TypeToDelete = "Income";
-                                    TitleToDelete =
-                                        incomeCategories[index]['title'];
-                                    _toggleOverlay();
-                                  },
                                 ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                      if (_showOverlay)
-                        GestureDetector(
-                          onTap: _toggleOverlay,
-                          child: Container(
-                            color: Colors.black.withOpacity(0.5),
-                            alignment: Alignment.center,
-                            child: SizedBox(
-                              height: MediaQuery.of(context).size.height / 4,
+                              );
+                            }
+                            return Padding(
+                              padding: const EdgeInsets.all(8),
                               child: Card(
-                                color: Colors.white,
-                                elevation: 4,
-                                margin: const EdgeInsets.all(16.0),
+                                color: Colors.green[50],
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    const Text(
-                                      'Deleting Item!',
-                                      style: TextStyle(
-                                        fontSize: 18.0,
+                                child: ListTile(
+                                  onTap: () async {
+                                    var test = await context
+                                        .read<StateProvider>()
+                                        .setCategoryToUpdate(
+                                            incomeCategories[index]['id']);
+                                    Navigator.pushNamed(
+                                        context, '/updateCategory');
+                                  },
+                                  onLongPress: () => {
+                                    TypeToDelete = "Income",
+                                    TitleToDelete =
+                                        incomeCategories[index]['title'],
+                                    _toggleOverlay()
+                                  },
+                                  leading: Icon(
+                                    IconData(
+                                        int.parse(
+                                            incomeCategories[index]['icon']),
+                                        fontFamily: 'MaterialIcons'),
+                                    color: Colors.brown,
+                                    size: 26,
+                                  ),
+                                  title: Center(
+                                    child: Text(
+                                      incomeCategories[index]['title'],
+                                      style: const TextStyle(
+                                        fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    const SizedBox(height: 4.0),
-                                    const Text(
-                                      'Are you sure?',
-                                      style: TextStyle(fontSize: 14.0),
+                                  ),
+                                  trailing: IconButton(
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Color.fromARGB(255, 190, 42, 32),
                                     ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: [
-                                        ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.green,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                          ),
-                                          onPressed: () {
-                                            deleteCategory();
-                                            _toggleOverlay();
-                                          },
-                                          child: const Text('Yes'),
+                                    onPressed: () {
+                                      TypeToDelete = "Income";
+                                      TitleToDelete =
+                                          incomeCategories[index]['title'];
+                                      _toggleOverlay();
+                                    },
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        if (_showOverlay)
+                          GestureDetector(
+                            onTap: _toggleOverlay,
+                            child: Container(
+                              color: Colors.black.withOpacity(0.5),
+                              alignment: Alignment.center,
+                              child: SizedBox(
+                                height: MediaQuery.of(context).size.height / 4,
+                                child: Card(
+                                  color: Colors.white,
+                                  elevation: 4,
+                                  margin: const EdgeInsets.all(16.0),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      const Text(
+                                        'Deleting Item!',
+                                        style: TextStyle(
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                        ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.red,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
+                                      ),
+                                      const SizedBox(height: 4.0),
+                                      const Text(
+                                        'Are you sure?',
+                                        style: TextStyle(fontSize: 14.0),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.green,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
                                             ),
+                                            onPressed: () {
+                                              deleteCategory();
+                                              _toggleOverlay();
+                                            },
+                                            child: const Text('Yes'),
                                           ),
-                                          onPressed: () {
-                                            _toggleOverlay();
-                                          },
-                                          child: const Text('No'),
-                                        ),
-                                      ],
-                                    )
-                                  ],
+                                          ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.red,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              _toggleOverlay();
+                                            },
+                                            child: const Text('No'),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
           ],
         ),

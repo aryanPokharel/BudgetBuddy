@@ -74,8 +74,11 @@ class _ExpensesState extends State<Expenses> {
         child: const Icon(Icons.currency_rupee_rounded),
       ),
       body: transactionList.isEmpty
-          ? const Center(
-              child: EmptyListWidget(),
+          ? Container(
+              color: Color.fromARGB(255, 203, 203, 203),
+              child: Center(
+                child: EmptyListWidget(),
+              ),
             )
           : Stack(
               children: [
@@ -102,7 +105,9 @@ class _ExpensesState extends State<Expenses> {
                             padding: const EdgeInsets.symmetric(vertical: 8),
                             child: Center(
                               child: Text(
-                                checkTodayYesterday(date.toString()),
+                                checkTodayYesterday(
+                                  date.toString(),
+                                ),
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 18,

@@ -19,6 +19,7 @@ class _InsightsPageState extends State<InsightsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 203, 203, 203),
       body: Center(
         child: SingleChildScrollView(
           child: Column(

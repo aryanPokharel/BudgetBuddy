@@ -84,6 +84,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       bottomNavigationBar: SalomonBottomBar(
+          backgroundColor: Color.fromARGB(255, 203, 203, 203),
           currentIndex: _selectedIndex,
           selectedItemColor: appTheme,
           unselectedItemColor: const Color(0xff757575),
