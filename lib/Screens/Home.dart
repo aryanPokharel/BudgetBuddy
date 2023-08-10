@@ -64,6 +64,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    // context.read<StateProvider>().fetchAllData();
     context.read<StateProvider>().getCategoriesFromDb();
     context.read<StateProvider>().getTransactionsFromDb();
   }
@@ -266,7 +267,7 @@ class _HomePageState extends State<HomePage> {
         child: IndexedStack(
           index: _selectedIndex,
           children: [
-            Expenses(),
+            Transactions(),
             Categories(),
             InsightsPage(),
           ],

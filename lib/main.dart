@@ -1,3 +1,4 @@
+import 'package:budget_buddy/Constants/DancingDoge.dart';
 import 'package:budget_buddy/Screens/AddCategory.dart';
 import 'package:budget_buddy/Screens/AddTransaction.dart';
 import 'package:budget_buddy/Screens/Settings.dart';
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     dynamic appTheme = Provider.of<StateProvider>(context).appTheme;
+
     return MaterialApp(
       theme: ThemeData(
         // for default, use defalutAppTheme
@@ -33,6 +35,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
+        '/loadingData': (context) => DancingDoge(),
         '/': (context) => const SplashScreen(),
         '/addTransaction': (context) => const AddTransaction(),
         '/addCategory': (context) => const AddCategory(),

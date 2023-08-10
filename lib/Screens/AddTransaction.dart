@@ -20,6 +20,10 @@ class _AddTransactionState extends State<AddTransaction> {
   var amountController = TextEditingController();
   var descriptionController = TextEditingController();
 
+  var title;
+  var amount;
+  var remarks;
+
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -76,6 +80,7 @@ class _AddTransactionState extends State<AddTransaction> {
   TimeOfDay selectedTime = TimeOfDay.now();
   @override
   Widget build(BuildContext context) {
+    dynamic appTheme = Provider.of<StateProvider>(context).appTheme;
     var categoryList = Provider.of<StateProvider>(context).categoryList;
     var expenseCategories = categoryList
         .where((category) => category['type'] == 'Expense')
@@ -160,7 +165,7 @@ class _AddTransactionState extends State<AddTransaction> {
                   controller: descriptionController,
                   maxLines: 2,
                   decoration: const InputDecoration(
-                    hintText: "Description",
+                    hintText: "Remarks",
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -316,6 +321,19 @@ class _AddTransactionState extends State<AddTransaction> {
                   ),
                 ),
                 const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/addCategory');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: appTheme,
+                    minimumSize: Size(400, 30),
+                  ),
+                  child: Text("Create Category"),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
                 DropdownButtonFormField<dynamic>(
                   value: _transactionType == "Expense"
                       ? expenseCategories[0]
@@ -378,6 +396,19 @@ class _AddTransactionState extends State<AddTransaction> {
                     hintText: "Select category",
                   ),
                 ),
+                // SizedBox(
+                //   width: MediaQuery.of(context).size.width * 0.1,
+                //   child: IconButton(
+                //     onPressed: () {
+                //       Navigator.pushNamed(context, '/addCategory');
+                //     },
+                //     icon: Icon(
+                //       Icons.add,
+                //       color: Colors.red,
+                //       size: 28,
+                //     ),
+                //   ),
+                // ),
                 const SizedBox(
                   height: 16,
                 ),

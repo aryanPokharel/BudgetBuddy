@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:budget_buddy/Screens/Home.dart';
+import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -13,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-
+    context.read<StateProvider>().fetchAllData();
     Timer(
       const Duration(seconds: 2),
       () {

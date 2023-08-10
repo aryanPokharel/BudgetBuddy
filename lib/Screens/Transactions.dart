@@ -7,14 +7,14 @@ import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class Expenses extends StatefulWidget {
-  const Expenses({super.key});
+class Transactions extends StatefulWidget {
+  const Transactions({super.key});
 
   @override
-  State<Expenses> createState() => _ExpensesState();
+  State<Transactions> createState() => _TransactionsState();
 }
 
-class _ExpensesState extends State<Expenses> {
+class _TransactionsState extends State<Transactions> {
   bool _showOverlay = false;
 
   void _toggleOverlay() {
@@ -28,11 +28,12 @@ class _ExpensesState extends State<Expenses> {
     context.read<StateProvider>().deleteTransaction(toDelete);
   }
 
-  @override
-  void initState() {
-    super.initState();
-    context.read<StateProvider>().getTransactionsFromDb();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   context.read<StateProvider>().fetchAllData();
+  //   Provider.of<StateProvider>(context).dataLoaded;
+  // }
 
   @override
   Widget build(BuildContext context) {

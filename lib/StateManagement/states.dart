@@ -4,6 +4,18 @@ import 'package:budget_buddy/Db/DbHelper.dart';
 import 'package:flutter/material.dart';
 
 class StateProvider with ChangeNotifier {
+  bool dataLoaded = false;
+// Fetch All Data
+  fetchAllData() async {
+    await getCategoriesFromDb();
+    await getTransactionsFromDb();
+    await categorizeTransactions();
+    await giveTitlesToCategoryTypes();
+
+    dataLoaded = true;
+    notifyListeners();
+  }
+
 // Importing the databaseHelper
   final dbHelper = DatabaseHelper.instance;
 
@@ -23,7 +35,7 @@ class StateProvider with ChangeNotifier {
   dynamic toUpdateCategoryId = 0;
   final List<dynamic> _categoryList = [];
 
-  void getCategoriesFromDb() async {
+  getCategoriesFromDb() async {
     List<Map<String, dynamic>> cats = await dbHelper.getAllCategories();
     var expenseCheckList = 0;
     var incomeCheckList = 0;
@@ -101,7 +113,6 @@ class StateProvider with ChangeNotifier {
         getCategoriesFromDb();
       }
     }
-
     notifyListeners();
   }
 

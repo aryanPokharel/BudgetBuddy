@@ -26,12 +26,12 @@ class _CategoriesState extends State<Categories> {
     });
   }
 
-  @override
-  void initState() {
-    // Call the super.initState() to ensure the state is properly initialized.
-    super.initState();
-    context.read<StateProvider>().getCategoriesFromDb();
-  }
+  // @override
+  // void initState() {
+  //   // Call the super.initState() to ensure the state is properly initialized.
+  //   super.initState();
+  //   context.read<StateProvider>().getCategoriesFromDb();
+  // }
 
   @override
   Widget build(BuildContext context) {
