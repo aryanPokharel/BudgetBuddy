@@ -329,7 +329,7 @@ class _AddTransactionState extends State<AddTransaction> {
                     backgroundColor: appTheme,
                     minimumSize: Size(400, 30),
                   ),
-                  child: Text("Create Category"),
+                  child: Text("Create Own Category"),
                 ),
                 SizedBox(
                   height: 10,
