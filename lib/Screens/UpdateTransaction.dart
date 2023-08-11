@@ -87,8 +87,12 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
         ? transactionToUpdate['remarks'].toString()
         : "";
 
-    selectedDate = DateTime.parse(transactionToUpdate['dateTime']);
-    selectedTime = parseStringToTimeOfDay(transactionToUpdate['time']);
+    selectedDate = DateTime.parse(
+      transactionToUpdate['dateTime'],
+    );
+    selectedTime = parseStringToTimeOfDay(
+      transactionToUpdate['time'],
+    );
   }
 
   @override

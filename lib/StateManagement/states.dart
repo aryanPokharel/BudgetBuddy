@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 
 class StateProvider with ChangeNotifier {
   bool dataLoaded = false;
+
+  dynamic monthList = [];
+
 // Fetch All Data
   fetchAllData() async {
     await getCategoriesFromDb();
