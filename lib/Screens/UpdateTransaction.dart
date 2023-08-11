@@ -93,6 +93,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
 
   @override
   Widget build(BuildContext context) {
+    dynamic appTheme = Provider.of<StateProvider>(context).appTheme;
     var categoryList = Provider.of<StateProvider>(context).categoryList;
     dynamic transactionToUpdate =
         Provider.of<StateProvider>(context, listen: false).transactionToUpdate;
@@ -341,6 +342,19 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                   ),
                 ),
                 const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/addCategory');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: appTheme,
+                    minimumSize: Size(400, 30),
+                  ),
+                  child: Text("Create Own Category"),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
                 DropdownButtonFormField<dynamic>(
                   value: selectedCategory,
                   items: _transactionType == "Expense"

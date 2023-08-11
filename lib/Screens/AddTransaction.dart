@@ -396,19 +396,6 @@ class _AddTransactionState extends State<AddTransaction> {
                     hintText: "Select category",
                   ),
                 ),
-                // SizedBox(
-                //   width: MediaQuery.of(context).size.width * 0.1,
-                //   child: IconButton(
-                //     onPressed: () {
-                //       Navigator.pushNamed(context, '/addCategory');
-                //     },
-                //     icon: Icon(
-                //       Icons.add,
-                //       color: Colors.red,
-                //       size: 28,
-                //     ),
-                //   ),
-                // ),
                 const SizedBox(
                   height: 16,
                 ),

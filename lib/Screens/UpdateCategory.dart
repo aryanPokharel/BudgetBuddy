@@ -19,9 +19,7 @@ class _UpdateCategoryState extends State<UpdateCategory> {
   late String _categoryType;
   late IconData selectedIcon;
   updateCategory(dynamic updatedCategory) {
-    print("Updating category");
     context.read<StateProvider>().updateCategory(updatedCategory);
-    print("Category Updated");
   }
 
   @override
