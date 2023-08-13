@@ -1,4 +1,5 @@
 import 'package:budget_buddy/Constants/DateName.dart';
+
 import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:budget_buddy/Screens/Categories.dart';
 import 'package:budget_buddy/Screens/Insights.dart';
@@ -71,18 +72,14 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> items = [
-      "August",
-      "September",
-      "May",
-      "June",
-      "July",
-    ];
+    dynamic monthList = Provider.of<StateProvider>(context).monthList;
 
     dynamic appTheme = Provider.of<StateProvider>(context).appTheme;
     dynamic totalExpenses = Provider.of<StateProvider>(context).totalExpenses;
     dynamic totalIncome = Provider.of<StateProvider>(context).totalIncome;
 
+    final CarouselController _monthListCarouselController =
+        CarouselController();
     return Scaffold(
       bottomNavigationBar: SalomonBottomBar(
           backgroundColor: Color.fromARGB(255, 203, 203, 203),
@@ -135,12 +132,13 @@ class _HomePageState extends State<HomePage> {
         title: SizedBox(
           height: 50,
           child: CarouselSlider.builder(
-            itemCount: items.length,
+            carouselController: _monthListCarouselController,
+            itemCount: monthList.length,
             itemBuilder: (BuildContext context, int index, int realIndex) {
               return Container(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  items[index],
+                  monthList[index],
                   style: const TextStyle(
                     fontSize: 24.0,
                     fontWeight: FontWeight.bold,
@@ -153,6 +151,10 @@ class _HomePageState extends State<HomePage> {
               height: 200,
               enableInfiniteScroll: true,
               enlargeCenterPage: true,
+              onPageChanged: (int index, CarouselPageChangedReason reason) {
+                // Callback function to get the current index when the page changes
+                print("Current Index: $index");
+              },
             ),
           ),
         ),
@@ -160,6 +162,7 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.cloud_upload),
             onPressed: () {
+              // indexToMonth(2);
               sendSnackBar(context, "Cloud backup comming soon!");
             },
           ),

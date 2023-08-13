@@ -1,4 +1,5 @@
 import 'package:budget_buddy/Constants/ConstantValues.dart';
+import 'package:budget_buddy/Constants/DateName.dart';
 import 'package:budget_buddy/Constants/TryParseDouble.dart';
 import 'package:budget_buddy/Db/DbHelper.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ class StateProvider with ChangeNotifier {
     await getTransactionsFromDb();
     await categorizeTransactions();
     await giveTitlesToCategoryTypes();
-
+    buildMonthList();
     dataLoaded = true;
     notifyListeners();
   }
@@ -79,6 +80,7 @@ class StateProvider with ChangeNotifier {
 
       notifyListeners();
     }
+    buildMonthList();
   }
 
   List<dynamic> get categoryList => _categoryList;
@@ -91,6 +93,7 @@ class StateProvider with ChangeNotifier {
     };
     await dbHelper.insertCategory(category);
     getCategoriesFromDb();
+    buildMonthList();
   }
 
   dynamic categoryToUpdate = {};
@@ -180,6 +183,7 @@ class StateProvider with ChangeNotifier {
       }
     }
     categorizeTransactions();
+    buildMonthList();
     notifyListeners();
   }
 
@@ -196,6 +200,7 @@ class StateProvider with ChangeNotifier {
 
     await dbHelper.insertTransaction(transaction);
     getTransactionsFromDb();
+    buildMonthList();
   }
 
   updateTransaction(dynamic updatedTransaction) async {
@@ -280,6 +285,33 @@ class StateProvider with ChangeNotifier {
       notifyListeners();
     }
     giveTitlesToCategoryTypes();
+    notifyListeners();
+  }
+
+  // Listing the available  months :
+  buildMonthList() {
+    monthList.clear();
+    _transactionList.forEach((transaction) {
+      String dateTimeString = transaction['dateTime'];
+      DateTime dateTime = DateTime.parse(dateTimeString);
+      int month = dateTime.month;
+      if (monthList.length < 1) {
+        monthList.add(getMonthName(month));
+        notifyListeners();
+      } else {
+        bool found = false;
+        for (var monthInList in monthList) {
+          if (monthInList == getMonthName(month)) {
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          monthList.add(getMonthName(month));
+          notifyListeners();
+        }
+      }
+    });
     notifyListeners();
   }
 
