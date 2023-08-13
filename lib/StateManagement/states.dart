@@ -7,8 +7,6 @@ import 'package:flutter/material.dart';
 class StateProvider with ChangeNotifier {
   bool dataLoaded = false;
 
-  dynamic monthList = [];
-
 // Fetch All Data
   fetchAllData() async {
     await getCategoriesFromDb();
@@ -173,6 +171,7 @@ class StateProvider with ChangeNotifier {
         "time": tran[DatabaseHelper.colTime],
         "category": tran[DatabaseHelper.colCategory],
       };
+
       _transactionList.add(newTransaction);
       if (newTransaction['type'] == "Expense") {
         totalExpenses += double.parse(newTransaction['amount']);
@@ -289,29 +288,52 @@ class StateProvider with ChangeNotifier {
   }
 
   // Listing the available  months :
+  var selectedMonth;
+
+  dynamic monthList = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
   buildMonthList() {
     monthList.clear();
     _transactionList.forEach((transaction) {
-      String dateTimeString = transaction['dateTime'];
-      DateTime dateTime = DateTime.parse(dateTimeString);
-      int month = dateTime.month;
       if (monthList.length < 1) {
-        monthList.add(getMonthName(month));
+        monthList.add(
+          getMonthName(transaction['dateTime']),
+        );
         notifyListeners();
       } else {
         bool found = false;
         for (var monthInList in monthList) {
-          if (monthInList == getMonthName(month)) {
+          if (monthInList == getMonthName(transaction['dateTime'])) {
             found = true;
             break;
           }
         }
         if (!found) {
-          monthList.add(getMonthName(month));
+          monthList.add(
+            getMonthName(transaction['dateTime']),
+          );
           notifyListeners();
         }
       }
     });
+    selectedMonth = monthList[0];
+    notifyListeners();
+  }
+
+  setSelectedMonth(int index) {
+    selectedMonth = monthList[index];
     notifyListeners();
   }
 

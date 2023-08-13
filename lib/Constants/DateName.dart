@@ -48,7 +48,9 @@ String checkTodayYesterday(String inputDate) {
   }
 }
 
-String getMonthName(int month) {
+String getMonthName(String dateTimeString) {
+  DateTime dateTime = DateTime.parse(dateTimeString);
+  int month = dateTime.month;
   switch (month) {
     case 1:
       return "January";

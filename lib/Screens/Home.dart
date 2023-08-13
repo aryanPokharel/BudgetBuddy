@@ -1,6 +1,5 @@
 import 'package:budget_buddy/Constants/DateName.dart';
 
-import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:budget_buddy/Screens/Categories.dart';
 import 'package:budget_buddy/Screens/Insights.dart';
 import 'package:budget_buddy/Screens/Transactions.dart';
@@ -153,7 +152,8 @@ class _HomePageState extends State<HomePage> {
               enlargeCenterPage: true,
               onPageChanged: (int index, CarouselPageChangedReason reason) {
                 // Callback function to get the current index when the page changes
-                print("Current Index: $index");
+
+                context.read<StateProvider>().setSelectedMonth(index);
               },
             ),
           ),
@@ -162,8 +162,8 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: const Icon(Icons.cloud_upload),
             onPressed: () {
-              // indexToMonth(2);
-              sendSnackBar(context, "Cloud backup comming soon!");
+              // sendSnackBar(context, "Cloud backup comming soon!");
+              print(monthList);
             },
           ),
         ],

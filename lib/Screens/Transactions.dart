@@ -3,6 +3,7 @@ import 'package:budget_buddy/Constants/FormatDate.dart';
 import 'package:budget_buddy/Constants/FormatTimeOfDay.dart';
 import 'package:budget_buddy/Constants/GetCategoryData.dart';
 import 'package:budget_buddy/Constants/LooksEmpty.dart';
+import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -40,26 +41,40 @@ class _TransactionsState extends State<Transactions> {
     List<dynamic> transactionList =
         Provider.of<StateProvider>(context).transactionList;
     Map<String, List<Map<String, dynamic>>> groupedTransactions = {};
-    if (transactionList.isNotEmpty) {
-      transactionList.sort(
+
+    List<dynamic> thisMonthTransactions = [];
+
+    for (var transaction in transactionList) {
+      if (getMonthName(transaction['dateTime']) ==
+          Provider.of<StateProvider>(context).selectedMonth) {
+        thisMonthTransactions.add(transaction);
+      }
+    }
+
+    dynamic selectedMonth = Provider.of<StateProvider>(context).selectedMonth;
+    if (thisMonthTransactions.isNotEmpty) {
+      thisMonthTransactions.sort(
         (a, b) => b['dateTime'].compareTo(
           a['dateTime'],
         ),
       );
-      var referenceDate = DateTime.parse(transactionList[0]['dateTime']);
+      var referenceDate = DateTime.parse(thisMonthTransactions[0]['dateTime']);
       groupedTransactions = {
-        formatDate(referenceDate): [transactionList[0]]
+        formatDate(referenceDate): [thisMonthTransactions[0]]
       };
 
-      for (var i = 1; i < transactionList.length; i++) {
-        var transactionDate = DateTime.parse(transactionList[i]['dateTime']);
+      for (var i = 1; i < thisMonthTransactions.length; i++) {
+        var transactionDate =
+            DateTime.parse(thisMonthTransactions[i]['dateTime']);
         var transactionDateFormatted = formatDate(transactionDate);
 
         if (transactionDateFormatted == formatDate(referenceDate)) {
           groupedTransactions[transactionDateFormatted]!
-              .add(transactionList[i]);
+              .add(thisMonthTransactions[i]);
         } else {
-          groupedTransactions[transactionDateFormatted] = [transactionList[i]];
+          groupedTransactions[transactionDateFormatted] = [
+            thisMonthTransactions[i]
+          ];
           referenceDate = transactionDate;
         }
       }
@@ -216,8 +231,10 @@ class _TransactionsState extends State<Transactions> {
                                             .read<StateProvider>()
                                             .setTransactionToUpdate(
                                                 transaction['id']);
-                                        Navigator.pushNamed(
-                                            context, '/updateTransaction');
+                                        // Navigator.pushNamed(
+                                        //     context, '/updateTransaction');
+                                        sendSnackBar(
+                                            context, selectedMonth.toString());
                                       },
                                       onLongPress: () {
                                         toDelete = transaction['id'];
