@@ -363,8 +363,6 @@ class StateProvider with ChangeNotifier {
 
     // For this month data
 
-    print("$selectedMonth transaction list: $thisMonthTransactionList");
-
     for (var transaction in thisMonthTransactionList) {
       if (transaction['type'] == 'Expense') {
         // For expense categories
@@ -403,11 +401,9 @@ class StateProvider with ChangeNotifier {
           });
         }
       }
-      // notifyListeners();
+      notifyListeners();
     }
-    // print(
-    //     "$selectedMonth expenseCategoryTypes : $thisMonthExpenseCategoryTypes");
-    // print("$selectedMonth incomeCategoryTypes : $thisMonthIncomeCategoryTypes");
+
     giveTitlesToCategoryTypes();
     notifyListeners();
   }
@@ -429,6 +425,7 @@ class StateProvider with ChangeNotifier {
     "November",
     "December"
   ];
+
   buildMonthList() {
     monthList.clear();
     _transactionList.forEach((transaction) {
@@ -456,7 +453,8 @@ class StateProvider with ChangeNotifier {
 
   setSelectedMonth(int index) {
     selectedMonth = monthList[index];
-    notifyListeners();
+    getTransactionsFromDb();
+    // notifyListeners();
   }
 
   // End of Transaction States

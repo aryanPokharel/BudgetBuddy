@@ -3,7 +3,6 @@ import 'package:budget_buddy/Constants/FormatDate.dart';
 import 'package:budget_buddy/Constants/FormatTimeOfDay.dart';
 import 'package:budget_buddy/Constants/GetCategoryData.dart';
 import 'package:budget_buddy/Constants/LooksEmpty.dart';
-import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -42,14 +41,15 @@ class _TransactionsState extends State<Transactions> {
         Provider.of<StateProvider>(context).transactionList;
     Map<String, List<Map<String, dynamic>>> groupedTransactions = {};
     dynamic selectedMonth = Provider.of<StateProvider>(context).selectedMonth;
-    List<dynamic> thisMonthTransactions = [];
+    List<dynamic> thisMonthTransactions =
+        Provider.of<StateProvider>(context).thisMonthTransactionList;
 
-    for (var transaction in transactionList) {
-      if (getMonthName(transaction['dateTime']) ==
-          Provider.of<StateProvider>(context).selectedMonth) {
-        thisMonthTransactions.add(transaction);
-      }
-    }
+    // for (var transaction in transactionList) {
+    //   if (getMonthName(transaction['dateTime']) ==
+    //       Provider.of<StateProvider>(context).selectedMonth) {
+    //     thisMonthTransactions.add(transaction);
+    //   }
+    // }
 
     if (thisMonthTransactions.isNotEmpty) {
       thisMonthTransactions.sort(
@@ -230,10 +230,8 @@ class _TransactionsState extends State<Transactions> {
                                             .read<StateProvider>()
                                             .setTransactionToUpdate(
                                                 transaction['id']);
-                                        // Navigator.pushNamed(
-                                        //     context, '/updateTransaction');
-                                        sendSnackBar(
-                                            context, selectedMonth.toString());
+                                        Navigator.pushNamed(
+                                            context, '/updateTransaction');
                                       },
                                       onLongPress: () {
                                         toDelete = transaction['id'];

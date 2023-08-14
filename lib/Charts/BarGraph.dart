@@ -111,7 +111,9 @@ class _FlBarGraphState extends State<FlBarGraph> {
         {
           "color":
               appThemeColors[expenseCategoryTypes.indexOf(expenseCategory)],
-          "title": expenseCateogoryTypesTitles[l]
+          "title": expenseCateogoryTypesTitles.isNotEmpty
+              ? expenseCateogoryTypesTitles[l]
+              : "No Title"
         },
       );
       l++;
@@ -123,7 +125,9 @@ class _FlBarGraphState extends State<FlBarGraph> {
       incomeIndices.add(
         {
           "color": appThemeColors[incomeCategoryTypes.indexOf(incomeCategory)],
-          "title": incomeCateogoryTypesTitles[m]
+          "title": incomeCateogoryTypesTitles.isNotEmpty
+              ? incomeCateogoryTypesTitles[m]
+              : "No Title"
         },
       );
       m++;
@@ -186,7 +190,9 @@ class _FlBarGraphState extends State<FlBarGraph> {
         {
           "color": appThemeColors[
               thisMonthExpenseCategoryTypes.indexOf(thisMonthExpenseCategory)],
-          "title": thisMonthExpenseCateogoryTypesTitles[p]
+          "title": thisMonthExpenseCateogoryTypesTitles.isNotEmpty
+              ? thisMonthExpenseCateogoryTypesTitles[p]
+              : "N/A"
         },
       );
       p++;
@@ -199,14 +205,14 @@ class _FlBarGraphState extends State<FlBarGraph> {
         {
           "color": appThemeColors[
               thisMonthIncomeCategoryTypes.indexOf(thisMonthIncomeCategory)],
-          "title": thisMonthIncomeCateogoryTypesTitles[q]
+          "title": thisMonthIncomeCateogoryTypesTitles.isNotEmpty
+              ? thisMonthIncomeCateogoryTypesTitles[q]
+              : "N/A"
         },
       );
       q++;
     }
 
-    // print(
-    //     "$selectedMonth number of expenseCategoryTypes : $thisMonthExpenseCategoryTypes");
     return (!(widget.data)
         ? (transactionList.length < 1)
             ? SizedBox(
