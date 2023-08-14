@@ -69,19 +69,16 @@ class _HomePageState extends State<HomePage> {
     context.read<StateProvider>().getTransactionsFromDb();
   }
 
+  final CarouselController _monthListCarouselController = CarouselController();
+
   @override
   Widget build(BuildContext context) {
-    final List<String> items = [
-      "August",
-      "September",
-      "May",
-      "June",
-      "July",
-    ];
-
+    var monthList = context.read<StateProvider>().monthList;
     dynamic appTheme = Provider.of<StateProvider>(context).appTheme;
     dynamic totalExpenses = Provider.of<StateProvider>(context).totalExpenses;
     dynamic totalIncome = Provider.of<StateProvider>(context).totalIncome;
+
+    var selectedMonth = Provider.of<StateProvider>(context).selectedMonth;
 
     return Scaffold(
       bottomNavigationBar: SalomonBottomBar(
@@ -135,12 +132,13 @@ class _HomePageState extends State<HomePage> {
         title: SizedBox(
           height: 50,
           child: CarouselSlider.builder(
-            itemCount: items.length,
+            carouselController: _monthListCarouselController,
+            itemCount: monthList.length,
             itemBuilder: (BuildContext context, int index, int realIndex) {
               return Container(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  items[index],
+                  monthList[index],
                   style: const TextStyle(
                     fontSize: 24.0,
                     fontWeight: FontWeight.bold,
@@ -153,6 +151,10 @@ class _HomePageState extends State<HomePage> {
               height: 200,
               enableInfiniteScroll: true,
               enlargeCenterPage: true,
+              initialPage: monthList.indexOf(selectedMonth),
+              onPageChanged: (int index, CarouselPageChangedReason reason) {
+                context.read<StateProvider>().setSelectedMonth(index);
+              },
             ),
           ),
         ),

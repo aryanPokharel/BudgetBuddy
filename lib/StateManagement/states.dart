@@ -6,7 +6,22 @@ import 'package:flutter/material.dart';
 class StateProvider with ChangeNotifier {
   bool dataLoaded = false;
 
-  dynamic monthList = [];
+  dynamic monthList = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  var selectedMonth = "August";
 
 // Fetch All Data
   fetchAllData() async {
@@ -83,7 +98,7 @@ class StateProvider with ChangeNotifier {
 
   List<dynamic> get categoryList => _categoryList;
 
-  void setCategoryList(dynamic newCategory) async {
+  void saveCategory(dynamic newCategory) async {
     var category = {
       DatabaseHelper.colType: newCategory['type'],
       DatabaseHelper.colTitle: newCategory['title'],
@@ -116,49 +131,16 @@ class StateProvider with ChangeNotifier {
         getCategoriesFromDb();
       }
     }
-    notifyListeners();
   }
 
   // Transaction States
-// Constant values
-  dynamic toUpdateTransactionId = 0;
-
-  var transactionToUpdate = {};
-  dynamic toUpdateType = "";
-  dynamic toUpdateTitle = "";
-  dynamic toUpdateAmount = "";
-  dynamic toUpdateRemarks = "";
-  dynamic toUpdateDate = "";
-
-  dynamic toUpdateTime = "";
-  dynamic toUpdateCategory = "";
-
-  Future setTransactionToUpdate(dynamic transactionId) async {
-    toUpdateTransactionId = transactionId;
-    var receivedTransaction =
-        await dbHelper.getTransactionById(toUpdateTransactionId);
-    transactionToUpdate['id'] = receivedTransaction!['_id'];
-    transactionToUpdate['type'] = receivedTransaction['type'];
-    transactionToUpdate['title'] = receivedTransaction['title'];
-    transactionToUpdate['amount'] = receivedTransaction['amount'];
-    transactionToUpdate['remarks'] = receivedTransaction['remarks'];
-    transactionToUpdate['dateTime'] = receivedTransaction['dateTime'];
-    transactionToUpdate['time'] = receivedTransaction['time'];
-    transactionToUpdate['category'] = receivedTransaction['category'];
-
-    notifyListeners();
-  }
-
-  final List<dynamic> _transactionList = [];
-
-  List<dynamic> get transactionList => _transactionList;
-
+  final List<dynamic> transactionList = [];
   getTransactionsFromDb() async {
     totalExpenses = 0;
     totalIncome = 0;
     List<Map<String, dynamic>> transactions =
         await dbHelper.getAllTransactions();
-    _transactionList.clear();
+    transactionList.clear();
     for (var tran in transactions) {
       var newTransaction = {
         "id": tran[DatabaseHelper.colId],
@@ -170,20 +152,18 @@ class StateProvider with ChangeNotifier {
         "time": tran[DatabaseHelper.colTime],
         "category": tran[DatabaseHelper.colCategory],
       };
-      _transactionList.add(newTransaction);
+      transactionList.add(newTransaction);
       if (newTransaction['type'] == "Expense") {
         totalExpenses += double.parse(newTransaction['amount']);
-        notifyListeners();
       } else {
         totalIncome += double.parse(newTransaction['amount']);
-        notifyListeners();
       }
     }
     categorizeTransactions();
     notifyListeners();
   }
 
-  void setTransactionList(dynamic newTransaction) async {
+  void saveTransaction(dynamic newTransaction) async {
     var transaction = {
       DatabaseHelper.colType: newTransaction['type'],
       DatabaseHelper.colTitle: newTransaction['title'],
@@ -198,6 +178,23 @@ class StateProvider with ChangeNotifier {
     getTransactionsFromDb();
   }
 
+  dynamic toUpdateTransactionId = 0;
+  var transactionToUpdate = {};
+  Future setTransactionToUpdate(dynamic transactionId) async {
+    toUpdateTransactionId = transactionId;
+    var receivedTransaction =
+        await dbHelper.getTransactionById(toUpdateTransactionId);
+    transactionToUpdate['id'] = receivedTransaction!['_id'];
+    transactionToUpdate['type'] = receivedTransaction['type'];
+    transactionToUpdate['title'] = receivedTransaction['title'];
+    transactionToUpdate['amount'] = receivedTransaction['amount'];
+    transactionToUpdate['remarks'] = receivedTransaction['remarks'];
+    transactionToUpdate['dateTime'] = receivedTransaction['dateTime'];
+    transactionToUpdate['time'] = receivedTransaction['time'];
+    transactionToUpdate['category'] = receivedTransaction['category'];
+    notifyListeners();
+  }
+
   updateTransaction(dynamic updatedTransaction) async {
     await dbHelper.updateTransaction(updatedTransaction);
     getTransactionsFromDb();
@@ -208,37 +205,9 @@ class StateProvider with ChangeNotifier {
     getTransactionsFromDb();
   }
 
-  var expenseCategoryTypesTitles = [];
-  var incomeCategoryTypesTitles = [];
-  giveTitlesToCategoryTypes() async {
-    // Temporary lists for expense and income titles
-    List<String> tempExpenseTitles = [];
-    List<String> tempIncomeTitles = [];
-
-    // Expense categories
-    for (var expenseCategoryType in expenseCategoryTypes) {
-      var category = await dbHelper.getCategoryById(expenseCategoryType['id']);
-      var title = category![DatabaseHelper.colTitle];
-      tempExpenseTitles.add(title);
-    }
-
-    // Income categories
-    for (var incomeCategoryType in incomeCategoryTypes) {
-      var category = await dbHelper.getCategoryById(incomeCategoryType['id']);
-      var title = category![DatabaseHelper.colTitle];
-      tempIncomeTitles.add(title);
-    }
-
-    // Set the main lists after collecting all titles
-    expenseCategoryTypesTitles = tempExpenseTitles;
-    incomeCategoryTypesTitles = tempIncomeTitles;
-  }
-
   var expenseCategoryTypes = [];
   var incomeCategoryTypes = [];
   categorizeTransactions() {
-    expenseCategoryTypes = [];
-    incomeCategoryTypes = [];
     for (var transaction in transactionList) {
       if (transaction['type'] == 'Expense') {
         // For expense categories
@@ -249,7 +218,7 @@ class StateProvider with ChangeNotifier {
           if (transaction['category'] == category['id']) {
             found = true;
             category['totalAmount'] += expenseCategoryTotalAmount;
-            break; // Exit the loop once a match is found
+            break;
           }
         }
         if (!found) {
@@ -283,5 +252,33 @@ class StateProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // End of Transaction States
+  var expenseCategoryTypesTitles = [];
+  var incomeCategoryTypesTitles = [];
+
+  giveTitlesToCategoryTypes() async {
+    List<String> tempExpenseTitles = [];
+    List<String> tempIncomeTitles = [];
+
+    for (var expenseCategoryType in expenseCategoryTypes) {
+      var category = await dbHelper.getCategoryById(expenseCategoryType['id']);
+      var title = category![DatabaseHelper.colTitle];
+      tempExpenseTitles.add(title);
+    }
+    for (var incomeCategoryType in incomeCategoryTypes) {
+      var category = await dbHelper.getCategoryById(incomeCategoryType['id']);
+      var title = category![DatabaseHelper.colTitle];
+      tempIncomeTitles.add(title);
+    }
+    expenseCategoryTypesTitles = tempExpenseTitles;
+    incomeCategoryTypesTitles = tempIncomeTitles;
+  }
+
+  // Working with months
+
+  setSelectedMonth(int month) {
+    selectedMonth = monthList[month];
+    notifyListeners();
+
+    print("selected month : $selectedMonth");
+  }
 }
