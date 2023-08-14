@@ -25,7 +25,7 @@ class _AddCategoryState extends State<AddCategory> {
   Widget build(BuildContext context) {
     saveCategory(dynamic type, dynamic title, dynamic icon) async {
       var newCategory = {"type": type, "title": title, "icon": icon};
-      context.read<StateProvider>().setCategoryList(newCategory);
+      context.read<StateProvider>().saveCategory(newCategory);
     }
 
     final formKey = GlobalKey<FormState>();
