@@ -41,7 +41,7 @@ class _TransactionsState extends State<Transactions> {
     List<dynamic> transactionList =
         Provider.of<StateProvider>(context).transactionList;
     Map<String, List<Map<String, dynamic>>> groupedTransactions = {};
-
+    dynamic selectedMonth = Provider.of<StateProvider>(context).selectedMonth;
     List<dynamic> thisMonthTransactions = [];
 
     for (var transaction in transactionList) {
@@ -51,7 +51,6 @@ class _TransactionsState extends State<Transactions> {
       }
     }
 
-    dynamic selectedMonth = Provider.of<StateProvider>(context).selectedMonth;
     if (thisMonthTransactions.isNotEmpty) {
       thisMonthTransactions.sort(
         (a, b) => b['dateTime'].compareTo(

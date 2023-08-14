@@ -11,10 +11,7 @@ class InsightsPage extends StatefulWidget {
 class _InsightsPageState extends State<InsightsPage> {
   String _transactionType = "Expense";
   String graphType = "Pie";
-  @override
-  void initState() {
-    super.initState();
-  }
+  bool monthlyData = false;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +22,29 @@ class _InsightsPageState extends State<InsightsPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                    child: Text(
+                      "Show Monthly Data",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  Switch(
+                    value: monthlyData,
+                    onChanged: (value) {
+                      setState(() {
+                        monthlyData = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
               SizedBox(
                 height: 20,
               ),
@@ -67,9 +87,11 @@ class _InsightsPageState extends State<InsightsPage> {
               const SizedBox(height: 16),
               _transactionType == "Expense"
                   ? FlBarGraph(
+                      data: monthlyData,
                       type: "Expense",
                     )
                   : FlBarGraph(
+                      data: monthlyData,
                       type: "Income",
                     ),
               Divider(

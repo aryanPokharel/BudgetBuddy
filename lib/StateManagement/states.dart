@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:budget_buddy/Constants/ConstantValues.dart';
 import 'package:budget_buddy/Constants/DateName.dart';
 import 'package:budget_buddy/Constants/TryParseDouble.dart';
@@ -32,6 +34,9 @@ class StateProvider with ChangeNotifier {
 
   dynamic totalExpenses = 0;
   dynamic totalIncome = 0;
+
+  dynamic thisMonthTotalExpenses = 0;
+  dynamic thisMonthTotalIncome = 0;
 
 // Category states
   dynamic toUpdateCategoryId = 0;
@@ -91,7 +96,7 @@ class StateProvider with ChangeNotifier {
     };
     await dbHelper.insertCategory(category);
     getCategoriesFromDb();
-    buildMonthList();
+    // buildMonthList();
   }
 
   dynamic categoryToUpdate = {};
@@ -151,12 +156,15 @@ class StateProvider with ChangeNotifier {
   }
 
   final List<dynamic> _transactionList = [];
-
   List<dynamic> get transactionList => _transactionList;
+  List<dynamic> _thisMonthTransactionList = [];
+  List<dynamic> get thisMonthTransactionList => _thisMonthTransactionList;
 
   getTransactionsFromDb() async {
+    // For Gross transactions
     totalExpenses = 0;
     totalIncome = 0;
+
     List<Map<String, dynamic>> transactions =
         await dbHelper.getAllTransactions();
     _transactionList.clear();
@@ -181,6 +189,40 @@ class StateProvider with ChangeNotifier {
         notifyListeners();
       }
     }
+
+    buildMonthList();
+    // For this month transactions
+    // For monthly
+    thisMonthTotalExpenses = 0;
+    thisMonthTotalIncome = 0;
+    List<Map<String, dynamic>> thisMonthTransactions = [];
+    _thisMonthTransactionList.clear();
+
+    for (var tran in transactions) {
+      var newTransaction = {
+        "id": tran[DatabaseHelper.colId],
+        "type": tran[DatabaseHelper.colType],
+        "title": tran[DatabaseHelper.colTitle],
+        "amount": tran[DatabaseHelper.colAmount],
+        "remarks": tran[DatabaseHelper.colRemarks],
+        "dateTime": tran[DatabaseHelper.colDateTime],
+        "time": tran[DatabaseHelper.colTime],
+        "category": tran[DatabaseHelper.colCategory],
+      };
+
+      if (getMonthName(newTransaction['dateTime']) == selectedMonth) {
+        thisMonthTransactionList.add(newTransaction);
+        thisMonthTransactions.add(newTransaction);
+        if (newTransaction['type'] == "Expense") {
+          thisMonthTotalExpenses += double.parse(newTransaction['amount']);
+          notifyListeners();
+        } else {
+          thisMonthTotalIncome += double.parse(newTransaction['amount']);
+          notifyListeners();
+        }
+      }
+    }
+
     categorizeTransactions();
     buildMonthList();
     notifyListeners();
@@ -214,10 +256,16 @@ class StateProvider with ChangeNotifier {
 
   var expenseCategoryTypesTitles = [];
   var incomeCategoryTypesTitles = [];
+
+  var thisMonthExpenseCategoryTypesTitles = [];
+  var thisMonthIncomeCategoryTypesTitles = [];
   giveTitlesToCategoryTypes() async {
     // Temporary lists for expense and income titles
     List<String> tempExpenseTitles = [];
     List<String> tempIncomeTitles = [];
+
+    List<String> tempThisMonthExpenseTitles = [];
+    List<String> tempThisMonthIncomeTitles = [];
 
     // Expense categories
     for (var expenseCategoryType in expenseCategoryTypes) {
@@ -233,16 +281,45 @@ class StateProvider with ChangeNotifier {
       tempIncomeTitles.add(title);
     }
 
+    // For this month
+    // Expense categories
+    for (var thisMonthExpenseCategoryType in thisMonthExpenseCategoryTypes) {
+      var category =
+          await dbHelper.getCategoryById(thisMonthExpenseCategoryType['id']);
+      var title = category![DatabaseHelper.colTitle];
+      tempThisMonthExpenseTitles.add(title);
+    }
+
+    // Income categories
+    for (var thisMonthIncomeCategoryType in thisMonthIncomeCategoryTypes) {
+      var category =
+          await dbHelper.getCategoryById(thisMonthIncomeCategoryType['id']);
+      var title = category![DatabaseHelper.colTitle];
+      tempThisMonthIncomeTitles.add(title);
+    }
+
     // Set the main lists after collecting all titles
     expenseCategoryTypesTitles = tempExpenseTitles;
     incomeCategoryTypesTitles = tempIncomeTitles;
+
+    thisMonthExpenseCategoryTypesTitles = tempThisMonthExpenseTitles;
+    thisMonthIncomeCategoryTypesTitles = tempThisMonthIncomeTitles;
   }
 
   var expenseCategoryTypes = [];
   var incomeCategoryTypes = [];
+
+  var thisMonthExpenseCategoryTypes = [];
+  var thisMonthIncomeCategoryTypes = [];
+
   categorizeTransactions() {
     expenseCategoryTypes = [];
     incomeCategoryTypes = [];
+
+    thisMonthExpenseCategoryTypes = [];
+    thisMonthIncomeCategoryTypes = [];
+
+    // For gross data
     for (var transaction in transactionList) {
       if (transaction['type'] == 'Expense') {
         // For expense categories
@@ -253,7 +330,7 @@ class StateProvider with ChangeNotifier {
           if (transaction['category'] == category['id']) {
             found = true;
             category['totalAmount'] += expenseCategoryTotalAmount;
-            break; // Exit the loop once a match is found
+            break;
           }
         }
         if (!found) {
@@ -283,6 +360,54 @@ class StateProvider with ChangeNotifier {
       }
       notifyListeners();
     }
+
+    // For this month data
+
+    print("$selectedMonth transaction list: $thisMonthTransactionList");
+
+    for (var transaction in thisMonthTransactionList) {
+      if (transaction['type'] == 'Expense') {
+        // For expense categories
+        double thisMonthExpenseCategoryTotalAmount =
+            tryParseDouble(transaction['amount']);
+        bool found = false;
+        for (var category in thisMonthExpenseCategoryTypes) {
+          if (transaction['category'] == category['id']) {
+            found = true;
+            category['totalAmount'] += thisMonthExpenseCategoryTotalAmount;
+            break; // Exit the loop once a match is found
+          }
+        }
+        if (!found) {
+          thisMonthExpenseCategoryTypes.add({
+            "id": transaction['category'],
+            "totalAmount": thisMonthExpenseCategoryTotalAmount,
+          });
+        }
+      } else {
+        // For income categories
+        double thisMonthIncomeCategoryTotalAmount =
+            tryParseDouble(transaction['amount']);
+        bool found = false;
+        for (var category in thisMonthIncomeCategoryTypes) {
+          if (transaction['category'] == category['id']) {
+            found = true;
+            category['totalAmount'] += thisMonthIncomeCategoryTotalAmount;
+            break; // Exit the loop once a match is found
+          }
+        }
+        if (!found) {
+          thisMonthIncomeCategoryTypes.add({
+            "id": transaction['category'],
+            "totalAmount": thisMonthIncomeCategoryTotalAmount,
+          });
+        }
+      }
+      // notifyListeners();
+    }
+    // print(
+    //     "$selectedMonth expenseCategoryTypes : $thisMonthExpenseCategoryTypes");
+    // print("$selectedMonth incomeCategoryTypes : $thisMonthIncomeCategoryTypes");
     giveTitlesToCategoryTypes();
     notifyListeners();
   }
@@ -311,7 +436,6 @@ class StateProvider with ChangeNotifier {
         monthList.add(
           getMonthName(transaction['dateTime']),
         );
-        notifyListeners();
       } else {
         bool found = false;
         for (var monthInList in monthList) {
@@ -324,11 +448,9 @@ class StateProvider with ChangeNotifier {
           monthList.add(
             getMonthName(transaction['dateTime']),
           );
-          notifyListeners();
         }
       }
     });
-    selectedMonth = monthList[0];
     notifyListeners();
   }
 

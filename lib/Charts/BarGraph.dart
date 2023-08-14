@@ -6,9 +6,10 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
 
 class FlBarGraph extends StatefulWidget {
+  final data;
   final type;
 
-  const FlBarGraph({required this.type, super.key});
+  const FlBarGraph({required this.data, required this.type, super.key});
 
   @override
   State<FlBarGraph> createState() => _FlBarGraphState();
@@ -20,17 +21,40 @@ class _FlBarGraphState extends State<FlBarGraph> {
     List<dynamic> transactionList =
         Provider.of<StateProvider>(context).transactionList;
 
+// For monthly insights
+    dynamic selectedMonth = Provider.of<StateProvider>(context).selectedMonth;
+    List<dynamic> thisMonthTransactions =
+        Provider.of<StateProvider>(context).thisMonthTransactionList;
+
     List<BarChartGroupData> expenseBarGraphData = [];
     List<BarChartGroupData> incomeBarGraphData = [];
+
     List<dynamic> expenseCategoryTypes =
         Provider.of<StateProvider>(context).expenseCategoryTypes;
     List<dynamic> incomeCategoryTypes =
         Provider.of<StateProvider>(context).incomeCategoryTypes;
 
+// For monthly insights
+    List<BarChartGroupData> thisMonthExpenseBarGraphData = [];
+    List<BarChartGroupData> thisMonthIncomeBarGraphData = [];
+
+    List<dynamic> thisMonthExpenseCategoryTypes =
+        Provider.of<StateProvider>(context).thisMonthExpenseCategoryTypes;
+
+    List<dynamic> thisMonthIncomeCategoryTypes =
+        Provider.of<StateProvider>(context).thisMonthIncomeCategoryTypes;
+
     var expenseCateogoryTypesTitles =
         Provider.of<StateProvider>(context).expenseCategoryTypesTitles;
     var incomeCateogoryTypesTitles =
         Provider.of<StateProvider>(context).incomeCategoryTypesTitles;
+
+// For monthly Insights
+    var thisMonthExpenseCateogoryTypesTitles =
+        Provider.of<StateProvider>(context).thisMonthExpenseCategoryTypesTitles;
+    var thisMonthIncomeCateogoryTypesTitles =
+        Provider.of<StateProvider>(context).thisMonthIncomeCategoryTypesTitles;
+
     var highestExpenseAmount = 0.0;
     var highestIncomeAmount = 0.0;
 
@@ -50,7 +74,7 @@ class _FlBarGraphState extends State<FlBarGraph> {
     for (var expenseCategory in expenseCategoryTypes) {
       expenseBarGraphData.add(
         BarChartGroupData(
-          x: expenseCategory['id'],
+          x: j + 1,
           barRods: [
             BarChartRodData(
               toY: expenseCategory['totalAmount'],
@@ -67,7 +91,7 @@ class _FlBarGraphState extends State<FlBarGraph> {
     for (var incomeCategory in incomeCategoryTypes) {
       incomeBarGraphData.add(
         BarChartGroupData(
-          x: k,
+          x: k + 1,
           barRods: [
             BarChartRodData(
               toY: incomeCategory['totalAmount'],
@@ -104,93 +128,265 @@ class _FlBarGraphState extends State<FlBarGraph> {
       );
       m++;
     }
-    return (transactionList.length < 1)
-        ? SizedBox(
-            height: 300,
-            child: DancingDoge(),
-          )
-        : Column(
-            children: [
-              Text(
-                widget.type == "Expense"
-                    ? "Expense Breakdown"
-                    : "Income Breakdown",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
-              ((widget.type == "Expense" && expenseCategoryTypes.length < 1) ||
-                      (widget.type == "Income" &&
-                          incomeCategoryTypes.length < 1))
-                  ? SizedBox(
-                      height: 300,
-                      child: DancingDoge(),
-                    )
-                  : SizedBox(
-                      height: 300,
-                      child: BarChart(
-                        BarChartData(
-                          alignment: BarChartAlignment.spaceAround,
-                          maxY: widget.type == "Expense"
-                              ? highestExpenseAmount + 100
-                              : highestIncomeAmount + 100,
-                          titlesData: FlTitlesData(show: true),
-                          borderData: FlBorderData(show: true),
-                          barGroups: widget.type == "Expense"
-                              ? expenseBarGraphData
-                              : incomeBarGraphData,
-                        ),
-                      ),
-                    ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+
+    // Doing the same calculation for this month data :
+    var thisMonthHighestExpenseAmount = 0.0;
+    var thisMonthHighestIncomeAmount = 0.0;
+
+    for (var expenseCategory in thisMonthExpenseCategoryTypes) {
+      if (expenseCategory['totalAmount'] > thisMonthHighestExpenseAmount) {
+        thisMonthHighestExpenseAmount = expenseCategory['totalAmount'];
+      }
+    }
+
+    for (var incomeCategory in incomeCategoryTypes) {
+      if (incomeCategory['totalAmount'] > thisMonthHighestIncomeAmount) {
+        thisMonthHighestIncomeAmount = incomeCategory['totalAmount'];
+      }
+    }
+
+    int n = 0;
+    for (var expenseCategory in thisMonthExpenseCategoryTypes) {
+      thisMonthExpenseBarGraphData.add(
+        BarChartGroupData(
+          x: n + 1,
+          barRods: [
+            BarChartRodData(
+              toY: expenseCategory['totalAmount'],
+              color: appThemeColors[n],
+              width: 16,
+            ),
+          ],
+        ),
+      );
+      n++;
+    }
+
+    int o = 0;
+    for (var incomeCategory in thisMonthIncomeCategoryTypes) {
+      thisMonthIncomeBarGraphData.add(
+        BarChartGroupData(
+          x: o + 1,
+          barRods: [
+            BarChartRodData(
+              toY: incomeCategory['totalAmount'],
+              color: appThemeColors[o],
+              width: 16,
+            ),
+          ],
+        ),
+      );
+      o++;
+    }
+
+    List<Map<String, dynamic>> thisMonthExpenseIndices = [];
+    int p = 0;
+    for (var thisMonthExpenseCategory in thisMonthExpenseCategoryTypes) {
+      thisMonthExpenseIndices.add(
+        {
+          "color": appThemeColors[
+              thisMonthExpenseCategoryTypes.indexOf(thisMonthExpenseCategory)],
+          "title": thisMonthExpenseCateogoryTypesTitles[p]
+        },
+      );
+      p++;
+    }
+
+    List<Map<String, dynamic>> thisMonthIncomeIndices = [];
+    int q = 0;
+    for (var thisMonthIncomeCategory in thisMonthIncomeCategoryTypes) {
+      thisMonthIncomeIndices.add(
+        {
+          "color": appThemeColors[
+              thisMonthIncomeCategoryTypes.indexOf(thisMonthIncomeCategory)],
+          "title": thisMonthIncomeCateogoryTypesTitles[q]
+        },
+      );
+      q++;
+    }
+
+    // print(
+    //     "$selectedMonth number of expenseCategoryTypes : $thisMonthExpenseCategoryTypes");
+    return (!(widget.data)
+        ? (transactionList.length < 1)
+            ? SizedBox(
+                height: 300,
+                child: DancingDoge(),
+              )
+            : Column(
                 children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      for (int i = 0;
-                          i <
-                              (widget.type == "Expense"
-                                  ? expenseIndices.length
-                                  : incomeIndices.length);
-                          i++)
-                        Row(
-                          children: [
-                            Container(
-                              width: 12,
-                              height: 12,
-                              color: (widget.type == "Expense"
-                                  ? expenseIndices[i]["color"]
-                                  : incomeIndices[i]["color"]),
+                  Text(
+                    widget.type == "Expense"
+                        ? "Expense Breakdown"
+                        : "Income Breakdown",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                  ((widget.type == "Expense" &&
+                              expenseCategoryTypes.length < 1) ||
+                          (widget.type == "Income" &&
+                              incomeCategoryTypes.length < 1))
+                      ? SizedBox(
+                          height: 300,
+                          child: DancingDoge(),
+                        )
+                      : SizedBox(
+                          height: 300,
+                          child: BarChart(
+                            BarChartData(
+                              alignment: BarChartAlignment.spaceAround,
+                              maxY: widget.type == "Expense"
+                                  ? highestExpenseAmount + 100
+                                  : highestIncomeAmount + 100,
+                              titlesData: FlTitlesData(show: true),
+                              borderData: FlBorderData(show: true),
+                              barGroups: widget.type == "Expense"
+                                  ? expenseBarGraphData
+                                  : incomeBarGraphData,
                             ),
-                            SizedBox(width: 4),
-                            i == 0
-                                ? Text(
-                                    "${(widget.type == "Expense" ? expenseIndices : incomeIndices)[i]["title"]}",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  )
-                                : Text(
-                                    "${(widget.type == "Expense" ? expenseIndices : incomeIndices)[i]["title"]}",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                          ],
+                          ),
                         ),
-                      SizedBox(
-                        height: 10,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (int i = 0;
+                              i <
+                                  (widget.type == "Expense"
+                                      ? expenseIndices.length
+                                      : incomeIndices.length);
+                              i++)
+                            Row(
+                              children: [
+                                Container(
+                                  width: 12,
+                                  height: 12,
+                                  color: (widget.type == "Expense"
+                                      ? expenseIndices[i]["color"]
+                                      : incomeIndices[i]["color"]),
+                                ),
+                                SizedBox(width: 4),
+                                i == 0
+                                    ? Text(
+                                        "${(widget.type == "Expense" ? expenseIndices : incomeIndices)[i]["title"]}",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      )
+                                    : Text(
+                                        "${(widget.type == "Expense" ? expenseIndices : incomeIndices)[i]["title"]}",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                              ],
+                            ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ],
-              ),
-            ],
-          );
+              )
+
+        // Else, return Monthly Data
+        : (thisMonthTransactions.length < 1)
+            ? SizedBox(
+                height: 300,
+                child: Text("No Transactions this month"),
+              )
+            : Column(
+                children: [
+                  Text(
+                    widget.type == "Expense"
+                        ? "Expense Breakdown"
+                        : "Income Breakdown",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                  ((widget.type == "Expense" &&
+                              thisMonthExpenseCategoryTypes.length < 1) ||
+                          (widget.type == "Income" &&
+                              thisMonthIncomeCategoryTypes.length < 1))
+                      ? SizedBox(
+                          height: 300,
+                          child: DancingDoge(),
+                        )
+                      : SizedBox(
+                          height: 300,
+                          child: BarChart(
+                            BarChartData(
+                              alignment: BarChartAlignment.spaceAround,
+                              maxY: widget.type == "Expense"
+                                  ? thisMonthHighestExpenseAmount + 100
+                                  : thisMonthHighestIncomeAmount + 100,
+                              titlesData: FlTitlesData(show: true),
+                              borderData: FlBorderData(show: true),
+                              barGroups: widget.type == "Expense"
+                                  ? thisMonthExpenseBarGraphData
+                                  : thisMonthIncomeBarGraphData,
+                            ),
+                          ),
+                        ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (int i = 0;
+                              i <
+                                  (widget.type == "Expense"
+                                      ? thisMonthExpenseIndices.length
+                                      : thisMonthIncomeIndices.length);
+                              i++)
+                            Row(
+                              children: [
+                                Container(
+                                  width: 12,
+                                  height: 12,
+                                  color: (widget.type == "Expense"
+                                      ? thisMonthExpenseIndices[i]["color"]
+                                      : thisMonthIncomeIndices[i]["color"]),
+                                ),
+                                SizedBox(width: 4),
+                                i == 0
+                                    ? Text(
+                                        "${(widget.type == "Expense" ? thisMonthExpenseIndices : thisMonthIncomeIndices)[i]["title"]}",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      )
+                                    : Text(
+                                        "${(widget.type == "Expense" ? thisMonthExpenseIndices : thisMonthIncomeIndices)[i]["title"]}",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                              ],
+                            ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ));
   }
 }

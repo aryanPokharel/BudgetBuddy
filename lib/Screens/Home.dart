@@ -67,15 +67,23 @@ class _HomePageState extends State<HomePage> {
     // context.read<StateProvider>().fetchAllData();
     context.read<StateProvider>().getCategoriesFromDb();
     context.read<StateProvider>().getTransactionsFromDb();
+    context.read<StateProvider>().setSelectedMonth(0);
   }
 
   @override
   Widget build(BuildContext context) {
     dynamic monthList = Provider.of<StateProvider>(context).monthList;
 
+    var selectedMonth = Provider.of<StateProvider>(context).selectedMonth;
+
     dynamic appTheme = Provider.of<StateProvider>(context).appTheme;
     dynamic totalExpenses = Provider.of<StateProvider>(context).totalExpenses;
     dynamic totalIncome = Provider.of<StateProvider>(context).totalIncome;
+
+    dynamic thisMonthTotalExpenses =
+        Provider.of<StateProvider>(context).thisMonthTotalExpenses;
+    dynamic thisMonthTotalIncome =
+        Provider.of<StateProvider>(context).thisMonthTotalIncome;
 
     final CarouselController _monthListCarouselController =
         CarouselController();
@@ -154,6 +162,8 @@ class _HomePageState extends State<HomePage> {
                 // Callback function to get the current index when the page changes
 
                 context.read<StateProvider>().setSelectedMonth(index);
+
+                context.read<StateProvider>().getTransactionsFromDb();
               },
             ),
           ),
@@ -194,7 +204,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     Text(
-                      "Rs. ${totalExpenses.toStringAsFixed(totalExpenses.truncateToDouble() == totalExpenses ? 0 : 2)}",
+                      "Rs. ${thisMonthTotalExpenses.toStringAsFixed(thisMonthTotalExpenses.truncateToDouble() == thisMonthTotalExpenses ? 0 : 2)}",
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 14,
@@ -220,7 +230,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     Text(
-                      "Rs. ${totalIncome.toStringAsFixed(totalIncome.truncateToDouble() == totalIncome ? 0 : 2)}",
+                      "Rs. ${thisMonthTotalIncome.toStringAsFixed(thisMonthTotalIncome.truncateToDouble() == thisMonthTotalIncome ? 0 : 2)}",
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 14,
@@ -249,7 +259,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     Text(
-                      "Rs. ${(totalIncome - totalExpenses).toStringAsFixed((totalIncome - totalExpenses).truncateToDouble() == (totalIncome - totalExpenses) ? 0 : 2)}",
+                      "Rs. ${(thisMonthTotalIncome - thisMonthTotalExpenses).toStringAsFixed((thisMonthTotalIncome - thisMonthTotalExpenses).truncateToDouble() == (thisMonthTotalIncome - thisMonthTotalExpenses) ? 0 : 2)}",
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 14,
