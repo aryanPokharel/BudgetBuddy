@@ -343,7 +343,7 @@ class StateProvider with ChangeNotifier {
           }
         }
         if (!found) {
-          incomeCategoryTypes.add({
+          thisMonthIncomeCategoryTypes.add({
             "id": transaction['category'],
             "totalAmount": thisMonthIncomeCategoryTotalAmount,
           });
