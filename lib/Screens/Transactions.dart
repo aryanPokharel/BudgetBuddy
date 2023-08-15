@@ -66,6 +66,7 @@ class _TransactionsState extends State<Transactions> {
     }
 
     return Scaffold(
+      // backgroundColor: Color.fromARGB(255, 203, 203, 203),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         heroTag: "addTransaction",
