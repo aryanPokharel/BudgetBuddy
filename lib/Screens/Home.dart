@@ -83,6 +83,7 @@ class _HomePageState extends State<HomePage> {
     var selectedMonth = Provider.of<StateProvider>(context).selectedMonth;
 
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 222, 222, 222),
       bottomNavigationBar: SalomonBottomBar(
           backgroundColor: Color.fromARGB(255, 203, 203, 203),
           currentIndex: _selectedIndex,
@@ -131,6 +132,11 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       appBar: AppBar(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(30),
+          ),
+        ),
         title: SizedBox(
           height: 50,
           child: CarouselSlider.builder(
@@ -168,11 +174,8 @@ class _HomePageState extends State<HomePage> {
             },
           ),
         ],
-        flexibleSpace: Container(
-          decoration: BoxDecoration(color: appTheme),
-        ),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(100),
+          preferredSize: const Size.fromHeight(80),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Row(
@@ -267,15 +270,13 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      body: SafeArea(
-        child: IndexedStack(
-          index: _selectedIndex,
-          children: [
-            Transactions(),
-            Categories(),
-            InsightsPage(),
-          ],
-        ),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: [
+          Transactions(),
+          Categories(),
+          InsightsPage(),
+        ],
       ),
     );
   }
