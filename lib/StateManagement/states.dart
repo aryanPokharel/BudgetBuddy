@@ -1,6 +1,7 @@
-import 'package:budget_buddy/Constants/ConstantValues.dart';
+import 'package:budget_buddy/Constants/DateName.dart';
 import 'package:budget_buddy/Constants/TryParseDouble.dart';
 import 'package:budget_buddy/Db/DbHelper.dart';
+import 'package:budget_buddy/Screens/Constants.dart';
 import 'package:flutter/material.dart';
 
 class StateProvider with ChangeNotifier {
@@ -30,6 +31,7 @@ class StateProvider with ChangeNotifier {
     await categorizeTransactions();
     await giveTitlesToCategoryTypes();
 
+    await buildThisMonthTransactions();
     dataLoaded = true;
     notifyListeners();
   }
@@ -160,6 +162,7 @@ class StateProvider with ChangeNotifier {
       }
     }
     categorizeTransactions();
+
     notifyListeners();
   }
 
@@ -246,7 +249,6 @@ class StateProvider with ChangeNotifier {
           });
         }
       }
-      notifyListeners();
     }
     giveTitlesToCategoryTypes();
     notifyListeners();
@@ -278,7 +280,19 @@ class StateProvider with ChangeNotifier {
   setSelectedMonth(int month) {
     selectedMonth = monthList[month];
     notifyListeners();
+    fetchAllData();
+  }
 
-    print("selected month : $selectedMonth");
+  var thisMonthCategories = [];
+
+  var thisMonthTransactions = [];
+  buildThisMonthTransactions() {
+    thisMonthTransactions.clear();
+    for (var transaction in transactionList) {
+      if (getMonthName(transaction['dateTime'].toString()) == selectedMonth) {
+        thisMonthTransactions.add(transaction);
+      }
+    }
+    notifyListeners();
   }
 }
