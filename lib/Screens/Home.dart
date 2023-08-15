@@ -75,8 +75,10 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     var monthList = context.read<StateProvider>().monthList;
     dynamic appTheme = Provider.of<StateProvider>(context).appTheme;
-    dynamic totalExpenses = Provider.of<StateProvider>(context).totalExpenses;
-    dynamic totalIncome = Provider.of<StateProvider>(context).totalIncome;
+    dynamic totalExpenses =
+        Provider.of<StateProvider>(context).thisMonthTotalExpenses;
+    dynamic totalIncome =
+        Provider.of<StateProvider>(context).thisMonthTotalIncome;
 
     var selectedMonth = Provider.of<StateProvider>(context).selectedMonth;
 

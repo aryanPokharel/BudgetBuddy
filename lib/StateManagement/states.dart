@@ -27,11 +27,15 @@ class StateProvider with ChangeNotifier {
 // Fetch All Data
   fetchAllData() async {
     await getCategoriesFromDb();
+
     await getTransactionsFromDb();
     await categorizeTransactions();
     await giveTitlesToCategoryTypes();
 
     await buildThisMonthTransactions();
+    await categorizeThisMonthTransactions();
+    await giveTitlesToThisMonthCategoryTypes();
+
     dataLoaded = true;
     notifyListeners();
   }
@@ -275,8 +279,9 @@ class StateProvider with ChangeNotifier {
     incomeCategoryTypesTitles = tempIncomeTitles;
   }
 
-  // Working with months
-
+  // Working with this month
+  dynamic thisMonthTotalExpenses = 0;
+  dynamic thisMonthTotalIncome = 0;
   setSelectedMonth(int month) {
     selectedMonth = monthList[month];
     notifyListeners();
@@ -284,15 +289,89 @@ class StateProvider with ChangeNotifier {
   }
 
   var thisMonthCategories = [];
-
   var thisMonthTransactions = [];
   buildThisMonthTransactions() {
+    thisMonthTotalExpenses = 0;
+    thisMonthTotalIncome = 0;
     thisMonthTransactions.clear();
     for (var transaction in transactionList) {
       if (getMonthName(transaction['dateTime'].toString()) == selectedMonth) {
         thisMonthTransactions.add(transaction);
+        if (transaction['type'] == "Expense") {
+          thisMonthTotalExpenses += double.parse(transaction['amount']);
+        } else {
+          thisMonthTotalIncome += double.parse(transaction['amount']);
+        }
       }
     }
+    categorizeThisMonthTransactions();
     notifyListeners();
+  }
+
+  var thisMonthExpenseCategoryTypes = [];
+  var thisMonthIncomeCategoryTypes = [];
+  categorizeThisMonthTransactions() {
+    for (var transaction in thisMonthTransactions) {
+      if (transaction['type'] == 'Expense') {
+        // For expense categories
+        double thisMonthExpenseCategoryTotalAmount =
+            tryParseDouble(transaction['amount']);
+        bool found = false;
+        for (var category in thisMonthExpenseCategoryTypes) {
+          if (transaction['category'] == category['id']) {
+            found = true;
+            category['totalAmount'] += thisMonthExpenseCategoryTotalAmount;
+            break;
+          }
+        }
+        if (!found) {
+          thisMonthExpenseCategoryTypes.add({
+            "id": transaction['category'],
+            "totalAmount": thisMonthExpenseCategoryTotalAmount,
+          });
+        }
+      } else {
+        // For income categories
+        double thisMonthIncomeCategoryTotalAmount =
+            tryParseDouble(transaction['amount']);
+        bool found = false;
+        for (var category in thisMonthIncomeCategoryTypes) {
+          if (transaction['category'] == category['id']) {
+            found = true;
+            category['totalAmount'] += thisMonthIncomeCategoryTotalAmount;
+            break; // Exit the loop once a match is found
+          }
+        }
+        if (!found) {
+          incomeCategoryTypes.add({
+            "id": transaction['category'],
+            "totalAmount": thisMonthIncomeCategoryTotalAmount,
+          });
+        }
+      }
+    }
+    giveTitlesToThisMonthCategoryTypes();
+    notifyListeners();
+  }
+
+  var thisMonthExpenseCategoryTypesTitles = [];
+  var thisMonthIncomeCategoryTypesTitles = [];
+
+  giveTitlesToThisMonthCategoryTypes() async {
+    List<String> tempExpenseTitles = [];
+    List<String> tempIncomeTitles = [];
+
+    for (var expenseCategoryType in expenseCategoryTypes) {
+      var category = await dbHelper.getCategoryById(expenseCategoryType['id']);
+      var title = category![DatabaseHelper.colTitle];
+      tempExpenseTitles.add(title);
+    }
+    for (var incomeCategoryType in incomeCategoryTypes) {
+      var category = await dbHelper.getCategoryById(incomeCategoryType['id']);
+      var title = category![DatabaseHelper.colTitle];
+      tempIncomeTitles.add(title);
+    }
+    expenseCategoryTypesTitles = tempExpenseTitles;
+    incomeCategoryTypesTitles = tempIncomeTitles;
   }
 }

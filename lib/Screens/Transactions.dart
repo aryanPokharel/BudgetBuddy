@@ -38,7 +38,7 @@ class _TransactionsState extends State<Transactions> {
   @override
   Widget build(BuildContext context) {
     List<dynamic> transactionList =
-        Provider.of<StateProvider>(context).transactionList;
+        Provider.of<StateProvider>(context).thisMonthTransactions;
     Map<String, List<Map<String, dynamic>>> groupedTransactions = {};
     if (transactionList.isNotEmpty) {
       transactionList.sort(
