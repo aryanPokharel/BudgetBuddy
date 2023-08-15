@@ -133,8 +133,10 @@ class _FlBarGraphState extends State<FlBarGraph> {
                         BarChartData(
                           alignment: BarChartAlignment.spaceAround,
                           maxY: widget.type == "Expense"
-                              ? highestExpenseAmount + 100
-                              : highestIncomeAmount + 100,
+                              ? highestExpenseAmount +
+                                  (highestExpenseAmount * 0.1)
+                              : highestIncomeAmount +
+                                  (highestIncomeAmount * 0.1),
                           titlesData: FlTitlesData(show: true),
                           borderData: FlBorderData(show: true),
                           barGroups: widget.type == "Expense"
