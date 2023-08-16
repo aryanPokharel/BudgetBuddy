@@ -66,7 +66,6 @@ class _TransactionsState extends State<Transactions> {
     }
 
     return Scaffold(
-      // backgroundColor: Color.fromARGB(255, 203, 203, 203),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         heroTag: "addTransaction",
@@ -77,7 +76,7 @@ class _TransactionsState extends State<Transactions> {
       ),
       body: transactionList.isEmpty
           ? Container(
-              color: Color.fromARGB(255, 203, 203, 203),
+              color: Color.fromARGB(255, 222, 222, 222),
               child: Center(
                 child: EmptyListWidget(),
               ),

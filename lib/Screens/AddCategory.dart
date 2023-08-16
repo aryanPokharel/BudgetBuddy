@@ -15,17 +15,31 @@ class _AddCategoryState extends State<AddCategory> {
   var titleController = TextEditingController();
   var iconController = TextEditingController();
 
+  var searchController = TextEditingController();
+
   String _categoryType = "Expense";
 
   var title;
 
   IconData selectedIcon = Icons.local_dining;
 
+  bool _isSearchVisible = false;
+
+  var filteredIconList = iconList;
+
   @override
   Widget build(BuildContext context) {
     saveCategory(dynamic type, dynamic title, dynamic icon) async {
       var newCategory = {"type": type, "title": title, "icon": icon};
       context.read<StateProvider>().saveCategory(newCategory);
+    }
+
+    void _filterData(String query) {
+      query = query.toLowerCase();
+      setState(() {
+        filteredIconList =
+            iconList.where((item) => item.toString().contains(query)).toList();
+      });
     }
 
     final formKey = GlobalKey<FormState>();
@@ -85,11 +99,51 @@ class _AddCategoryState extends State<AddCategory> {
                 ),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Select Icon',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Select Icon',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _isSearchVisible = !_isSearchVisible;
+                      });
+                    },
+                    icon: Icon(Icons.search),
+                  ),
+                ],
+              ),
+              Visibility(
+                visible: _isSearchVisible,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          onChanged: _filterData,
+                          controller: searchController,
+                          decoration: InputDecoration(
+                            hintText: 'Search...',
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _isSearchVisible = false;
+                          });
+                        },
+                        icon: Icon(Icons.close),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
@@ -100,7 +154,7 @@ class _AddCategoryState extends State<AddCategory> {
                   crossAxisCount: 6,
                   crossAxisSpacing: 10,
                 ),
-                itemCount: iconList.length,
+                itemCount: filteredIconList.length,
                 itemBuilder: (context, index) {
                   return GestureDetector(
                     onTap: () {

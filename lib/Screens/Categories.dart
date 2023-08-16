@@ -26,13 +26,6 @@ class _CategoriesState extends State<Categories> {
     });
   }
 
-  // @override
-  // void initState() {
-  //   // Call the super.initState() to ensure the state is properly initialized.
-  //   super.initState();
-  //   context.read<StateProvider>().getCategoriesFromDb();
-  // }
-
   @override
   Widget build(BuildContext context) {
     var categoryList = Provider.of<StateProvider>(context).categoryList;
@@ -61,12 +54,12 @@ class _CategoriesState extends State<Categories> {
         ),
         appBar: AppBar(
           elevation: 0,
-          backgroundColor: Colors.white,
+          backgroundColor: Color.fromARGB(255, 222, 222, 222),
           toolbarHeight: 10,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(40),
             child: Container(
-              color: Color.fromARGB(255, 227, 227, 227),
+              color: Color.fromARGB(255, 222, 222, 222),
               child: const TabBar(
                 indicatorColor: Colors.green,
                 tabs: [

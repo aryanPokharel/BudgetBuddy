@@ -14,7 +14,6 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   String selectedLanguage = 'English';
-  String selectedTheme = 'Light';
   bool notificationsEnabled = true;
   bool darkModeEnabled = false;
 
