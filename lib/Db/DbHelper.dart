@@ -7,6 +7,7 @@ class DatabaseHelper {
 
   static const tableCategories = 'categories';
   static const tableTransactions = 'transactions';
+  static const tableAppSettings = 'appSettings';
 
   static const colId = '_id';
   static const colType = 'type';
@@ -19,6 +20,10 @@ class DatabaseHelper {
   static const colDateTime = 'dateTime';
   static const colCategory = 'category';
   static const colTime = 'time';
+
+  // Constants to store app Settings
+  static const colAppTheme = 'appTheme';
+  static const colThemeColor = 'themeColor';
 
   // Make this a singleton class
   DatabaseHelper._privateConstructor();
@@ -42,10 +47,9 @@ class DatabaseHelper {
     );
   }
 
-  // Creates the categories and transactions tables
+  // Creates the categories and transactions and appSettings tables
   Future _onCreate(Database db, int version) async {
-    await db.execute(
-        '''
+    await db.execute('''
     CREATE TABLE $tableCategories (
       $colId INTEGER PRIMARY KEY,
       $colType TEXT NOT NULL,
@@ -73,8 +77,7 @@ class DatabaseHelper {
       await db.insert(tableCategories, categoryData);
     }
 
-    await db.execute(
-        '''
+    await db.execute('''
       CREATE TABLE $tableTransactions (
         $colId INTEGER PRIMARY KEY,
         $colType TEXT NOT NULL,
@@ -87,6 +90,22 @@ class DatabaseHelper {
         FOREIGN KEY ($colCategory) REFERENCES $tableCategories($colId) -- Establish a foreign key constraint
       )
     ''');
+
+    // Create app settings table
+
+    await db.execute('''
+    CREATE TABLE $tableAppSettings (
+      $colId INTEGER PRIMARY KEY,
+      $colAppTheme TEXT NOT NULL,
+      $colThemeColor TEXT NOT NULL
+    )
+  ''');
+    dynamic initialAppSetting = {
+      "appTheme": "Light",
+      "themeColor": "Colors.red",
+    };
+
+    await db.insert(tableAppSettings, initialAppSetting);
   }
 
   // Insert a new category into the database
@@ -115,6 +134,14 @@ class DatabaseHelper {
     int id = row[colId];
     return await db!
         .update(tableTransactions, row, where: '$colId = ?', whereArgs: [id]);
+  }
+
+  // Update the appSettings in the database
+  Future<int> updateAppSettings(Map<String, dynamic> row) async {
+    Database? db = await instance.database;
+    int id = row[colId];
+    return await db!
+        .update(tableAppSettings, row, where: '$colId = ?', whereArgs: [id]);
   }
 
   // Delete a category from the database
@@ -153,6 +180,12 @@ class DatabaseHelper {
   Future<List<Map<String, dynamic>>> getAllTransactions() async {
     Database? db = await instance.database;
     return await db!.query(tableTransactions);
+  }
+
+  // Get the appSettings from the database
+  Future<List<Map<String, dynamic>>> getAppSettings() async {
+    Database? db = await instance.database;
+    return await db!.query(tableAppSettings);
   }
 
   // Add the getCategoryById method

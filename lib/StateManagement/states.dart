@@ -35,6 +35,8 @@ class StateProvider with ChangeNotifier {
     await buildThisMonthTransactions();
     await categorizeThisMonthTransactions();
     await giveTitlesToThisMonthCategoryTypes();
+
+    await getAppSettings();
     notifyListeners();
   }
 
@@ -47,6 +49,20 @@ class StateProvider with ChangeNotifier {
 
   void setAppTheme(dynamic theme) {
     _appTheme = theme;
+    notifyListeners();
+  }
+
+  // Working with app Settings
+  getAppSettings() async {
+    await dbHelper.getAppSettings().then((value) {
+      print(value);
+      // _appTheme = value;
+      notifyListeners();
+    });
+  }
+
+  updateAppTheme(dynamic updatedAppTheme) async {
+    await dbHelper.updateAppSettings(updatedAppTheme);
     notifyListeners();
   }
 
