@@ -43,7 +43,7 @@ class _UpdateCategoryState extends State<UpdateCategory> {
           : const Color.fromARGB(255, 210, 219, 200),
       appBar: AppBar(
         title: const Text(
-          'Add Category',
+          'Update Category',
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),

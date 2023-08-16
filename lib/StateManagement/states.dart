@@ -35,8 +35,6 @@ class StateProvider with ChangeNotifier {
     await buildThisMonthTransactions();
     await categorizeThisMonthTransactions();
     await giveTitlesToThisMonthCategoryTypes();
-
-    dataLoaded = true;
     notifyListeners();
   }
 
@@ -166,7 +164,7 @@ class StateProvider with ChangeNotifier {
       }
     }
     categorizeTransactions();
-
+    buildThisMonthTransactions();
     notifyListeners();
   }
 
@@ -205,11 +203,13 @@ class StateProvider with ChangeNotifier {
   updateTransaction(dynamic updatedTransaction) async {
     await dbHelper.updateTransaction(updatedTransaction);
     getTransactionsFromDb();
+    notifyListeners();
   }
 
   deleteTransaction(dynamic transactionId) async {
     await dbHelper.deleteTransaction(transactionId);
     getTransactionsFromDb();
+    notifyListeners();
   }
 
   var expenseCategoryTypes = [];
@@ -284,8 +284,9 @@ class StateProvider with ChangeNotifier {
   dynamic thisMonthTotalIncome = 0;
   setSelectedMonth(int month) {
     selectedMonth = monthList[month];
-    notifyListeners();
+
     fetchAllData();
+    notifyListeners();
   }
 
   var thisMonthCategories = [];

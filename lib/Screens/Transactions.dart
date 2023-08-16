@@ -32,7 +32,6 @@ class _TransactionsState extends State<Transactions> {
   // void initState() {
   //   super.initState();
   //   context.read<StateProvider>().fetchAllData();
-  //   Provider.of<StateProvider>(context).dataLoaded;
   // }
 
   @override
