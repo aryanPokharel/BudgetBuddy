@@ -48,11 +48,6 @@ class StateProvider with ChangeNotifier {
   dynamic _appTheme = defaultAppTheme;
   dynamic get appTheme => _appTheme;
 
-  // void setAppTheme(dynamic theme) {
-  //   _appTheme = theme;
-  //   notifyListeners();
-  // }
-
   // Working with app Settings
   getAppSettings() async {
     await dbHelper.getAppSettings().then((value) {
