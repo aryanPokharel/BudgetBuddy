@@ -68,14 +68,20 @@ class _SettingsPageState extends State<SettingsPage> {
                 setState(() {
                   darkModeEnabled = value;
                   if (darkModeEnabled) {
-                    context.read<StateProvider>().setAppTheme(Colors.blueGrey);
-                    // context.read<StateProvider>().updateAppTheme({
-                    //   "_id": 1,
-                    //   "appTheme": "Dark",
-                    //   "themeColor": "",
-                    // });
+                    // context.read<StateProvider>().setAppTheme(Colors.blueGrey);
+                    context.read<StateProvider>().updateAppTheme({
+                      "_id": 1,
+                      "appTheme": "Dark",
+                      "themeColor": "Colors.blueGrey",
+                    });
+                    context.read<StateProvider>().getAppSettings();
                   } else {
-                    context.read<StateProvider>().setAppTheme(defaultAppTheme);
+                    // context.read<StateProvider>().setAppTheme(defaultAppTheme);
+                    context.read<StateProvider>().updateAppTheme({
+                      "_id": 1,
+                      "appTheme": "Light",
+                      "themeColor": "Colors.lightBlue",
+                    });
                     // context.read<StateProvider>().getAppSettings();
                   }
                 });

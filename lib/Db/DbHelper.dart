@@ -140,6 +140,7 @@ class DatabaseHelper {
   Future<int> updateAppSettings(Map<String, dynamic> row) async {
     Database? db = await instance.database;
     int id = row[colId];
+
     return await db!
         .update(tableAppSettings, row, where: '$colId = ?', whereArgs: [id]);
   }

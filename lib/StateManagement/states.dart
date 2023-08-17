@@ -1,4 +1,5 @@
 import 'package:budget_buddy/Constants/DateName.dart';
+import 'package:budget_buddy/Constants/ParseColor.dart';
 import 'package:budget_buddy/Constants/TryParseDouble.dart';
 import 'package:budget_buddy/Db/DbHelper.dart';
 import 'package:budget_buddy/Screens/Constants.dart';
@@ -47,23 +48,27 @@ class StateProvider with ChangeNotifier {
   dynamic _appTheme = defaultAppTheme;
   dynamic get appTheme => _appTheme;
 
-  void setAppTheme(dynamic theme) {
-    _appTheme = theme;
-    notifyListeners();
-  }
+  // void setAppTheme(dynamic theme) {
+  //   _appTheme = theme;
+  //   notifyListeners();
+  // }
 
   // Working with app Settings
   getAppSettings() async {
     await dbHelper.getAppSettings().then((value) {
-      print(value);
-      // _appTheme = value;
+      _appTheme = colorMap[(value[0]['themeColor'])] ?? Colors.blue;
       notifyListeners();
     });
   }
 
   updateAppTheme(dynamic updatedAppTheme) async {
-    await dbHelper.updateAppSettings(updatedAppTheme);
-    notifyListeners();
+    dynamic updatedAppSetting = {
+      "_id": 1,
+      "appTheme": "Light",
+      "themeColor": colorToString(updatedAppTheme),
+    };
+    await dbHelper.updateAppSettings(updatedAppSetting);
+    getAppSettings();
   }
 
   dynamic totalExpenses = 0;

@@ -14,6 +14,8 @@ class FlBarGraph extends StatefulWidget {
   State<FlBarGraph> createState() => _FlBarGraphState();
 }
 
+// We need to call the expenseCategoryTypesTitles function from the StateProvider class
+
 class _FlBarGraphState extends State<FlBarGraph> {
   @override
   Widget build(BuildContext context) {
