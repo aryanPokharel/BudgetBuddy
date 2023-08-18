@@ -33,8 +33,8 @@ class _FlBarGraphState extends State<FlBarGraph> {
         Provider.of<StateProvider>(context).expenseCategoryTypesTitles;
     var incomeCateogoryTypesTitles =
         Provider.of<StateProvider>(context).incomeCategoryTypesTitles;
-    var highestExpenseAmount = 0.0;
-    var highestIncomeAmount = 0.0;
+    dynamic highestExpenseAmount = 0;
+    dynamic highestIncomeAmount = 0;
 
     for (var expenseCategory in expenseCategoryTypes) {
       if (expenseCategory['totalAmount'] > highestExpenseAmount) {
