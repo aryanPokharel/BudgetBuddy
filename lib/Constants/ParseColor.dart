@@ -25,6 +25,7 @@ Map<int, String> colorValueToNameMap = {
   Colors.orange.value: "orange",
   Colors.purple.value: "purple",
   Colors.pink.value: "pink",
+  Colors.blueGrey.value: "blueGrey",
 };
 String getColorStringFromValue(int colorValue) {
   String colorName = colorValueToNameMap[colorValue] ?? "unknown";
@@ -40,4 +41,5 @@ Map<String, Color> colorMap = {
   'Colors.orange': Colors.orange,
   'Colors.purple': Colors.purple,
   'Colors.pink': Colors.pink,
+  'Colors.blueGrey': Colors.blueGrey,
 };

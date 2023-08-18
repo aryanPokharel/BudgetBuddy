@@ -49,19 +49,54 @@ class StateProvider with ChangeNotifier {
   dynamic get appTheme => _appTheme;
 
   // Working with app Settings
+
+  bool darkTheme = false;
   getAppSettings() async {
     await dbHelper.getAppSettings().then((value) {
-      _appTheme = colorMap[(value[0]['themeColor'])] ?? Colors.blue;
+      if (value[0]['appTheme'] == "Dark") {
+        darkTheme = true;
+        _appTheme = Colors.blueGrey;
+      } else {
+        darkTheme = false;
+        _appTheme = colorMap[value[0]['themeColor']] ?? Colors.blue;
+      }
       notifyListeners();
     });
   }
 
-  updateAppTheme(dynamic updatedAppTheme) async {
-    dynamic updatedAppSetting = {
+  setAppColor() async {
+    dynamic updatedAppSetting;
+    await dbHelper.getAppSettings().then((value) {
+      _appTheme = colorMap[value[0]['themeColor']];
+      darkTheme = false;
+
+      notifyListeners();
+    });
+    updatedAppSetting = {
       "_id": 1,
       "appTheme": "Light",
-      "themeColor": colorToString(updatedAppTheme),
     };
+    await dbHelper.updateAppSettings(updatedAppSetting);
+    notifyListeners();
+  }
+
+  updateAppTheme(String mode, dynamic updatedAppTheme) async {
+    dynamic updatedAppSetting;
+    if (mode == "Dark") {
+      darkTheme = true;
+      updatedAppSetting = {
+        "_id": 1,
+        "appTheme": mode,
+      };
+    } else {
+      darkTheme = false;
+      updatedAppSetting = {
+        "_id": 1,
+        "appTheme": mode,
+        "themeColor": colorToString(updatedAppTheme),
+      };
+    }
+
     await dbHelper.updateAppSettings(updatedAppSetting);
     getAppSettings();
   }

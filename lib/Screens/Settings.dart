@@ -1,6 +1,5 @@
 import 'package:budget_buddy/Constants/ConstantValues.dart';
 import 'package:budget_buddy/Constants/DrawerColorButton.dart';
-import 'package:budget_buddy/Screens/Constants.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,13 +14,13 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   String selectedLanguage = 'English';
   bool notificationsEnabled = true;
-  bool darkModeEnabled = false;
+  late bool darkModeEnabled;
 
   @override
   Widget build(BuildContext context) {
     List<DrawerColorButton> firstRow = [];
     List<DrawerColorButton> secondRow = [];
-
+    darkModeEnabled = Provider.of<StateProvider>(context).darkTheme;
     for (var i = 0; i < 4; i++) {
       firstRow.add(DrawerColorButton(
         color: appThemeColors[i],
@@ -68,21 +67,11 @@ class _SettingsPageState extends State<SettingsPage> {
                 setState(() {
                   darkModeEnabled = value;
                   if (darkModeEnabled) {
-                    // context.read<StateProvider>().setAppTheme(Colors.blueGrey);
-                    context.read<StateProvider>().updateAppTheme({
-                      "_id": 1,
-                      "appTheme": "Dark",
-                      "themeColor": "Colors.blueGrey",
-                    });
-                    context.read<StateProvider>().getAppSettings();
+                    context
+                        .read<StateProvider>()
+                        .updateAppTheme("Dark", Colors.blueGrey);
                   } else {
-                    // context.read<StateProvider>().setAppTheme(defaultAppTheme);
-                    context.read<StateProvider>().updateAppTheme({
-                      "_id": 1,
-                      "appTheme": "Light",
-                      "themeColor": "Colors.lightBlue",
-                    });
-                    // context.read<StateProvider>().getAppSettings();
+                    context.read<StateProvider>().setAppColor();
                   }
                 });
               },

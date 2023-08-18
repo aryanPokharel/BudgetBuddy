@@ -11,7 +11,7 @@ class DrawerColorButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        context.read<StateProvider>().updateAppTheme(color);
+        context.read<StateProvider>().updateAppTheme("Light", color);
       },
       child: Container(
         width: 30,
