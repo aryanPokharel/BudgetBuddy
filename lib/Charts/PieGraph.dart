@@ -52,11 +52,10 @@ class _FlPieGraphState extends State<FlPieGraph> {
         PieChartSectionData(
           value: i == 1 ? totalIncome : totalExpenses,
           color: i == 1 ? Colors.green : Colors.red,
-          title: i == 1 ? "Income" : "Expense",
+          showTitle: false,
           radius: i == 1
               ? (incomeIsGreater ? 70 : 60)
               : (incomeIsGreater ? 60 : 70),
-          titleStyle: TextStyle(color: Colors.white, fontSize: 16),
         ),
       );
     }

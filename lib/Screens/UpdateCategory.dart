@@ -18,6 +18,7 @@ class _UpdateCategoryState extends State<UpdateCategory> {
   var iconController = TextEditingController();
   late String _categoryType;
   late IconData selectedIcon;
+  late var appTheme;
   updateCategory(dynamic updatedCategory) {
     context.read<StateProvider>().updateCategory(updatedCategory);
   }
@@ -37,6 +38,7 @@ class _UpdateCategoryState extends State<UpdateCategory> {
   @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
+    appTheme = context.read<StateProvider>().appTheme;
     return Scaffold(
       backgroundColor: _categoryType == "Expense"
           ? const Color.fromARGB(255, 196, 214, 222)
@@ -130,7 +132,7 @@ class _UpdateCategoryState extends State<UpdateCategory> {
               const SizedBox(height: 24),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
+                  backgroundColor: appTheme,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -155,12 +157,15 @@ class _UpdateCategoryState extends State<UpdateCategory> {
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.save),
+                    Icon(
+                      Icons.save,
+                      size: 18,
+                    ),
                     SizedBox(width: 8),
                     Text(
-                      'Update Category',
+                      'Update',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

@@ -10,7 +10,10 @@ class InsightsPage extends StatefulWidget {
 
 class _InsightsPageState extends State<InsightsPage> {
   String _transactionType = "Expense";
-  String graphType = "Pie";
+  String grossGraphType = "Pie";
+  int _selectedOption = 0;
+
+  String individualGraphType = "Pie";
   @override
   void initState() {
     super.initState();
@@ -49,13 +52,14 @@ class _InsightsPageState extends State<InsightsPage> {
               SizedBox(
                 height: 10,
               ),
-              graphType == "Pie" ? FlPieGraph() : FlLineGraph(),
+              grossGraphType == "Pie" ? FlPieGraph() : FlLineGraph(),
               Divider(
                 thickness: 2,
               ),
               SizedBox(
-                height: 60,
+                height: 50,
               ),
+              Row(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -88,7 +92,7 @@ class _InsightsPageState extends State<InsightsPage> {
         setState(() {
           insightType == "Individual"
               ? _transactionType = option
-              : graphType = option;
+              : grossGraphType = option;
           ;
         });
       },
@@ -119,19 +123,21 @@ class _InsightsPageState extends State<InsightsPage> {
           : Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: graphType == option ? Colors.blue : Colors.transparent,
+                color:
+                    grossGraphType == option ? Colors.blue : Colors.transparent,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: graphType == option ? Colors.blue : Colors.grey,
+                  color: grossGraphType == option ? Colors.blue : Colors.grey,
                   width: 1.5,
                 ),
               ),
               child: Text(
                 option,
                 style: TextStyle(
-                  color: graphType == option ? Colors.white : Colors.black,
-                  fontWeight:
-                      graphType == option ? FontWeight.bold : FontWeight.normal,
+                  color: grossGraphType == option ? Colors.white : Colors.black,
+                  fontWeight: grossGraphType == option
+                      ? FontWeight.bold
+                      : FontWeight.normal,
                 ),
               ),
             ),

@@ -6,7 +6,7 @@ Color parseColor(String colorString) {
       (color) => color.toString() == colorString,
       orElse: () => Colors.blueGrey,
     );
-    return parsedColor ?? Colors.blueGrey;
+    return parsedColor;
   } catch (e) {
     return Colors.blueGrey;
   }

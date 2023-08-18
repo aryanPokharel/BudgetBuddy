@@ -133,7 +133,7 @@ class _AddTransactionState extends State<AddTransaction> {
                     _buildRadioOption("Income"),
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
                 TextFormField(
                   controller: titleController,
                   decoration: const InputDecoration(
@@ -146,7 +146,7 @@ class _AddTransactionState extends State<AddTransaction> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
                 TextFormField(
                   controller: amountController,
                   keyboardType: TextInputType.number,
@@ -168,7 +168,7 @@ class _AddTransactionState extends State<AddTransaction> {
                     hintText: "Remarks",
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -245,12 +245,12 @@ class _AddTransactionState extends State<AddTransaction> {
                   ],
                 ),
                 const SizedBox(
-                  height: 8,
+                  height: 6,
                 ),
                 GestureDetector(
                   onTap: () => _selectDate(context),
                   child: Container(
-                    height: 50,
+                    height: 45,
                     decoration: BoxDecoration(
                       color: Colors.lightBlue,
                       borderRadius: BorderRadius.circular(10),
@@ -270,7 +270,7 @@ class _AddTransactionState extends State<AddTransaction> {
                                 ? 'Please select a date'
                                 : "${selectedDate!.year}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.day.toString().padLeft(2, '0')}",
                             style: const TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                               color: Colors.white,
                             ),
                           ),
@@ -283,11 +283,11 @@ class _AddTransactionState extends State<AddTransaction> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 8),
                 GestureDetector(
                   onTap: () => _selectTime(context),
                   child: Container(
-                    height: 50,
+                    height: 45,
                     decoration: BoxDecoration(
                       color: const Color.fromARGB(255, 14, 100, 139),
                       borderRadius: BorderRadius.circular(10),
@@ -307,7 +307,7 @@ class _AddTransactionState extends State<AddTransaction> {
                                 ? 'Please select time'
                                 : selectedTime.format(context),
                             style: const TextStyle(
-                              fontSize: 18,
+                              fontSize: 16,
                               color: Colors.white,
                             ),
                           ),
@@ -320,7 +320,7 @@ class _AddTransactionState extends State<AddTransaction> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 14),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/addCategory');
@@ -332,7 +332,7 @@ class _AddTransactionState extends State<AddTransaction> {
                   child: Text("Create Own Category"),
                 ),
                 SizedBox(
-                  height: 10,
+                  height: 8,
                 ),
                 DropdownButtonFormField<dynamic>(
                   value: _transactionType == "Expense"
@@ -397,7 +397,7 @@ class _AddTransactionState extends State<AddTransaction> {
                   ),
                 ),
                 const SizedBox(
-                  height: 16,
+                  height: 12,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
