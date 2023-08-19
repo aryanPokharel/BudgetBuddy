@@ -6,17 +6,24 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:provider/provider.dart';
 
 class FlLineGraph extends StatefulWidget {
-  const FlLineGraph({super.key});
+  final insightType;
+  const FlLineGraph({this.insightType, super.key});
 
   @override
   State<FlLineGraph> createState() => _FlLineGraphState();
 }
 
 class _FlLineGraphState extends State<FlLineGraph> {
+  late List<dynamic> transactionList;
   @override
   Widget build(BuildContext context) {
-    List<dynamic> transactionList =
-        Provider.of<StateProvider>(context).transactionList;
+    if (widget.insightType == "Monthly") {
+      transactionList =
+          Provider.of<StateProvider>(context).thisMonthTransactions;
+    } else {
+      transactionList = Provider.of<StateProvider>(context).transactionList;
+    }
+
     List<FlSpot> expenseSpots = [];
     List<FlSpot> incomeSpots = [];
 
@@ -46,6 +53,7 @@ class _FlLineGraphState extends State<FlLineGraph> {
       {"color": Colors.green, "title": "Income"},
       {"color": Colors.red, "title": "Expense"},
     ];
+
     return (transactionList.length < 1)
         ? SizedBox(
             height: 300,

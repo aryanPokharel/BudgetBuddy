@@ -75,7 +75,8 @@ class _InsightsPageState extends State<InsightsPage> {
               grossGraphType == "Pie"
                   ? FlPieGraph(
                       insightType: showMonthlyInsights ? "Monthly" : "Overall")
-                  : FlLineGraph(),
+                  : FlLineGraph(
+                      insightType: showMonthlyInsights ? "Monthly" : "Overall"),
               Divider(
                 thickness: 2,
               ),
