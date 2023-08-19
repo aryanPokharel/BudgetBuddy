@@ -68,16 +68,23 @@ class _AddTransactionState extends State<AddTransaction> {
   }
 
   clear() {
+    print("choosenExpense category : $choosenExpenseCategory");
+    print("choosenIncome category : $choosenIncomeCategory");
+
     setState(() {
       titleController.clear();
       amountController.clear();
       descriptionController.clear();
-      selectedDate = null;
+      selectedDate = DateTime.now();
+      selectedTime = TimeOfDay.now();
     });
   }
 
   dynamic selectedCategory;
   TimeOfDay selectedTime = TimeOfDay.now();
+
+  var choosenExpenseCategory;
+  var choosenIncomeCategory;
   @override
   Widget build(BuildContext context) {
     dynamic appTheme = Provider.of<StateProvider>(context).appTheme;
@@ -187,7 +194,6 @@ class _AddTransactionState extends State<AddTransaction> {
                       onPressed: () {
                         setState(() {
                           selectedDate = now;
-                          selectedTime = TimeOfDay.now();
                         });
                       },
                       child: const Text(
@@ -210,7 +216,6 @@ class _AddTransactionState extends State<AddTransaction> {
                       onPressed: () {
                         setState(() {
                           selectedDate = yesterday;
-                          selectedTime = TimeOfDay.now();
                         });
                       },
                       child: const Text(
@@ -234,7 +239,6 @@ class _AddTransactionState extends State<AddTransaction> {
                       onPressed: () {
                         setState(() {
                           selectedDate = dayBeforeYesterday;
-                          selectedTime = TimeOfDay.now();
                         });
                       },
                       child: const Text(
@@ -338,6 +342,15 @@ class _AddTransactionState extends State<AddTransaction> {
                   value: _transactionType == "Expense"
                       ? expenseCategories[0]
                       : incomeCategories[0],
+                  // value: _transactionType == "Expense"
+                  //     ? choosenExpenseCategory.length < 1
+                  //         ? expenseCategories[0]
+                  // : expenseCategories.indexWhere((element) =>
+                  //     element['id'] == choosenExpenseCategory['id'])
+                  //     : choosenIncomeCategory.length < 1
+                  //         ? incomeCategories[0]
+                  //         : incomeCategories.indexWhere((element) =>
+                  //             element['id'] == choosenIncomeCategory['id']),
                   items: _transactionType == "Expense"
                       ? expenseCategories.map((dynamic category) {
                           final Map<String, dynamic> categoryData =
@@ -390,6 +403,9 @@ class _AddTransactionState extends State<AddTransaction> {
                           );
                         }).toList(),
                   onChanged: (value) {
+                    _transactionType == "Expense"
+                        ? choosenExpenseCategory = value
+                        : choosenIncomeCategory = value;
                     selectedCategory = value['id'];
                   },
                   decoration: const InputDecoration(
