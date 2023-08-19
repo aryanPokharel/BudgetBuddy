@@ -27,6 +27,8 @@ class _FlLineGraphState extends State<FlLineGraph> {
     List<FlSpot> expenseSpots = [];
     List<FlSpot> incomeSpots = [];
 
+    double totalExpenses = 0;
+    double totalIncome = 0;
     for (var transaction in transactionList) {
       if (transaction['type'] == 'Expense') {
         expenseSpots.add(
@@ -37,6 +39,8 @@ class _FlLineGraphState extends State<FlLineGraph> {
             ),
           ),
         );
+
+        totalExpenses += double.parse(transaction['amount']);
       } else {
         incomeSpots.add(
           FlSpot(
@@ -46,6 +50,7 @@ class _FlLineGraphState extends State<FlLineGraph> {
             ),
           ),
         );
+        totalIncome += double.parse(transaction['amount']);
       }
     }
 
@@ -68,8 +73,16 @@ class _FlLineGraphState extends State<FlLineGraph> {
                 height: 400,
                 child: LineChart(
                   LineChartData(
+                    minY: totalIncome > totalExpenses
+                        ? -(totalExpenses * 0.1)
+                        : -(totalIncome * 0.1),
+                    maxY: totalIncome > totalExpenses
+                        ? totalIncome + (totalIncome * 0.1)
+                        : totalExpenses + (totalExpenses * 0.1),
                     gridData: FlGridData(show: false),
-                    titlesData: FlTitlesData(show: true),
+                    titlesData: FlTitlesData(
+                      show: true,
+                    ),
                     borderData: FlBorderData(show: true),
                     lineBarsData: [
                       LineChartBarData(

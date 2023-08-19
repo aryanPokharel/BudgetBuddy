@@ -1,7 +1,6 @@
 import 'package:budget_buddy/Charts/BarGraph.dart';
 import 'package:budget_buddy/Charts/LineGraph.dart';
 import 'package:budget_buddy/Charts/PieGraph.dart';
-import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:flutter/material.dart';
 
 class InsightsPage extends StatefulWidget {
@@ -41,11 +40,6 @@ class _InsightsPageState extends State<InsightsPage> {
                   onChanged: (value) {
                     setState(() {
                       showMonthlyInsights = value;
-                      if (showMonthlyInsights) {
-                        sendSnackBar(context, showMonthlyInsights.toString());
-                      } else {
-                        sendSnackBar(context, showMonthlyInsights.toString());
-                      }
                     });
                   },
                 ),
