@@ -1,6 +1,7 @@
 import 'package:budget_buddy/Charts/BarGraph.dart';
 import 'package:budget_buddy/Charts/LineGraph.dart';
 import 'package:budget_buddy/Charts/PieGraph.dart';
+import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:flutter/material.dart';
 
 class InsightsPage extends StatefulWidget {
@@ -11,13 +12,14 @@ class InsightsPage extends StatefulWidget {
 class _InsightsPageState extends State<InsightsPage> {
   String _transactionType = "Expense";
   String grossGraphType = "Pie";
-  int _selectedOption = 0;
 
   String individualGraphType = "Pie";
   @override
   void initState() {
     super.initState();
   }
+
+  bool showMonthlyInsights = false;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +33,24 @@ class _InsightsPageState extends State<InsightsPage> {
               SizedBox(
                 height: 20,
               ),
+              ListTile(
+                leading: const Icon(Icons.calendar_month),
+                title: const Text('Show Montly Data'),
+                trailing: Switch(
+                  value: showMonthlyInsights,
+                  onChanged: (value) {
+                    setState(() {
+                      showMonthlyInsights = value;
+                      if (showMonthlyInsights) {
+                        sendSnackBar(context, showMonthlyInsights.toString());
+                      } else {
+                        sendSnackBar(context, showMonthlyInsights.toString());
+                      }
+                    });
+                  },
+                ),
+              ),
+              const Divider(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -52,14 +72,16 @@ class _InsightsPageState extends State<InsightsPage> {
               SizedBox(
                 height: 10,
               ),
-              grossGraphType == "Pie" ? FlPieGraph() : FlLineGraph(),
+              grossGraphType == "Pie"
+                  ? FlPieGraph(
+                      insightType: showMonthlyInsights ? "Monthly" : "Overall")
+                  : FlLineGraph(),
               Divider(
                 thickness: 2,
               ),
               SizedBox(
                 height: 50,
               ),
-              Row(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

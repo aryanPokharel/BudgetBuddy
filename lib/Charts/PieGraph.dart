@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class FlPieGraph extends StatefulWidget {
-  const FlPieGraph({super.key});
+  final insightType;
+  const FlPieGraph({this.insightType, super.key});
 
   @override
   State<FlPieGraph> createState() => _FlPieGraphState();
@@ -36,15 +37,34 @@ class _FlPieGraphState extends State<FlPieGraph> {
 
   @override
   Widget build(BuildContext context) {
-    double totalExpenses =
-        tryParseDouble(Provider.of<StateProvider>(context).totalExpenses);
-    double totalIncome =
-        tryParseDouble(Provider.of<StateProvider>(context).totalIncome);
+    double totalExpenses;
+    double totalIncome;
+    double totalTransactions;
+    double incomePercent;
+    double expensePercent;
+    bool incomeIsGreater;
 
-    double totalTransactions = totalExpenses + totalIncome;
-    double incomePercent = (totalIncome / totalTransactions) * 100;
-    double expensePercent = (totalExpenses / totalTransactions) * 100;
-    bool incomeIsGreater = totalIncome > totalExpenses;
+    if (widget.insightType == "Monthly") {
+      totalExpenses = tryParseDouble(
+          Provider.of<StateProvider>(context).thisMonthTotalExpenses);
+      totalIncome = tryParseDouble(
+          Provider.of<StateProvider>(context).thisMonthTotalIncome);
+
+      totalTransactions = totalExpenses + totalIncome;
+      incomePercent = (totalIncome / totalTransactions) * 100;
+      expensePercent = (totalExpenses / totalTransactions) * 100;
+      incomeIsGreater = totalIncome > totalExpenses;
+    } else {
+      totalExpenses =
+          tryParseDouble(Provider.of<StateProvider>(context).totalExpenses);
+      totalIncome =
+          tryParseDouble(Provider.of<StateProvider>(context).totalIncome);
+
+      totalTransactions = totalExpenses + totalIncome;
+      incomePercent = (totalIncome / totalTransactions) * 100;
+      expensePercent = (totalExpenses / totalTransactions) * 100;
+      incomeIsGreater = totalIncome > totalExpenses;
+    }
 
     List<PieChartSectionData> pieChartData = [];
     for (int i = 0; i < 2; i++) {
@@ -74,6 +94,7 @@ class _FlPieGraphState extends State<FlPieGraph> {
         "title": "Expense"
       },
     ];
+
     return (totalExpenses == 0 && totalIncome == 0)
         ? SizedBox(height: 300, child: DancingDoge())
         : Column(
