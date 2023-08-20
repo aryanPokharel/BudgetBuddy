@@ -370,6 +370,8 @@ class StateProvider with ChangeNotifier {
   var thisMonthExpenseCategoryTypes = [];
   var thisMonthIncomeCategoryTypes = [];
   categorizeThisMonthTransactions() {
+    thisMonthExpenseCategoryTypes.clear();
+    thisMonthIncomeCategoryTypes.clear();
     for (var transaction in thisMonthTransactions) {
       if (transaction['type'] == 'Expense') {
         // For expense categories
@@ -430,7 +432,7 @@ class StateProvider with ChangeNotifier {
       var title = category![DatabaseHelper.colTitle];
       tempIncomeTitles.add(title);
     }
-    expenseCategoryTypesTitles = tempExpenseTitles;
-    incomeCategoryTypesTitles = tempIncomeTitles;
+    thisMonthExpenseCategoryTypesTitles = tempExpenseTitles;
+    thisMonthIncomeCategoryTypesTitles = tempIncomeTitles;
   }
 }

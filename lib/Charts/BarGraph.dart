@@ -17,22 +17,37 @@ class FlBarGraph extends StatefulWidget {
 // We need to call the expenseCategoryTypesTitles function from the StateProvider class
 
 class _FlBarGraphState extends State<FlBarGraph> {
+  late bool showMonthlyData;
+  @override
+  void initState() {
+    super.initState();
+    // context.read<StateProvider>().fetchAllData();
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<dynamic> transactionList =
-        Provider.of<StateProvider>(context).transactionList;
+    showMonthlyData = Provider.of<StateProvider>(context).showMonthlyData;
+    List<dynamic> transactionList = showMonthlyData
+        ? Provider.of<StateProvider>(context).thisMonthTransactions
+        : Provider.of<StateProvider>(context).transactionList;
 
     List<BarChartGroupData> expenseBarGraphData = [];
     List<BarChartGroupData> incomeBarGraphData = [];
-    List<dynamic> expenseCategoryTypes =
-        Provider.of<StateProvider>(context).expenseCategoryTypes;
-    List<dynamic> incomeCategoryTypes =
-        Provider.of<StateProvider>(context).incomeCategoryTypes;
 
-    var expenseCateogoryTypesTitles =
-        Provider.of<StateProvider>(context).expenseCategoryTypesTitles;
-    var incomeCateogoryTypesTitles =
-        Provider.of<StateProvider>(context).incomeCategoryTypesTitles;
+    List<dynamic> expenseCategoryTypes = showMonthlyData
+        ? Provider.of<StateProvider>(context).thisMonthExpenseCategoryTypes
+        : Provider.of<StateProvider>(context).expenseCategoryTypes;
+    List<dynamic> incomeCategoryTypes = showMonthlyData
+        ? Provider.of<StateProvider>(context).thisMonthIncomeCategoryTypes
+        : Provider.of<StateProvider>(context).incomeCategoryTypes;
+
+    var expenseCateogoryTypesTitles = showMonthlyData
+        ? Provider.of<StateProvider>(context)
+            .thisMonthExpenseCategoryTypesTitles
+        : Provider.of<StateProvider>(context).expenseCategoryTypesTitles;
+    var incomeCateogoryTypesTitles = showMonthlyData
+        ? Provider.of<StateProvider>(context).thisMonthIncomeCategoryTypesTitles
+        : Provider.of<StateProvider>(context).incomeCategoryTypesTitles;
     dynamic highestExpenseAmount = 0;
     dynamic highestIncomeAmount = 0;
 
@@ -89,7 +104,9 @@ class _FlBarGraphState extends State<FlBarGraph> {
         {
           "color":
               appThemeColors[expenseCategoryTypes.indexOf(expenseCategory)],
-          "title": expenseCateogoryTypesTitles[l]
+          "title": expenseCateogoryTypesTitles.length > 0
+              ? expenseCateogoryTypesTitles[l]
+              : "notFound"
         },
       );
       l++;
@@ -101,11 +118,14 @@ class _FlBarGraphState extends State<FlBarGraph> {
       incomeIndices.add(
         {
           "color": appThemeColors[incomeCategoryTypes.indexOf(incomeCategory)],
-          "title": incomeCateogoryTypesTitles[m]
+          "title": incomeCateogoryTypesTitles.length > 0
+              ? incomeCateogoryTypesTitles[m]
+              : "notFound"
         },
       );
       m++;
     }
+
     return (transactionList.length < 1)
         ? SizedBox(
             height: 300,
