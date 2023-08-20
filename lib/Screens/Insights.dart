@@ -1,7 +1,9 @@
 import 'package:budget_buddy/Charts/BarGraph.dart';
 import 'package:budget_buddy/Charts/LineGraph.dart';
 import 'package:budget_buddy/Charts/PieGraph.dart';
+import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class InsightsPage extends StatefulWidget {
   @override
@@ -18,10 +20,11 @@ class _InsightsPageState extends State<InsightsPage> {
     super.initState();
   }
 
-  bool showMonthlyInsights = false;
+  late bool showMonthlyData;
 
   @override
   Widget build(BuildContext context) {
+    showMonthlyData = Provider.of<StateProvider>(context).showMonthlyData;
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 222, 222, 222),
       body: Center(
@@ -32,19 +35,6 @@ class _InsightsPageState extends State<InsightsPage> {
               SizedBox(
                 height: 20,
               ),
-              ListTile(
-                leading: const Icon(Icons.calendar_month),
-                title: const Text('Show Montly Data'),
-                trailing: Switch(
-                  value: showMonthlyInsights,
-                  onChanged: (value) {
-                    setState(() {
-                      showMonthlyInsights = value;
-                    });
-                  },
-                ),
-              ),
-              const Divider(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -68,9 +58,9 @@ class _InsightsPageState extends State<InsightsPage> {
               ),
               grossGraphType == "Pie"
                   ? FlPieGraph(
-                      insightType: showMonthlyInsights ? "Monthly" : "Overall")
+                      insightType: showMonthlyData ? "Monthly" : "Overall")
                   : FlLineGraph(
-                      insightType: showMonthlyInsights ? "Monthly" : "Overall"),
+                      insightType: showMonthlyData ? "Monthly" : "Overall"),
               Divider(
                 thickness: 2,
               ),

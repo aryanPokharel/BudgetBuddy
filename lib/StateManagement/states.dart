@@ -8,6 +8,13 @@ import 'package:flutter/material.dart';
 class StateProvider with ChangeNotifier {
   bool dataLoaded = false;
 
+  bool showMonthlyData = true;
+
+  setShowMonthlyData(bool value) {
+    showMonthlyData = value;
+    notifyListeners();
+  }
+
   dynamic monthList = [
     "January",
     "February",

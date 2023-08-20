@@ -1,5 +1,4 @@
 import 'package:budget_buddy/Constants/DateName.dart';
-import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:budget_buddy/Screens/Categories.dart';
 import 'package:budget_buddy/Screens/Insights.dart';
 import 'package:budget_buddy/Screens/Transactions.dart';
@@ -61,6 +60,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  bool showMonthlyData = true;
   @override
   void initState() {
     super.initState();
@@ -73,13 +73,15 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    showMonthlyData = Provider.of<StateProvider>(context).showMonthlyData;
     var monthList = context.read<StateProvider>().monthList;
     dynamic appTheme = Provider.of<StateProvider>(context).appTheme;
-    dynamic totalExpenses =
-        Provider.of<StateProvider>(context).thisMonthTotalExpenses;
-    dynamic totalIncome =
-        Provider.of<StateProvider>(context).thisMonthTotalIncome;
-
+    dynamic totalExpenses = showMonthlyData
+        ? Provider.of<StateProvider>(context).thisMonthTotalExpenses
+        : Provider.of<StateProvider>(context).totalExpenses;
+    dynamic totalIncome = showMonthlyData
+        ? Provider.of<StateProvider>(context).thisMonthTotalIncome
+        : Provider.of<StateProvider>(context).totalIncome;
     var selectedMonth = Provider.of<StateProvider>(context).selectedMonth;
 
     return Scaffold(
@@ -139,38 +141,69 @@ class _HomePageState extends State<HomePage> {
         ),
         title: SizedBox(
           height: 50,
-          child: CarouselSlider.builder(
-            carouselController: _monthListCarouselController,
-            itemCount: monthList.length,
-            itemBuilder: (BuildContext context, int index, int realIndex) {
-              return Container(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  monthList[index],
-                  style: const TextStyle(
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+          child: showMonthlyData
+              ? CarouselSlider.builder(
+                  carouselController: _monthListCarouselController,
+                  itemCount: monthList.length,
+                  itemBuilder:
+                      (BuildContext context, int index, int realIndex) {
+                    return Container(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        monthList[index],
+                        style: const TextStyle(
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    );
+                  },
+                  options: CarouselOptions(
+                    height: 200,
+                    enableInfiniteScroll: true,
+                    enlargeCenterPage: true,
+                    initialPage: monthList.indexOf(selectedMonth),
+                    onPageChanged:
+                        (int index, CarouselPageChangedReason reason) {
+                      context.read<StateProvider>().setSelectedMonth(index);
+                    },
+                  ),
+                )
+              : CarouselSlider.builder(
+                  itemCount: 1,
+                  itemBuilder:
+                      (BuildContext context, int index, int realIndex) {
+                    return Container(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "Show Monthly Data",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    );
+                  },
+                  options: CarouselOptions(
+                    height: 200,
+                    enableInfiniteScroll: false,
+                    enlargeCenterPage: true,
                   ),
                 ),
-              );
-            },
-            options: CarouselOptions(
-              height: 200,
-              enableInfiniteScroll: true,
-              enlargeCenterPage: true,
-              initialPage: monthList.indexOf(selectedMonth),
-              onPageChanged: (int index, CarouselPageChangedReason reason) {
-                context.read<StateProvider>().setSelectedMonth(index);
-              },
-            ),
-          ),
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.cloud_upload),
-            onPressed: () {
-              sendSnackBar(context, "Cloud backup comming soon!");
+          Switch(
+            activeTrackColor: appTheme.value == 0xff4caf50
+                ? Color.fromARGB(255, 145, 195, 191)
+                : Colors.lightGreen,
+            activeColor: Colors.white,
+            value: showMonthlyData,
+            onChanged: (value) {
+              setState(() {
+                context.read<StateProvider>().setShowMonthlyData(value);
+              });
             },
           ),
         ],

@@ -34,10 +34,14 @@ class _TransactionsState extends State<Transactions> {
   //   context.read<StateProvider>().fetchAllData();
   // }
 
+  late bool showMonthlyData;
+
   @override
   Widget build(BuildContext context) {
-    List<dynamic> transactionList =
-        Provider.of<StateProvider>(context).thisMonthTransactions;
+    showMonthlyData = Provider.of<StateProvider>(context).showMonthlyData;
+    List<dynamic> transactionList = showMonthlyData
+        ? Provider.of<StateProvider>(context).thisMonthTransactions
+        : Provider.of<StateProvider>(context).transactionList;
     Map<String, List<Map<String, dynamic>>> groupedTransactions = {};
     if (transactionList.isNotEmpty) {
       transactionList.sort(
