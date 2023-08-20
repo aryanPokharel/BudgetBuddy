@@ -1,6 +1,7 @@
 import 'package:budget_buddy/Charts/BarGraph.dart';
 import 'package:budget_buddy/Charts/LineGraph.dart';
 import 'package:budget_buddy/Charts/PieGraph.dart';
+import 'package:budget_buddy/Charts/PieGraph2.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -83,6 +84,18 @@ class _InsightsPageState extends State<InsightsPage> {
                   : FlBarGraph(
                       type: "Income",
                     ),
+              Divider(
+                thickness: 2,
+              ),
+              FlPieGraph2(
+                transactionType: "Expense",
+              ),
+              Divider(
+                thickness: 2,
+              ),
+              FlPieGraph2(
+                transactionType: "Income",
+              ),
               Divider(
                 thickness: 2,
               ),
