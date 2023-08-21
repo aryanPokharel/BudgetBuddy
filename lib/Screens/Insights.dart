@@ -27,6 +27,16 @@ class _InsightsPageState extends State<InsightsPage> {
   @override
   Widget build(BuildContext context) {
     showMonthlyData = Provider.of<StateProvider>(context).showMonthlyData;
+
+    List<dynamic> expenseCategoryTypes = showMonthlyData
+        ? Provider.of<StateProvider>(context).thisMonthExpenseCategoryTypes
+        : Provider.of<StateProvider>(context).expenseCategoryTypes;
+    List<dynamic> incomeCategoryTypes = showMonthlyData
+        ? Provider.of<StateProvider>(context).thisMonthIncomeCategoryTypes
+        : Provider.of<StateProvider>(context).incomeCategoryTypes;
+
+    bool noData =
+        (expenseCategoryTypes.length == 0 && incomeCategoryTypes.length == 0);
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 222, 222, 222),
       body: Center(
@@ -66,47 +76,55 @@ class _InsightsPageState extends State<InsightsPage> {
               Divider(
                 thickness: 2,
               ),
-              SizedBox(
-                height: 50,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildRadioOption("Individual", "Bar", "Expense"),
-                  const SizedBox(width: 16),
-                  _buildRadioOption("Individual", "Bar", "Income"),
-                ],
-              ),
-              const SizedBox(height: 16),
-              _barTransactionType == "Expense"
-                  ? FlBarGraph(
-                      type: "Expense",
+              noData
+                  ? Text("")
+                  : Container(
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: 50,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _buildRadioOption("Individual", "Bar", "Expense"),
+                              const SizedBox(width: 16),
+                              _buildRadioOption("Individual", "Bar", "Income"),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          _barTransactionType == "Expense"
+                              ? FlBarGraph(
+                                  type: "Expense",
+                                )
+                              : FlBarGraph(
+                                  type: "Income",
+                                ),
+                          Divider(
+                            thickness: 2,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _buildRadioOption("Individual", "Pie", "Expense"),
+                              const SizedBox(width: 16),
+                              _buildRadioOption("Individual", "Pie", "Income"),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          _pieTransactionType == "Expense"
+                              ? FlPieGraph2(
+                                  transactionType: "Expense",
+                                )
+                              : FlPieGraph2(
+                                  transactionType: "Income",
+                                ),
+                          Divider(
+                            thickness: 2,
+                          ),
+                        ],
+                      ),
                     )
-                  : FlBarGraph(
-                      type: "Income",
-                    ),
-              Divider(
-                thickness: 2,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildRadioOption("Individual", "Pie", "Expense"),
-                  const SizedBox(width: 16),
-                  _buildRadioOption("Individual", "Pie", "Income"),
-                ],
-              ),
-              const SizedBox(height: 16),
-              _pieTransactionType == "Expense"
-                  ? FlPieGraph2(
-                      transactionType: "Expense",
-                    )
-                  : FlPieGraph2(
-                      transactionType: "Income",
-                    ),
-              Divider(
-                thickness: 2,
-              ),
             ],
           ),
         ),

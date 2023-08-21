@@ -41,25 +41,30 @@ class _FlPieGraph2State extends State<FlPieGraph2> {
     List<PieChartSectionData> incomePieChartData = [];
     if (widget.transactionType == "Expense") {
       for (int i = 0; i < expenseCategoryTypes.length; i++) {
-        expensePieChartData.add(
-          PieChartSectionData(
-            value: expenseCategoryTypes[i]['totalAmount'],
-            color: appThemeColors[i],
-            showTitle: false,
-          ),
-        );
+        if (expenseCategoryTypes.length > 0) {
+          expensePieChartData.add(
+            PieChartSectionData(
+              value: expenseCategoryTypes[i]['totalAmount'],
+              color: appThemeColors[i],
+              showTitle: false,
+            ),
+          );
+        }
       }
     } else {
-      for (int i = 0; i < expenseCategoryTypes.length; i++) {
-        incomePieChartData.add(
-          PieChartSectionData(
-            value: incomeCategoryTypes[i]['totalAmount'],
-            color: appThemeColors[i],
-            showTitle: false,
-          ),
-        );
+      for (int i = 0; i < incomeCategoryTypes.length; i++) {
+        if (incomeCategoryTypes.length > 0)
+          incomePieChartData.add(
+            PieChartSectionData(
+              value: incomeCategoryTypes[i]['totalAmount'],
+              color: appThemeColors[i],
+              showTitle: false,
+            ),
+          );
       }
     }
+
+    print(incomePieChartData);
 
     List<Map<String, dynamic>> expenseData = [];
     double totalExpenses = 0;
@@ -87,7 +92,9 @@ class _FlPieGraph2State extends State<FlPieGraph2> {
       });
       totalIncome += (incomeCategoryTypes[k]['totalAmount']) as double;
     }
-    return (totalExpenses == 0 && totalIncome == 0)
+
+    return (widget.transactionType == "Expense" && totalExpenses == 0) ||
+            (widget.transactionType == "Income" && totalIncome == 0)
         ? SizedBox(
             height: 300,
             child: DancingDoge(),
