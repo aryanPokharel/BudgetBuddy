@@ -41,7 +41,6 @@ class _HomePageState extends State<HomePage> {
     if (dateTime.year == today.year &&
         dateTime.month == today.month &&
         dateTime.day == today.day) {
-      // Today
       return getAbbreviatedMonthName(
         today.month.toString(),
         today.year.toString(),
@@ -49,13 +48,11 @@ class _HomePageState extends State<HomePage> {
     } else if (dateTime.year == yesterday.year &&
         dateTime.month == yesterday.month &&
         dateTime.day == yesterday.day) {
-      // Yesterday
       return getAbbreviatedMonthName(
         yesterday.month.toString(),
         yesterday.year.toString(),
       );
     } else {
-      // Format date as "dd MMM"
       return DateFormat('dd MMM').format(dateTime);
     }
   }
@@ -64,9 +61,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // context.read<StateProvider>().fetchAllData();
-    context.read<StateProvider>().getCategoriesFromDb();
-    context.read<StateProvider>().getTransactionsFromDb();
+    context.read<StateProvider>().fetchAllData();
   }
 
   final CarouselController _monthListCarouselController = CarouselController();
@@ -170,13 +165,12 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                 )
-              : CarouselSlider.builder(
-                  itemCount: 1,
-                  itemBuilder:
-                      (BuildContext context, int index, int realIndex) {
-                    return Container(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
+              : Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
                         "Show Monthly Data",
                         style: const TextStyle(
                           fontSize: 16,
@@ -184,12 +178,7 @@ class _HomePageState extends State<HomePage> {
                           color: Colors.white,
                         ),
                       ),
-                    );
-                  },
-                  options: CarouselOptions(
-                    height: 200,
-                    enableInfiniteScroll: false,
-                    enlargeCenterPage: true,
+                    ],
                   ),
                 ),
         ),
@@ -201,9 +190,7 @@ class _HomePageState extends State<HomePage> {
             activeColor: Colors.white,
             value: showMonthlyData,
             onChanged: (value) {
-              setState(() {
-                context.read<StateProvider>().setShowMonthlyData(value);
-              });
+              context.read<StateProvider>().setShowMonthlyData(value);
             },
           ),
         ],
