@@ -30,10 +30,11 @@ class StateProvider with ChangeNotifier {
     "December",
   ];
 
-  var selectedMonth = "August";
+  var selectedMonth;
 
 // Fetch All Data
   fetchAllData() async {
+    selectedMonth = monthList[DateTime.now().month - 1];
     await getCategoriesFromDb();
 
     await getTransactionsFromDb();

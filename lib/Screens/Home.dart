@@ -191,6 +191,8 @@ class _HomePageState extends State<HomePage> {
             value: showMonthlyData,
             onChanged: (value) {
               context.read<StateProvider>().setShowMonthlyData(value);
+              var thisMonth = DateTime.now().month;
+              print(thisMonth);
             },
           ),
         ],

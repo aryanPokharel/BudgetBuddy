@@ -15,6 +15,7 @@ class FlPieGraph2 extends StatefulWidget {
 
 class _FlPieGraph2State extends State<FlPieGraph2> {
   late bool showMonthlyData;
+
   @override
   Widget build(BuildContext context) {
     showMonthlyData = Provider.of<StateProvider>(context).showMonthlyData;
