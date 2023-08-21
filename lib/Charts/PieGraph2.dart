@@ -63,9 +63,6 @@ class _FlPieGraph2State extends State<FlPieGraph2> {
           );
       }
     }
-
-    print(incomePieChartData);
-
     List<Map<String, dynamic>> expenseData = [];
     double totalExpenses = 0;
 
