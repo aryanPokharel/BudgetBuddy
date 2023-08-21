@@ -68,7 +68,9 @@ class _FlPieGraph2State extends State<FlPieGraph2> {
       expenseData.add({
         "value": expenseCategoryTypes[j]['totalAmount'],
         "color": appThemeColors[j],
-        "title": expenseCateogoryTypesTitles[j]
+        "title": expenseCateogoryTypesTitles.length > 0
+            ? expenseCateogoryTypesTitles[j]
+            : "No Data"
       });
       totalExpenses += (expenseCategoryTypes[j]['totalAmount']) as double;
     }
@@ -79,7 +81,9 @@ class _FlPieGraph2State extends State<FlPieGraph2> {
       incomeData.add({
         "value": incomeCategoryTypes[k]['totalAmount'],
         "color": appThemeColors[k],
-        "title": incomeCateogoryTypesTitles[k]
+        "title": incomeCateogoryTypesTitles.length > 0
+            ? incomeCateogoryTypesTitles[k]
+            : "No Data"
       });
       totalIncome += (incomeCategoryTypes[k]['totalAmount']) as double;
     }

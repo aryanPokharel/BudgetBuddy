@@ -12,7 +12,8 @@ class InsightsPage extends StatefulWidget {
 }
 
 class _InsightsPageState extends State<InsightsPage> {
-  String _transactionType = "Expense";
+  String _barTransactionType = "Expense";
+  String _pieTransactionType = "Expense";
   String grossGraphType = "Pie";
 
   String individualGraphType = "Pie";
@@ -39,9 +40,9 @@ class _InsightsPageState extends State<InsightsPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildRadioOption("Gross", "Pie"),
+                  _buildRadioOption("Gross", "Pie", "Pie"),
                   const SizedBox(width: 16),
-                  _buildRadioOption("Gross", "Line"),
+                  _buildRadioOption("Gross", "Line", "Line"),
                 ],
               ),
               SizedBox(
@@ -71,13 +72,13 @@ class _InsightsPageState extends State<InsightsPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildRadioOption("Individual", "Expense"),
+                  _buildRadioOption("Individual", "Bar", "Expense"),
                   const SizedBox(width: 16),
-                  _buildRadioOption("Individual", "Income"),
+                  _buildRadioOption("Individual", "Bar", "Income"),
                 ],
               ),
               const SizedBox(height: 16),
-              _transactionType == "Expense"
+              _barTransactionType == "Expense"
                   ? FlBarGraph(
                       type: "Expense",
                     )
@@ -87,15 +88,22 @@ class _InsightsPageState extends State<InsightsPage> {
               Divider(
                 thickness: 2,
               ),
-              FlPieGraph2(
-                transactionType: "Expense",
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildRadioOption("Individual", "Pie", "Expense"),
+                  const SizedBox(width: 16),
+                  _buildRadioOption("Individual", "Pie", "Income"),
+                ],
               ),
-              Divider(
-                thickness: 2,
-              ),
-              FlPieGraph2(
-                transactionType: "Income",
-              ),
+              const SizedBox(height: 16),
+              _pieTransactionType == "Expense"
+                  ? FlPieGraph2(
+                      transactionType: "Expense",
+                    )
+                  : FlPieGraph2(
+                      transactionType: "Income",
+                    ),
               Divider(
                 thickness: 2,
               ),
@@ -106,40 +114,75 @@ class _InsightsPageState extends State<InsightsPage> {
     );
   }
 
-  Widget _buildRadioOption(String insightType, String option) {
+  Widget _buildRadioOption(
+      String insightType, String graphType, String option) {
     return InkWell(
       onTap: () {
         setState(() {
           insightType == "Individual"
-              ? _transactionType = option
+              ? graphType == "Bar"
+                  ? _barTransactionType = option
+                  : _pieTransactionType = option
               : grossGraphType = option;
           ;
         });
       },
       child: insightType == "Individual"
-          ? Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: _transactionType == option
-                    ? Colors.blue
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: _transactionType == option ? Colors.blue : Colors.grey,
-                  width: 1.5,
-                ),
-              ),
-              child: Text(
-                option,
-                style: TextStyle(
-                  color:
-                      _transactionType == option ? Colors.white : Colors.black,
-                  fontWeight: _transactionType == option
-                      ? FontWeight.bold
-                      : FontWeight.normal,
-                ),
-              ),
-            )
+          ? graphType == "Bar"
+              ? Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: _barTransactionType == option
+                        ? Colors.blue
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: _barTransactionType == option
+                          ? Colors.blue
+                          : Colors.grey,
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Text(
+                    option,
+                    style: TextStyle(
+                      color: _barTransactionType == option
+                          ? Colors.white
+                          : Colors.black,
+                      fontWeight: _barTransactionType == option
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    ),
+                  ),
+                )
+              : Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: _pieTransactionType == option
+                        ? Colors.blue
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: _pieTransactionType == option
+                          ? Colors.blue
+                          : Colors.grey,
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Text(
+                    option,
+                    style: TextStyle(
+                      color: _pieTransactionType == option
+                          ? Colors.white
+                          : Colors.black,
+                      fontWeight: _pieTransactionType == option
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    ),
+                  ),
+                )
           : Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
