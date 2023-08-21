@@ -15,26 +15,10 @@ class StateProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  dynamic monthList = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
-  var selectedMonth;
-
+  var selectedMonth = months[DateTime.now().month - 1];
+  var monthList = months;
 // Fetch All Data
   fetchAllData() async {
-    selectedMonth = monthList[DateTime.now().month - 1];
     await getCategoriesFromDb();
 
     await getTransactionsFromDb();

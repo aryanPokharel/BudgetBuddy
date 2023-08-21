@@ -1,5 +1,6 @@
 import 'package:budget_buddy/Constants/DateName.dart';
 import 'package:budget_buddy/Screens/Categories.dart';
+import 'package:budget_buddy/Screens/Constants.dart';
 import 'package:budget_buddy/Screens/Insights.dart';
 import 'package:budget_buddy/Screens/Transactions.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
@@ -69,7 +70,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     showMonthlyData = Provider.of<StateProvider>(context).showMonthlyData;
-    var monthList = context.read<StateProvider>().monthList;
+    var monthList = months;
     dynamic appTheme = Provider.of<StateProvider>(context).appTheme;
     dynamic totalExpenses = showMonthlyData
         ? Provider.of<StateProvider>(context).thisMonthTotalExpenses
