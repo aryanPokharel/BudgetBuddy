@@ -12,6 +12,7 @@ class InsightsPage extends StatefulWidget {
 }
 
 class _InsightsPageState extends State<InsightsPage> {
+  dynamic appTheme;
   String _barTransactionType = "Expense";
   String _pieTransactionType = "Expense";
   String grossGraphType = "Pie";
@@ -26,6 +27,7 @@ class _InsightsPageState extends State<InsightsPage> {
 
   @override
   Widget build(BuildContext context) {
+    appTheme = Provider.of<StateProvider>(context).appTheme;
     showMonthlyData = Provider.of<StateProvider>(context).showMonthlyData;
 
     List<dynamic> expenseCategoryTypes = showMonthlyData
@@ -152,12 +154,12 @@ class _InsightsPageState extends State<InsightsPage> {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     color: _barTransactionType == option
-                        ? Colors.blue
+                        ? appTheme
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: _barTransactionType == option
-                          ? Colors.blue
+                          ? appTheme
                           : Colors.grey,
                       width: 1.5,
                     ),
@@ -179,12 +181,12 @@ class _InsightsPageState extends State<InsightsPage> {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     color: _pieTransactionType == option
-                        ? Colors.blue
+                        ? appTheme
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: _pieTransactionType == option
-                          ? Colors.blue
+                          ? appTheme
                           : Colors.grey,
                       width: 1.5,
                     ),
@@ -204,11 +206,10 @@ class _InsightsPageState extends State<InsightsPage> {
           : Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color:
-                    grossGraphType == option ? Colors.blue : Colors.transparent,
+                color: grossGraphType == option ? appTheme : Colors.transparent,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: grossGraphType == option ? Colors.blue : Colors.grey,
+                  color: grossGraphType == option ? appTheme : Colors.grey,
                   width: 1.5,
                 ),
               ),
