@@ -18,6 +18,7 @@ class _UpdateCategoryState extends State<UpdateCategory> {
   var iconController = TextEditingController();
   late String _categoryType;
   late IconData selectedIcon;
+  late var appTheme;
   updateCategory(dynamic updatedCategory) {
     context.read<StateProvider>().updateCategory(updatedCategory);
   }
@@ -37,13 +38,19 @@ class _UpdateCategoryState extends State<UpdateCategory> {
   @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
+    appTheme = context.read<StateProvider>().appTheme;
+    bool darkModeEnabled = Provider.of<StateProvider>(context).darkTheme;
     return Scaffold(
       backgroundColor: _categoryType == "Expense"
-          ? const Color.fromARGB(255, 196, 214, 222)
-          : const Color.fromARGB(255, 210, 219, 200),
+          ? darkModeEnabled
+              ? Color.fromARGB(255, 112, 112, 112)
+              : Color.fromARGB(255, 196, 214, 222)
+          : darkModeEnabled
+              ? Color.fromARGB(255, 112, 112, 112)
+              : Color.fromARGB(255, 210, 219, 200),
       appBar: AppBar(
         title: const Text(
-          'Add Category',
+          'Update Category',
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),
@@ -68,7 +75,7 @@ class _UpdateCategoryState extends State<UpdateCategory> {
                 key: formKey,
                 child: TextFormField(
                   controller: titleController,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     hintText: "Title",
                     border: OutlineInputBorder(
                       borderSide: BorderSide(
@@ -119,9 +126,10 @@ class _UpdateCategoryState extends State<UpdateCategory> {
                           : Colors.transparent,
                       child: Icon(
                         iconList[index],
-                        color: selectedIcon == iconList[index]
-                            ? Colors.white
-                            : Colors.black,
+                        color: darkModeEnabled ? Colors.white : Colors.black,
+                        // color: selectedIcon == iconList[index]
+                        //     ? Colors.white
+                        //     : Colors.black,
                       ),
                     ),
                   );
@@ -130,7 +138,7 @@ class _UpdateCategoryState extends State<UpdateCategory> {
               const SizedBox(height: 24),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
+                  backgroundColor: appTheme,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -155,12 +163,15 @@ class _UpdateCategoryState extends State<UpdateCategory> {
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.save),
+                    Icon(
+                      Icons.save,
+                      size: 18,
+                    ),
                     SizedBox(width: 8),
                     Text(
-                      'Update Category',
+                      'Update',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -195,9 +206,11 @@ class _UpdateCategoryState extends State<UpdateCategory> {
           option,
           style: TextStyle(
             fontSize: 16,
-            color: _categoryType == option ? Colors.white : Colors.black,
-            fontWeight:
-                _categoryType == option ? FontWeight.bold : FontWeight.normal,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            // color: _categoryType == option ? Colors.white : Colors.black,
+            // fontWeight:
+            //     _categoryType == option ? FontWeight.bold : FontWeight.normal,
           ),
         ),
       ),

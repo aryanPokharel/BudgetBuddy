@@ -1,4 +1,5 @@
 import 'package:budget_buddy/Constants/LooksEmpty.dart';
+import 'package:budget_buddy/Constants/MyAdWidget.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,17 +27,13 @@ class _CategoriesState extends State<Categories> {
     });
   }
 
-  // @override
-  // void initState() {
-  //   // Call the super.initState() to ensure the state is properly initialized.
-  //   super.initState();
-  //   context.read<StateProvider>().getCategoriesFromDb();
-  // }
-
   @override
   Widget build(BuildContext context) {
     var categoryList = Provider.of<StateProvider>(context).categoryList;
 
+    bool darkModeEnabled = Provider.of<StateProvider>(context).darkTheme;
+
+    var appTheme = Provider.of<StateProvider>(context).appTheme;
     var expenseCategories = [];
     var incomeCategories = [];
 
@@ -57,24 +54,30 @@ class _CategoriesState extends State<Categories> {
           onPressed: () {
             Navigator.pushNamed(context, "/addCategory");
           },
-          child: const Icon(Icons.category),
+          backgroundColor: Colors.white70,
+          foregroundColor: darkModeEnabled ? appTheme[700] : appTheme,
+          child: const Icon(Icons.add_outlined),
         ),
         appBar: AppBar(
           elevation: 0,
-          backgroundColor: Colors.white,
+          backgroundColor: darkModeEnabled
+              ? Color.fromARGB(255, 112, 112, 112)
+              : Color.fromARGB(255, 222, 222, 222),
           toolbarHeight: 10,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(40),
             child: Container(
-              color: Color.fromARGB(255, 227, 227, 227),
-              child: const TabBar(
-                indicatorColor: Colors.green,
+              color: darkModeEnabled
+                  ? Color.fromARGB(255, 112, 112, 112)
+                  : Color.fromARGB(255, 222, 222, 222),
+              child: TabBar(
+                indicatorColor: darkModeEnabled ? Colors.white70 : Colors.green,
                 tabs: [
                   Tab(
                     child: Text(
                       "Expense",
                       style: TextStyle(
-                        color: Colors.black,
+                        color: darkModeEnabled ? Colors.white70 : Colors.black,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -84,7 +87,7 @@ class _CategoriesState extends State<Categories> {
                     child: Text(
                       "Income",
                       style: TextStyle(
-                        color: Colors.black,
+                        color: darkModeEnabled ? Colors.white70 : Colors.black,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -100,41 +103,29 @@ class _CategoriesState extends State<Categories> {
             expenseCategories.isEmpty
                 ? const EmptyListWidget()
                 : Container(
-                    color: Color.fromARGB(255, 203, 203, 203),
+                    color: darkModeEnabled
+                        ? Color.fromARGB(255, 112, 112, 112)
+                        : Color.fromARGB(255, 222, 222, 222),
                     child: Stack(
                       children: [
                         ListView.builder(
                           itemCount: expenseCategories.length + 1,
                           itemBuilder: (context, index) {
                             if (index == expenseCategories.length) {
-                              // Show an empty card after the last item in the list
-                              return const Padding(
-                                padding: EdgeInsets.all(8),
-                                child: Card(
-                                  color: Colors.transparent,
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                      topRight: Radius.circular(20),
-                                      bottomRight: Radius.circular(20),
-                                    ),
-                                  ),
-                                  child: SizedBox(
-                                    height: 70, // Adjust the height as needed
-                                  ),
-                                ),
-                              );
+                              return MyAdWidget();
                             }
                             return Padding(
                               padding: const EdgeInsets.all(8),
                               child: Card(
-                                color: Colors.blue[50],
+                                color: darkModeEnabled
+                                    ? appTheme[700]
+                                    : Colors.blue[50],
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: ListTile(
                                   onTap: () async {
-                                    var test = await context
+                                    await context
                                         .read<StateProvider>()
                                         .setCategoryToUpdate(
                                             expenseCategories[index]['id']);
@@ -152,7 +143,9 @@ class _CategoriesState extends State<Categories> {
                                         int.parse(
                                             expenseCategories[index]['icon']),
                                         fontFamily: 'MaterialIcons'),
-                                    color: Colors.brown,
+                                    color: darkModeEnabled
+                                        ? Colors.white70
+                                        : Colors.brown,
                                     size: 26,
                                   ),
                                   title: Center(
@@ -165,9 +158,11 @@ class _CategoriesState extends State<Categories> {
                                     ),
                                   ),
                                   trailing: IconButton(
-                                    icon: const Icon(
+                                    icon: Icon(
                                       Icons.delete,
-                                      color: Color.fromARGB(255, 190, 42, 32),
+                                      color: darkModeEnabled
+                                          ? Colors.white70
+                                          : Color.fromARGB(255, 190, 42, 32),
                                     ),
                                     onPressed: () {
                                       TypeToDelete = "Expense";
@@ -190,7 +185,7 @@ class _CategoriesState extends State<Categories> {
                               child: SizedBox(
                                 height: MediaQuery.of(context).size.height / 4,
                                 child: Card(
-                                  color: Colors.white,
+                                  color: Colors.white70,
                                   elevation: 4,
                                   margin: const EdgeInsets.all(16.0),
                                   shape: RoundedRectangleBorder(
@@ -261,41 +256,29 @@ class _CategoriesState extends State<Categories> {
             incomeCategories.isEmpty
                 ? const EmptyListWidget()
                 : Container(
-                    color: Color.fromARGB(255, 203, 203, 203),
+                    color: darkModeEnabled
+                        ? Color.fromARGB(255, 112, 112, 112)
+                        : Color.fromARGB(255, 222, 222, 222),
                     child: Stack(
                       children: [
                         ListView.builder(
                           itemCount: incomeCategories.length + 1,
                           itemBuilder: (context, index) {
                             if (index == incomeCategories.length) {
-                              // Show an empty card after the last item in the list
-                              return const Padding(
-                                padding: EdgeInsets.all(8),
-                                child: Card(
-                                  color: Colors.transparent,
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.only(
-                                      topRight: Radius.circular(20),
-                                      bottomRight: Radius.circular(20),
-                                    ),
-                                  ),
-                                  child: SizedBox(
-                                    height: 70,
-                                  ),
-                                ),
-                              );
+                              return MyAdWidget();
                             }
                             return Padding(
                               padding: const EdgeInsets.all(8),
                               child: Card(
-                                color: Colors.green[50],
+                                color: darkModeEnabled
+                                    ? appTheme[700]
+                                    : Colors.blue[50],
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: ListTile(
                                   onTap: () async {
-                                    var test = await context
+                                    await context
                                         .read<StateProvider>()
                                         .setCategoryToUpdate(
                                             incomeCategories[index]['id']);
@@ -313,7 +296,9 @@ class _CategoriesState extends State<Categories> {
                                         int.parse(
                                             incomeCategories[index]['icon']),
                                         fontFamily: 'MaterialIcons'),
-                                    color: Colors.brown,
+                                    color: darkModeEnabled
+                                        ? Colors.white70
+                                        : Colors.brown,
                                     size: 26,
                                   ),
                                   title: Center(
@@ -326,9 +311,11 @@ class _CategoriesState extends State<Categories> {
                                     ),
                                   ),
                                   trailing: IconButton(
-                                    icon: const Icon(
+                                    icon: Icon(
                                       Icons.delete,
-                                      color: Color.fromARGB(255, 190, 42, 32),
+                                      color: darkModeEnabled
+                                          ? Colors.white70
+                                          : Color.fromARGB(255, 190, 42, 32),
                                     ),
                                     onPressed: () {
                                       TypeToDelete = "Income";
@@ -351,7 +338,7 @@ class _CategoriesState extends State<Categories> {
                               child: SizedBox(
                                 height: MediaQuery.of(context).size.height / 4,
                                 child: Card(
-                                  color: Colors.white,
+                                  color: Colors.white70,
                                   elevation: 4,
                                   margin: const EdgeInsets.all(16.0),
                                   shape: RoundedRectangleBorder(

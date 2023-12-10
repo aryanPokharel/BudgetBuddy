@@ -1,10 +1,14 @@
+import 'package:budget_buddy/Constants/DateName.dart';
 import 'package:budget_buddy/Constants/SendSnackBar.dart';
+import 'package:budget_buddy/Constants/URLS.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
+
 import 'package:provider/provider.dart';
 
 class AddTransaction extends StatefulWidget {
-  const AddTransaction({super.key});
+  const AddTransaction({Key? key});
 
   @override
   State<AddTransaction> createState() => _AddTransactionState();
@@ -16,14 +20,26 @@ class _AddTransactionState extends State<AddTransaction> {
   DateTime? selectedDate = DateTime.now();
   dynamic dateToSend;
 
+  late String foundTitleFieldName;
+  late String foundAmountFieldName;
+  late String foundDateFieldName;
+
   var titleController = TextEditingController();
   var amountController = TextEditingController();
-  var descriptionController = TextEditingController();
-
+  var remarksController = TextEditingController();
   var title;
   var amount;
   var remarks;
 
+  @override
+  void initState() {
+    super.initState();
+    foundTitleFieldName = '';
+    foundAmountFieldName = '';
+    foundDateFieldName = '';
+  }
+
+  File? _selectedImage;
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -50,42 +66,150 @@ class _AddTransactionState extends State<AddTransaction> {
     if (picked != null && picked != selectedDate) {
       final DateTime pickedDate =
           DateTime(picked.year, picked.month, picked.day);
-      setState(
-        () {
-          selectedDate = pickedDate;
-          dateToSend = "${picked.year}-${picked.month}-${picked.day}";
-        },
-      );
+      setState(() {
+        selectedDate = pickedDate;
+        dateToSend = "${picked.year}-${picked.month}-${picked.day}";
+      });
+
+      if (checkTodayYesterday(selectedDate.toString()) == "Day Before") {
+        context.read<StateProvider>().setDateFieldBackgroundColor(
+              Color.fromARGB(255, 182, 165, 10),
+            );
+      } else if (checkTodayYesterday(selectedDate.toString()) == "Yesterday") {
+        context.read<StateProvider>().setDateFieldBackgroundColor(
+              Colors.lightBlue,
+            );
+      } else if (checkTodayYesterday(selectedDate.toString()) == "Today") {
+        context.read<StateProvider>().setDateFieldBackgroundColor(
+              Colors.green,
+            );
+      } else {
+        context
+            .read<StateProvider>()
+            .setDateFieldBackgroundColor(Colors.blueGrey);
+      }
     }
   }
 
   saveExpense(dynamic newExpense) {
-    context.read<StateProvider>().setTransactionList(newExpense);
+    context.read<StateProvider>().saveTransaction(newExpense);
   }
 
   saveIncome(dynamic newIncome) {
-    context.read<StateProvider>().setTransactionList(newIncome);
+    context.read<StateProvider>().saveTransaction(newIncome);
   }
 
   clear() {
-    setState(() {
-      titleController.clear();
-      amountController.clear();
-      descriptionController.clear();
-      selectedDate = null;
-    });
+    titleController.clear();
+    amountController.clear();
+    remarksController.clear();
+    selectedDate = DateTime.now();
+    selectedTime = TimeOfDay.now();
   }
+
+  final String apiUrl = invoiceReaderURL;
+  final String apiKey = invoiceReaderApiKey;
+  final String authToken = invoiceReaderApiKey;
 
   dynamic selectedCategory;
   TimeOfDay selectedTime = TimeOfDay.now();
+
+  var choosenExpenseCategory;
+  var choosenIncomeCategory;
+
+  late var picker;
+  bool isSendingInvoice = false;
+  // Future sendInvoice() async {
+  //   try {
+  //     setState(() {
+  //       isSendingInvoice = true;
+  //     });
+  //     if (_selectedImage == null) {
+  //       sendSnackBar(context, "Please select an image.");
+  //       return;
+  //     }
+  //     var imageBytes = await _selectedImage!.readAsBytes();
+
+  //     String base64Image = base64Encode(imageBytes);
+
+  //     final response = await http.post(
+  //       Uri.parse(apiUrl),
+  //       headers: <String, String>{
+  //         'Content-Type': 'application/json; charset=UTF-8',
+  //         'Authorization': 'Token $apiKey',
+  //       },
+  //       body: jsonEncode(<String, dynamic>{
+  //         'document': base64Image,
+  //       }),
+  //     );
+
+  //     if (response.statusCode == 201) {
+  //       var responseJson = jsonDecode(response.body);
+
+  //       var prediction =
+  //           responseJson['document']['inference']['pages'][0]['prediction'];
+
+  //       remarksController.text = "Read From Invoice";
+
+  //       for (var titleFieldName in titleFieldNames) {
+  //         if (prediction.containsKey(titleFieldName)) {
+  //           foundTitleFieldName = titleFieldName;
+  //           break;
+  //         }
+  //       }
+
+  //       if (foundTitleFieldName.isNotEmpty) {
+  //         titleController.text =
+  //             prediction[foundTitleFieldName]['value'].toString();
+  //       } else {
+  //         titleController.text = "No Title";
+  //       }
+  //       // For amount
+  //       for (var amountFieldName in amountFieldNames) {
+  //         if (prediction.containsKey(amountFieldName)) {
+  //           foundAmountFieldName = amountFieldName;
+  //           break;
+  //         }
+  //       }
+
+  //       if (foundAmountFieldName.isNotEmpty) {
+  //         amountController.text =
+  //             prediction[foundAmountFieldName]['value'].toString();
+  //       } else {
+  //         amountController.text = "0";
+  //       }
+
+  //       // For Date
+  //       // for (var dateFieldName in dateFieldNames) {
+  //       //   if (prediction.containsKey(dateFieldName)) {
+  //       //     foundDateFieldName = dateFieldName;
+  //       //     break;
+  //       //   }
+  //       // }
+
+  //       // if (foundDateFieldName.isNotEmpty) {
+  //       //   selectedDate =
+  //       //       prediction[foundDateFieldName]['value'].toString() as DateTime?;
+  //       // }
+  //     } else {
+  //       sendSnackBar(context, "Couldn't process the image!");
+  //     }
+  //   } catch (e) {
+  //     sendSnackBar(context, "Bad Network");
+  //   } finally {
+  //     isSendingInvoice = false;
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
+    // picker = ImagePicker();
     dynamic appTheme = Provider.of<StateProvider>(context).appTheme;
+    bool darkModeEnabled = Provider.of<StateProvider>(context).darkTheme;
     var categoryList = Provider.of<StateProvider>(context).categoryList;
     var expenseCategories = categoryList
         .where((category) => category['type'] == 'Expense')
         .toList();
-
     var incomeCategories =
         categoryList.where((category) => category['type'] == 'Income').toList();
 
@@ -112,360 +236,489 @@ class _AddTransactionState extends State<AddTransaction> {
       }
     }
 
+    var dateFieldColor =
+        Provider.of<StateProvider>(context).dateFieldBackgroundColor;
+
+    setDateFieldBackgroundColor(var newColor) {
+      context.read<StateProvider>().setDateFieldBackgroundColor(newColor);
+    }
+
     return Scaffold(
       backgroundColor: _transactionType == "Expense"
-          ? const Color.fromARGB(255, 196, 214, 222)
-          : const Color.fromARGB(255, 210, 219, 200),
-      appBar: AppBar(),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Form(
-            key: formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildRadioOption("Expense"),
-                    const SizedBox(width: 16),
-                    _buildRadioOption("Income"),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: titleController,
-                  decoration: const InputDecoration(
-                    hintText: "Title",
+          ? darkModeEnabled
+              ? Color.fromARGB(255, 112, 112, 112)
+              : Color.fromARGB(255, 196, 214, 222)
+          : darkModeEnabled
+              ? Color.fromARGB(255, 112, 112, 112)
+              : Color.fromARGB(255, 210, 219, 200),
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () {
+              sendSnackBar(context, "Invoice Reading Coming Soon!");
+              // showModalBottomSheet(
+              //   context: context,
+              //   builder: (BuildContext context) {
+              //     return Column(
+              //       mainAxisSize: MainAxisSize.min,
+              //       children: <Widget>[
+              //         ListTile(
+              //           leading: Icon(Icons.camera),
+              //           title: Text('Camera'),
+              //           onTap: () async {
+              //             Navigator.pop(context);
+
+              //             final pickedFile = await picker.pickImage(
+              //               source: ImageSource.camera,
+              //             );
+              //             if (pickedFile != null) {
+              //               setState(() {
+              //                 _selectedImage = File(pickedFile.path);
+              //               });
+
+              //               sendInvoice();
+              //             } else {
+              //               sendSnackBar(context, "Didn't get Image!");
+              //             }
+              //           },
+              //         ),
+              //         ListTile(
+              //           leading: Icon(Icons.image),
+              //           title: Text('Gallery'),
+              //           onTap: () async {
+              //             Navigator.pop(context);
+
+              //             final pickedFile = await picker.pickImage(
+              //               source: ImageSource.gallery,
+              //             );
+
+              //             if (pickedFile != null) {
+              //               setState(() {
+              //                 _selectedImage = File(pickedFile.path);
+              //               });
+
+              //               sendInvoice();
+              //             } else {
+              //               sendSnackBar(context, "Didn't get Image!");
+              //             }
+              //           },
+              //         ),
+              //       ],
+              //     );
+              //   },
+              // );
+            },
+            icon: Icon(Icons.document_scanner),
+          )
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: (isSendingInvoice)
+            ? Container(
+                height: MediaQuery.of(context).size.height,
+                child: Center(
+                  child: SimpleDialog(
+                    title: Text("Processing Image"),
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: LinearProgressIndicator(),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              isSendingInvoice = false;
+                            });
+                          },
+                          child: Text("Cancel"),
+                        ),
+                      ),
+                    ],
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Give a title';
-                    }
-                    return null;
-                  },
                 ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: amountController,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    hintText: "Amount",
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Enter a value';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: descriptionController,
-                  maxLines: 2,
-                  decoration: const InputDecoration(
-                    hintText: "Remarks",
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        splashFactory: NoSplash.splashFactory,
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.green,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        elevation: 8,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 4, horizontal: 10),
+              )
+            : Padding(
+                padding: const EdgeInsets.all(12),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _buildRadioOption("Expense"),
+                          const SizedBox(width: 16),
+                          _buildRadioOption("Income"),
+                        ],
                       ),
-                      onPressed: () {
-                        setState(() {
-                          selectedDate = now;
-                          selectedTime = TimeOfDay.now();
-                        });
-                      },
-                      child: const Text(
-                        "Today",
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        splashFactory: NoSplash.splashFactory,
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.lightBlue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        elevation: 8,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 4, horizontal: 10),
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          selectedDate = yesterday;
-                          selectedTime = TimeOfDay.now();
-                        });
-                      },
-                      child: const Text(
-                        "Yesterday",
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        splashFactory: NoSplash.splashFactory,
-                        foregroundColor: Colors.white,
-                        backgroundColor:
-                            const Color.fromARGB(255, 182, 165, 10),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        elevation: 8,
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 4, horizontal: 10),
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          selectedDate = dayBeforeYesterday;
-                          selectedTime = TimeOfDay.now();
-                        });
-                      },
-                      child: const Text(
-                        "DayBefore",
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                GestureDetector(
-                  onTap: () => _selectDate(context),
-                  child: Container(
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: Colors.lightBlue,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Icon(
-                          Icons.calendar_month,
-                          color: Colors.white,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            selectedDate == null
-                                ? 'Please select a date'
-                                : "${selectedDate!.year}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.day.toString().padLeft(2, '0')}",
-                            style: const TextStyle(
-                              fontSize: 18,
-                              color: Colors.white,
-                            ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: titleController,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                        decoration: InputDecoration(
+                          hintStyle: TextStyle(fontWeight: FontWeight.bold),
+                          hintText: "Title",
+                          filled: true,
+                          fillColor: Color.fromARGB(255, 114, 126, 150),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(20.0),
                           ),
                         ),
-                        const Icon(
-                          Icons.arrow_drop_down,
-                          color: Colors.white,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                GestureDetector(
-                  onTap: () => _selectTime(context),
-                  child: Container(
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 14, 100, 139),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Icon(
-                          Icons.alarm,
-                          color: Colors.white,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            selectedDate == null
-                                ? 'Please select time'
-                                : selectedTime.format(context),
-                            style: const TextStyle(
-                              fontSize: 18,
-                              color: Colors.white,
-                            ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Give a title';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: amountController,
+                        keyboardType: TextInputType.number,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                        decoration: InputDecoration(
+                          hintStyle: TextStyle(fontWeight: FontWeight.bold),
+                          hintText: "Amount",
+                          filled: true,
+                          fillColor: Color.fromARGB(255, 114, 126, 150),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(20.0),
                           ),
                         ),
-                        const Icon(
-                          Icons.arrow_drop_down,
-                          color: Colors.white,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/addCategory');
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: appTheme,
-                    minimumSize: Size(400, 30),
-                  ),
-                  child: Text("Create Own Category"),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                DropdownButtonFormField<dynamic>(
-                  value: _transactionType == "Expense"
-                      ? expenseCategories[0]
-                      : incomeCategories[0],
-                  items: _transactionType == "Expense"
-                      ? expenseCategories.map((dynamic category) {
-                          final Map<String, dynamic> categoryData =
-                              category as Map<String, dynamic>;
-                          return DropdownMenuItem<dynamic>(
-                            value: category,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Icon(
-                                  IconData(
-                                      int.parse(
-                                        categoryData['icon'],
-                                      ),
-                                      fontFamily: 'MaterialIcons'),
-                                ),
-                                const SizedBox(
-                                  width: 110,
-                                ),
-                                Text(
-                                  categoryData['title'],
-                                ),
-                              ],
-                            ),
-                          );
-                        }).toList()
-                      : incomeCategories.map((dynamic category) {
-                          final Map<String, dynamic> categoryData =
-                              category as Map<String, dynamic>;
-                          return DropdownMenuItem<dynamic>(
-                            value: category,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Icon(
-                                  IconData(
-                                      int.parse(
-                                        categoryData['icon'],
-                                      ),
-                                      fontFamily: 'MaterialIcons'),
-                                ),
-                                const SizedBox(
-                                  width: 110,
-                                ),
-                                Text(
-                                  categoryData['title'],
-                                ),
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                  onChanged: (value) {
-                    selectedCategory = value['id'];
-                  },
-                  decoration: const InputDecoration(
-                    hintText: "Select category",
-                  ),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        if (_transactionType == "Expense") {
-                          var newExpense = {
-                            "type": "Expense",
-                            "title": titleController.text.trim(),
-                            "remarks": descriptionController.text.trim(),
-                            "amount": amountController.text.trim(),
-                            "dateTime": selectedDate.toString(),
-                            "time": selectedTime.toString(),
-                            "category": selectedCategory,
-                          };
-
-                          if (formKey.currentState!.validate()) {
-                            saveExpense(newExpense);
-                            sendSnackBar(context, "Expense Added");
-                            Navigator.of(context).pop();
-                          } else {
-                            sendSnackBar(context, "Provide necessary info");
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter a value';
                           }
-                        } else {
-                          var newIncome = {
-                            "type": "Income",
-                            "title": titleController.text.trim(),
-                            "remarks": descriptionController.text.trim(),
-                            "amount": amountController.text.trim(),
-                            "dateTime": selectedDate.toString(),
-                            "time": selectedTime.toString(),
-                            "category": selectedCategory.toString(),
-                          };
-
-                          if (formKey.currentState!.validate()) {
-                            saveIncome(newIncome);
-                            sendSnackBar(context, "Income Added");
-                            Navigator.of(context).pop();
-                          } else {
-                            sendSnackBar(context, "Provide necessary info");
-                          }
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: remarksController,
+                        maxLines: 2,
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                        decoration: InputDecoration(
+                          hintStyle: TextStyle(fontWeight: FontWeight.bold),
+                          hintText: "Remarks",
+                          filled: true,
+                          fillColor: Color.fromARGB(255, 114, 126, 150),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide.none,
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
                         ),
                       ),
-                      child: const Icon(Icons.save),
-                    ),
-                    ElevatedButton(
-                      onPressed: clear,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              splashFactory: NoSplash.splashFactory,
+                              foregroundColor: Colors.white,
+                              backgroundColor:
+                                  const Color.fromARGB(255, 182, 165, 10),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              elevation: 8,
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 4, horizontal: 10),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                selectedDate = dayBeforeYesterday;
+                                setDateFieldBackgroundColor(
+                                  Color.fromARGB(255, 182, 165, 10),
+                                );
+                              });
+                            },
+                            child: const Text(
+                              "DayBefore",
+                              style: TextStyle(fontSize: 14),
+                            ),
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              splashFactory: NoSplash.splashFactory,
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.lightBlue,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              elevation: 8,
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 4, horizontal: 10),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                selectedDate = yesterday;
+                                setDateFieldBackgroundColor(Colors.lightBlue);
+                              });
+                            },
+                            child: const Text(
+                              "Yesterday",
+                              style: TextStyle(fontSize: 14),
+                            ),
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              splashFactory: NoSplash.splashFactory,
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.green,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              elevation: 8,
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 4, horizontal: 10),
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                selectedDate = now;
+                                setDateFieldBackgroundColor(Colors.green);
+                              });
+                            },
+                            child: const Text(
+                              "Today",
+                              style: TextStyle(fontSize: 14),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 6,
+                      ),
+                      GestureDetector(
+                        onTap: () => {_selectDate(context)},
+                        child: Container(
+                          height: 45,
+                          decoration: BoxDecoration(
+                            color: dateFieldColor,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Icon(
+                                Icons.calendar_month,
+                                color: Colors.white,
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  selectedDate == null
+                                      ? 'Please select a date'
+                                      : "${selectedDate!.year}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.day.toString().padLeft(2, '0')}",
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              const Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.white,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      child: const Icon(Icons.delete),
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
-        ),
+                      const SizedBox(height: 8),
+                      GestureDetector(
+                        onTap: () => _selectTime(context),
+                        child: Container(
+                          height: 45,
+                          decoration: BoxDecoration(
+                            color: Color.fromARGB(255, 215, 73, 85),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Icon(
+                                Icons.alarm,
+                                color: Colors.white,
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  selectedDate == null
+                                      ? 'Please select time'
+                                      : selectedTime.format(context),
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                              const Icon(
+                                Icons.arrow_drop_down,
+                                color: Colors.white,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/addCategory');
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color.fromARGB(255, 114, 126, 150),
+                          minimumSize: Size(400, 30),
+                        ),
+                        child: Text("Create Own Category"),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      DropdownButtonFormField<dynamic>(
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                        value: _transactionType == "Expense"
+                            ? expenseCategories[0]
+                            : incomeCategories[0],
+                        items: _transactionType == "Expense"
+                            ? expenseCategories.map((dynamic category) {
+                                final Map<String, dynamic> categoryData =
+                                    category as Map<String, dynamic>;
+                                return DropdownMenuItem<dynamic>(
+                                  value: category,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Icon(
+                                        IconData(
+                                            int.parse(categoryData['icon']),
+                                            fontFamily: 'MaterialIcons'),
+                                      ),
+                                      const SizedBox(
+                                        width: 110,
+                                      ),
+                                      Text(
+                                        categoryData['title'],
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList()
+                            : incomeCategories.map((dynamic category) {
+                                final Map<String, dynamic> categoryData =
+                                    category as Map<String, dynamic>;
+                                return DropdownMenuItem<dynamic>(
+                                  value: category,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Icon(
+                                        IconData(
+                                            int.parse(categoryData['icon']),
+                                            fontFamily: 'MaterialIcons'),
+                                      ),
+                                      const SizedBox(
+                                        width: 110,
+                                      ),
+                                      Text(
+                                        categoryData['title'],
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                        onChanged: (value) {
+                          _transactionType == "Expense"
+                              ? choosenExpenseCategory = value
+                              : choosenIncomeCategory = value;
+                          selectedCategory = value['id'];
+                        },
+                        decoration: const InputDecoration(
+                          hintText: "Select category",
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 12,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          ElevatedButton(
+                            onPressed: clear,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Icon(Icons.delete),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              if (_transactionType == "Expense") {
+                                var newExpense = {
+                                  "type": "Expense",
+                                  "title": titleController.text.trim(),
+                                  "remarks": remarksController.text.trim(),
+                                  "amount": amountController.text.trim(),
+                                  "dateTime": selectedDate.toString(),
+                                  "time": selectedTime.toString(),
+                                  "category": selectedCategory,
+                                };
+
+                                if (formKey.currentState!.validate()) {
+                                  saveExpense(newExpense);
+                                  sendSnackBar(context, "Expense Added");
+                                  Navigator.of(context).pop();
+                                } else {
+                                  sendSnackBar(
+                                      context, "Provide necessary info");
+                                }
+                              } else {
+                                var newIncome = {
+                                  "type": "Income",
+                                  "title": titleController.text.trim(),
+                                  "remarks": remarksController.text.trim(),
+                                  "amount": amountController.text.trim(),
+                                  "dateTime": selectedDate.toString(),
+                                  "time": selectedTime.toString(),
+                                  "category": selectedCategory.toString(),
+                                };
+
+                                if (formKey.currentState!.validate()) {
+                                  saveIncome(newIncome);
+                                  sendSnackBar(context, "Income Added");
+                                  Navigator.of(context).pop();
+                                } else {
+                                  sendSnackBar(
+                                      context, "Provide necessary info");
+                                }
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: const Icon(Icons.save),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
       ),
     );
   }
@@ -490,10 +743,8 @@ class _AddTransactionState extends State<AddTransaction> {
         child: Text(
           option,
           style: TextStyle(
-            color: _transactionType == option ? Colors.white : Colors.black,
-            fontWeight: _transactionType == option
-                ? FontWeight.bold
-                : FontWeight.normal,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),

@@ -17,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     context.read<StateProvider>().fetchAllData();
     Timer(
-      const Duration(seconds: 2),
+      const Duration(seconds: 1),
       () {
         Navigator.pushReplacement(
           context,
@@ -32,12 +32,12 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromRGBO(252, 254, 251, 1.0),
+      backgroundColor: Colors.black,
       body: Center(
         child: Image.asset(
-          'assets/gifs/doge.gif',
-          height: 150,
-          width: 150,
+          'assets/icons/SoftwareBhatti.png',
+          height: MediaQuery.of(context).size.height * 0.80,
+          width: MediaQuery.of(context).size.width * 0.80,
         ),
       ),
     );

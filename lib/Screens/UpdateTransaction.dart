@@ -1,3 +1,4 @@
+import 'package:budget_buddy/Constants/DateName.dart';
 import 'package:budget_buddy/Constants/FormatTimeOfDay.dart';
 import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
@@ -53,6 +54,29 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
           dateToSend = "${picked.year}-${picked.month}-${picked.day}";
         },
       );
+      if (checkTodayYesterday(selectedDate.toString()) == "Day Before") {
+        context
+            .read<StateProvider>()
+            .setUpdateTransactionDateFieldBackgroundColor(
+              Color.fromARGB(255, 182, 165, 10),
+            );
+      } else if (checkTodayYesterday(selectedDate.toString()) == "Yesterday") {
+        context
+            .read<StateProvider>()
+            .setUpdateTransactionDateFieldBackgroundColor(
+              Colors.lightBlue,
+            );
+      } else if (checkTodayYesterday(selectedDate.toString()) == "Today") {
+        context
+            .read<StateProvider>()
+            .setUpdateTransactionDateFieldBackgroundColor(
+              Colors.green,
+            );
+      } else {
+        context
+            .read<StateProvider>()
+            .setUpdateTransactionDateFieldBackgroundColor(Colors.blueGrey);
+      }
     }
   }
 
@@ -98,6 +122,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
   @override
   Widget build(BuildContext context) {
     dynamic appTheme = Provider.of<StateProvider>(context).appTheme;
+    bool darkModeEnabled = Provider.of<StateProvider>(context).darkTheme;
     var categoryList = Provider.of<StateProvider>(context).categoryList;
     dynamic transactionToUpdate =
         Provider.of<StateProvider>(context, listen: false).transactionToUpdate;
@@ -140,15 +165,26 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
     }
 
     bool typeChanged = false;
+    var dateFieldColor = Provider.of<StateProvider>(context)
+        .updateTransactionDateFieldBackgroundColor;
+    setDateFieldBackgroundColor(var newColor) {
+      context
+          .read<StateProvider>()
+          .setUpdateTransactionDateFieldBackgroundColor(newColor);
+    }
 
     return Scaffold(
       backgroundColor: _transactionType == "Expense"
-          ? const Color.fromARGB(255, 196, 214, 222)
-          : const Color.fromARGB(255, 210, 219, 200),
+          ? darkModeEnabled
+              ? Color.fromARGB(255, 112, 112, 112)
+              : Color.fromARGB(255, 196, 214, 222)
+          : darkModeEnabled
+              ? Color.fromARGB(255, 112, 112, 112)
+              : Color.fromARGB(255, 210, 219, 200),
       appBar: AppBar(),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(12),
           child: Form(
             key: formKey,
             child: Column(
@@ -165,8 +201,16 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: titleController,
-                  decoration: const InputDecoration(
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                  decoration: InputDecoration(
+                    hintStyle: TextStyle(fontWeight: FontWeight.bold),
                     hintText: "Title",
+                    filled: true,
+                    fillColor: Color.fromARGB(255, 114, 126, 150),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -179,8 +223,16 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                 TextFormField(
                   controller: amountController,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                  decoration: InputDecoration(
+                    hintStyle: TextStyle(fontWeight: FontWeight.bold),
                     hintText: "Amount",
+                    filled: true,
+                    fillColor: Color.fromARGB(255, 114, 126, 150),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -193,8 +245,16 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                 TextFormField(
                   controller: remarksController,
                   maxLines: 2,
-                  decoration: const InputDecoration(
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                  decoration: InputDecoration(
+                    hintStyle: TextStyle(fontWeight: FontWeight.bold),
                     hintText: "Remarks",
+                    filled: true,
+                    fillColor: Color.fromARGB(255, 114, 126, 150),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -205,7 +265,8 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                       style: ElevatedButton.styleFrom(
                         splashFactory: NoSplash.splashFactory,
                         foregroundColor: Colors.white,
-                        backgroundColor: Colors.green,
+                        backgroundColor:
+                            const Color.fromARGB(255, 182, 165, 10),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -215,12 +276,15 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                       ),
                       onPressed: () {
                         setState(() {
-                          selectedDate = now;
+                          selectedDate = dayBeforeYesterday;
                           selectedTime = TimeOfDay.now();
+                          setDateFieldBackgroundColor(
+                            Color.fromARGB(255, 182, 165, 10),
+                          );
                         });
                       },
                       child: const Text(
-                        "Today",
+                        "DayBefore",
                         style: TextStyle(fontSize: 14),
                       ),
                     ),
@@ -240,6 +304,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                         setState(() {
                           selectedDate = yesterday;
                           selectedTime = TimeOfDay.now();
+                          setDateFieldBackgroundColor(Colors.lightBlue);
                         });
                       },
                       child: const Text(
@@ -251,8 +316,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                       style: ElevatedButton.styleFrom(
                         splashFactory: NoSplash.splashFactory,
                         foregroundColor: Colors.white,
-                        backgroundColor:
-                            const Color.fromARGB(255, 182, 165, 10),
+                        backgroundColor: Colors.green,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -262,12 +326,13 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                       ),
                       onPressed: () {
                         setState(() {
-                          selectedDate = dayBeforeYesterday;
+                          selectedDate = now;
                           selectedTime = TimeOfDay.now();
+                          setDateFieldBackgroundColor(Colors.green);
                         });
                       },
                       child: const Text(
-                        "DayBefore",
+                        "Today",
                         style: TextStyle(fontSize: 14),
                       ),
                     ),
@@ -281,7 +346,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                   child: Container(
                     height: 50,
                     decoration: BoxDecoration(
-                      color: Colors.lightBlue,
+                      color: dateFieldColor,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -316,7 +381,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                   child: Container(
                     height: 50,
                     decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 14, 100, 139),
+                      color: Color.fromARGB(255, 215, 73, 85),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -351,7 +416,7 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                     Navigator.pushNamed(context, '/addCategory');
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: appTheme,
+                    backgroundColor: Color.fromARGB(255, 114, 126, 150),
                     minimumSize: Size(400, 30),
                   ),
                   child: Text("Create Own Category"),
@@ -430,8 +495,18 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                   height: 16,
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
+                    ElevatedButton(
+                      onPressed: clear,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: const Icon(Icons.delete),
+                    ),
                     ElevatedButton(
                       onPressed: () {
                         if (_transactionType == "Expense") {
@@ -487,16 +562,6 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
                       ),
                       child: const Icon(Icons.save),
                     ),
-                    ElevatedButton(
-                      onPressed: clear,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: const Icon(Icons.delete),
-                    ),
                   ],
                 )
               ],
@@ -527,10 +592,8 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
         child: Text(
           option,
           style: TextStyle(
-            color: _transactionType == option ? Colors.white : Colors.black,
-            fontWeight: _transactionType == option
-                ? FontWeight.bold
-                : FontWeight.normal,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),

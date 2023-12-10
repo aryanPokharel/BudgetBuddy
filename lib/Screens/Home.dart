@@ -1,12 +1,13 @@
 import 'package:budget_buddy/Constants/DateName.dart';
 import 'package:budget_buddy/Constants/SendSnackBar.dart';
-
 import 'package:budget_buddy/Screens/Categories.dart';
+import 'package:budget_buddy/Constants/Constants.dart';
 import 'package:budget_buddy/Screens/Insights.dart';
 import 'package:budget_buddy/Screens/Transactions.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
@@ -43,7 +44,6 @@ class _HomePageState extends State<HomePage> {
     if (dateTime.year == today.year &&
         dateTime.month == today.month &&
         dateTime.day == today.day) {
-      // Today
       return getAbbreviatedMonthName(
         today.month.toString(),
         today.year.toString(),
@@ -51,49 +51,78 @@ class _HomePageState extends State<HomePage> {
     } else if (dateTime.year == yesterday.year &&
         dateTime.month == yesterday.month &&
         dateTime.day == yesterday.day) {
-      // Yesterday
       return getAbbreviatedMonthName(
         yesterday.month.toString(),
         yesterday.year.toString(),
       );
     } else {
-      // Format date as "dd MMM"
       return DateFormat('dd MMM').format(dateTime);
     }
   }
 
+  bool showMonthlyData = true;
   @override
   void initState() {
     super.initState();
-    // context.read<StateProvider>().fetchAllData();
-    context.read<StateProvider>().getCategoriesFromDb();
-    context.read<StateProvider>().getTransactionsFromDb();
-    context.read<StateProvider>().setSelectedMonth(0);
+    _initBannerAd();
+    context.read<StateProvider>().fetchAllData();
+  }
+
+  final CarouselController _monthListCarouselController = CarouselController();
+
+  // Working with ads
+  late BannerAd _bannerAd;
+  bool _isAdLoaded = false;
+
+  _initBannerAd() {
+    _bannerAd = BannerAd(
+      size: AdSize.banner,
+      adUnitId: 'ca-app-pub-3940256099942544/6300978111',
+      // adUnitId: BannerAd.testAdUnitId,
+      listener: BannerAdListener(onAdLoaded: (ad) {
+        setState(() {
+          _isAdLoaded = true;
+        });
+      }, onAdFailedToLoad: (ad, error) {
+        ad.dispose();
+        print(error);
+      }),
+      request: const AdRequest(),
+    );
+
+    _bannerAd.load();
   }
 
   @override
   Widget build(BuildContext context) {
-    dynamic monthList = Provider.of<StateProvider>(context).monthList;
+    var currency = Provider.of<StateProvider>(context).currency;
+    String currencySymbol = currencyMap[currency]!;
 
+    bool darkModeEnabled = Provider.of<StateProvider>(context).darkTheme;
+
+    showMonthlyData = Provider.of<StateProvider>(context).showMonthlyData;
+    var monthList = months;
+    dynamic appTheme = Provider.of<StateProvider>(context).appTheme;
+    dynamic totalExpenses = showMonthlyData
+        ? Provider.of<StateProvider>(context).thisMonthTotalExpenses
+        : Provider.of<StateProvider>(context).totalExpenses;
+    dynamic totalIncome = showMonthlyData
+        ? Provider.of<StateProvider>(context).thisMonthTotalIncome
+        : Provider.of<StateProvider>(context).totalIncome;
     var selectedMonth = Provider.of<StateProvider>(context).selectedMonth;
 
-    dynamic appTheme = Provider.of<StateProvider>(context).appTheme;
-    dynamic totalExpenses = Provider.of<StateProvider>(context).totalExpenses;
-    dynamic totalIncome = Provider.of<StateProvider>(context).totalIncome;
-
-    dynamic thisMonthTotalExpenses =
-        Provider.of<StateProvider>(context).thisMonthTotalExpenses;
-    dynamic thisMonthTotalIncome =
-        Provider.of<StateProvider>(context).thisMonthTotalIncome;
-
-    final CarouselController _monthListCarouselController =
-        CarouselController();
     return Scaffold(
+      backgroundColor: darkModeEnabled
+          ? Color.fromARGB(255, 112, 112, 112)
+          : Color.fromARGB(255, 222, 222, 222),
       bottomNavigationBar: SalomonBottomBar(
-          backgroundColor: Color.fromARGB(255, 203, 203, 203),
+          backgroundColor: darkModeEnabled
+              ? Color.fromARGB(255, 112, 112, 112)
+              : Color.fromARGB(255, 222, 222, 222),
           currentIndex: _selectedIndex,
-          selectedItemColor: appTheme,
-          unselectedItemColor: const Color(0xff757575),
+          selectedItemColor: darkModeEnabled ? appTheme[100] : appTheme,
+          unselectedItemColor:
+              darkModeEnabled ? Colors.white70 : const Color(0xff757575),
           onTap: (index) {
             setState(() {
               _selectedIndex = index;
@@ -101,13 +130,20 @@ class _HomePageState extends State<HomePage> {
           },
           items: _navBarItems),
       drawer: Drawer(
+        backgroundColor:
+            !darkModeEnabled ? Color.fromARGB(255, 222, 222, 222) : null,
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [appTheme.shade800, appTheme.shade200],
+                  colors: darkModeEnabled
+                      ? [
+                          Color.fromARGB(255, 34, 42, 46),
+                          Color.fromARGB(0, 139, 139, 139)
+                        ]
+                      : [appTheme, appTheme[200]],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),
@@ -137,155 +173,163 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       appBar: AppBar(
-        title: SizedBox(
-          height: 50,
-          child: CarouselSlider.builder(
-            carouselController: _monthListCarouselController,
-            itemCount: monthList.length,
-            itemBuilder: (BuildContext context, int index, int realIndex) {
-              return Container(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  monthList[index],
-                  style: const TextStyle(
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              );
-            },
-            options: CarouselOptions(
-              height: 200,
-              enableInfiniteScroll: true,
-              enlargeCenterPage: true,
-              onPageChanged:
-                  (int index, CarouselPageChangedReason reason) async {
-                // Callback function to get the current index when the page changes
-
-                context.read<StateProvider>().setSelectedMonth(index);
-
-                // context.read<StateProvider>().getTransactionsFromDb();
-              },
-            ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(30),
           ),
         ),
+        title: showMonthlyData
+            ? SizedBox(
+                height: 50,
+                child: CarouselSlider.builder(
+                  carouselController: _monthListCarouselController,
+                  itemCount: monthList.length,
+                  itemBuilder:
+                      (BuildContext context, int index, int realIndex) {
+                    return Container(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        monthList[index],
+                        style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white70),
+                      ),
+                    );
+                  },
+                  options: CarouselOptions(
+                    height: 200,
+                    enableInfiniteScroll: true,
+                    enlargeCenterPage: true,
+                    initialPage: monthList.indexOf(selectedMonth),
+                    onPageChanged:
+                        (int index, CarouselPageChangedReason reason) {
+                      context.read<StateProvider>().setSelectedMonth(index);
+                    },
+                  ),
+                ))
+            : null,
         actions: [
           IconButton(
-            icon: const Icon(Icons.cloud_upload),
             onPressed: () {
-              sendSnackBar(context, "Cloud backup comming soon!");
+              sendSnackBar(context, "Upload to cloud comming soon!");
             },
-          ),
+            icon: Icon(Icons.upload_rounded),
+          )
         ],
-        flexibleSpace: Container(
-          decoration: BoxDecoration(color: appTheme),
-        ),
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(100),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Column(
+          preferredSize: Size.fromHeight(75),
+          child: Column(
+            children: [
+              // Padding(
+              //   padding: const EdgeInsets.all(2.0),
+              //   child: _isAdLoaded
+              //       ? Container(
+              //           width: MediaQuery.of(context).size.width,
+              //           height: 60,
+              //           child: AdWidget(ad: _bannerAd),
+              //         )
+              //       : Text("Ads comming soon!"),
+              // ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    const Icon(
-                      Icons.arrow_downward,
-                      color: Colors.white,
-                      size: 25,
+                    Column(
+                      children: [
+                        const Text(
+                          "Expenses",
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          "$currencySymbol ${totalExpenses.toStringAsFixed(totalExpenses.truncateToDouble() == totalExpenses ? 0 : 2)}",
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      "Expenses",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Column(
+                      children: [
+                        const Text(
+                          "Income",
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          "$currencySymbol ${totalIncome.toStringAsFixed(totalIncome.truncateToDouble() == totalIncome ? 0 : 2)}",
+                          style: const TextStyle(
+                            color: Colors.green,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                      ],
                     ),
-                    Text(
-                      "Rs. ${thisMonthTotalExpenses.toStringAsFixed(thisMonthTotalExpenses.truncateToDouble() == thisMonthTotalExpenses ? 0 : 2)}",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Column(
+                      children: [
+                        const Text(
+                          "Gross",
+                          style: TextStyle(
+                            color: Colors.white70,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          "$currencySymbol ${(totalIncome - totalExpenses).toStringAsFixed((totalIncome - totalExpenses).truncateToDouble() == (totalIncome - totalExpenses) ? 0 : 2)}",
+                          style: TextStyle(
+                            color: (totalIncome - totalExpenses) > 0
+                                ? Colors.green
+                                : Colors.red,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                Column(
-                  children: [
-                    const Icon(
-                      Icons.arrow_upward,
-                      color: Colors.white,
-                      size: 25,
-                    ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      "Income",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      "Rs. ${thisMonthTotalIncome.toStringAsFixed(thisMonthTotalIncome.truncateToDouble() == thisMonthTotalIncome ? 0 : 2)}",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    const Icon(
-                      Icons.attach_money,
-                      color: Colors.white,
-                      size: 25,
-                    ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      "Gross",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      "Rs. ${(thisMonthTotalIncome - thisMonthTotalExpenses).toStringAsFixed((thisMonthTotalIncome - thisMonthTotalExpenses).truncateToDouble() == (thisMonthTotalIncome - thisMonthTotalExpenses) ? 0 : 2)}",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                  ],
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
-      body: SafeArea(
-        child: IndexedStack(
-          index: _selectedIndex,
-          children: [
-            Transactions(),
-            Categories(),
-            InsightsPage(),
-          ],
-        ),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: [
+          Transactions(),
+          Categories(),
+          InsightsPage(),
+        ],
       ),
     );
   }

@@ -1,42 +1,122 @@
-import 'dart:async';
-
-import 'package:budget_buddy/Constants/ConstantValues.dart';
 import 'package:budget_buddy/Constants/DateName.dart';
+import 'package:budget_buddy/Constants/ParseColor.dart';
 import 'package:budget_buddy/Constants/TryParseDouble.dart';
 import 'package:budget_buddy/Db/DbHelper.dart';
+import 'package:budget_buddy/Constants/Constants.dart';
 import 'package:flutter/material.dart';
 
 class StateProvider with ChangeNotifier {
   bool dataLoaded = false;
 
-// Fetch All Data
+  bool showMonthlyData = true;
+
+  setShowMonthlyData(bool value) {
+    showMonthlyData = value;
+    notifyListeners();
+  }
+
+  var selectedMonth = months[DateTime.now().month - 1];
+  var monthList = months;
+
   fetchAllData() async {
     await getCategoriesFromDb();
+
     await getTransactionsFromDb();
     await categorizeTransactions();
     await giveTitlesToCategoryTypes();
-    buildMonthList();
-    dataLoaded = true;
+
+    await buildThisMonthTransactions();
+    await categorizeThisMonthTransactions();
+    await giveTitlesToThisMonthCategoryTypes();
+
+    await getAppSettings();
     notifyListeners();
   }
 
 // Importing the databaseHelper
   final dbHelper = DatabaseHelper.instance;
 
+  String currency = "USD";
+  bool getNotifcations = true;
 // App Settings states
   dynamic _appTheme = defaultAppTheme;
   dynamic get appTheme => _appTheme;
 
-  void setAppTheme(dynamic theme) {
-    _appTheme = theme;
+  bool darkTheme = false;
+  getAppSettings() async {
+    await dbHelper.getAppSettings().then((value) {
+      currency = value[0]['currency'];
+      getNotifcations = value[0]['getNotifications'] == 1 ? true : false;
+      if (value[0]['appTheme'] == "Dark") {
+        darkTheme = true;
+        _appTheme = Colors.blueGrey;
+      } else {
+        darkTheme = false;
+        _appTheme = colorMap[value[0]['themeColor']] ?? Colors.blue;
+      }
+      notifyListeners();
+    });
+  }
+
+  setGetNotifications(bool value) async {
+    dynamic updatedAppSetting;
+    updatedAppSetting = {
+      "_id": 1,
+      "getNotifications": value ? 1 : 0,
+    };
+    await dbHelper.updateAppSettings(updatedAppSetting);
+    getAppSettings();
+  }
+
+  updateCurrency(String currency) async {
+    dynamic updatedAppSetting;
+    updatedAppSetting = {
+      "_id": 1,
+      "currency": currency,
+    };
+    await dbHelper.updateAppSettings(updatedAppSetting);
+    getAppSettings();
+  }
+
+  setAppColor() async {
+    dynamic updatedAppSetting;
+    await dbHelper.getAppSettings().then((value) {
+      _appTheme = colorMap[value[0]['themeColor']];
+      darkTheme = false;
+
+      notifyListeners();
+    });
+    updatedAppSetting = {
+      "_id": 1,
+      "appTheme": "Light",
+    };
+    await dbHelper.updateAppSettings(updatedAppSetting);
     notifyListeners();
+  }
+
+  updateAppTheme(String mode, dynamic updatedAppTheme) async {
+    dynamic updatedAppSetting;
+    if (mode == "Dark") {
+      darkTheme = true;
+      updatedAppSetting = {
+        "_id": 1,
+        "appTheme": mode,
+      };
+    } else {
+      darkTheme = false;
+      updatedAppSetting = {
+        "_id": 1,
+        "appTheme": mode,
+        "themeColor": colorToString(updatedAppTheme),
+      };
+    }
+
+    await dbHelper.updateAppSettings(updatedAppSetting);
+    getAppSettings();
   }
 
   dynamic totalExpenses = 0;
   dynamic totalIncome = 0;
-
-  dynamic thisMonthTotalExpenses = 0;
-  dynamic thisMonthTotalIncome = 0;
 
 // Category states
   dynamic toUpdateCategoryId = 0;
@@ -83,12 +163,11 @@ class StateProvider with ChangeNotifier {
 
       notifyListeners();
     }
-    buildMonthList();
   }
 
   List<dynamic> get categoryList => _categoryList;
 
-  void setCategoryList(dynamic newCategory) async {
+  void saveCategory(dynamic newCategory) async {
     var category = {
       DatabaseHelper.colType: newCategory['type'],
       DatabaseHelper.colTitle: newCategory['title'],
@@ -96,7 +175,6 @@ class StateProvider with ChangeNotifier {
     };
     await dbHelper.insertCategory(category);
     getCategoriesFromDb();
-    // buildMonthList();
   }
 
   dynamic categoryToUpdate = {};
@@ -118,56 +196,22 @@ class StateProvider with ChangeNotifier {
   deleteCategory(String categoryType, String categoryTitle) async {
     for (var cat in categoryList) {
       if (cat['type'] == categoryType && cat['title'] == categoryTitle) {
+        // We need to move all the transactions associated to this category to Miscellaneous category
+
         dbHelper.deleteCategory(cat['id']);
         getCategoriesFromDb();
       }
     }
-    notifyListeners();
   }
 
   // Transaction States
-// Constant values
-  dynamic toUpdateTransactionId = 0;
-
-  var transactionToUpdate = {};
-  dynamic toUpdateType = "";
-  dynamic toUpdateTitle = "";
-  dynamic toUpdateAmount = "";
-  dynamic toUpdateRemarks = "";
-  dynamic toUpdateDate = "";
-
-  dynamic toUpdateTime = "";
-  dynamic toUpdateCategory = "";
-
-  Future setTransactionToUpdate(dynamic transactionId) async {
-    toUpdateTransactionId = transactionId;
-    var receivedTransaction =
-        await dbHelper.getTransactionById(toUpdateTransactionId);
-    transactionToUpdate['id'] = receivedTransaction!['_id'];
-    transactionToUpdate['type'] = receivedTransaction['type'];
-    transactionToUpdate['title'] = receivedTransaction['title'];
-    transactionToUpdate['amount'] = receivedTransaction['amount'];
-    transactionToUpdate['remarks'] = receivedTransaction['remarks'];
-    transactionToUpdate['dateTime'] = receivedTransaction['dateTime'];
-    transactionToUpdate['time'] = receivedTransaction['time'];
-    transactionToUpdate['category'] = receivedTransaction['category'];
-
-    notifyListeners();
-  }
-
-  final List<dynamic> _transactionList = [];
-  List<dynamic> get transactionList => _transactionList;
-  List<dynamic> _thisMonthTransactionList = [];
-  List<dynamic> get thisMonthTransactionList => _thisMonthTransactionList;
-
+  final List<dynamic> transactionList = [];
   getTransactionsFromDb() async {
-    // For Gross transactions
     totalExpenses = 0;
     totalIncome = 0;
-
     List<Map<String, dynamic>> transactions =
         await dbHelper.getAllTransactions();
-    _transactionList.clear();
+    transactionList.clear();
     for (var tran in transactions) {
       var newTransaction = {
         "id": tran[DatabaseHelper.colId],
@@ -179,56 +223,19 @@ class StateProvider with ChangeNotifier {
         "time": tran[DatabaseHelper.colTime],
         "category": tran[DatabaseHelper.colCategory],
       };
-
-      _transactionList.add(newTransaction);
+      transactionList.add(newTransaction);
       if (newTransaction['type'] == "Expense") {
         totalExpenses += double.parse(newTransaction['amount']);
-        notifyListeners();
       } else {
         totalIncome += double.parse(newTransaction['amount']);
-        notifyListeners();
       }
     }
-
-    buildMonthList();
-    // For this month transactions
-    // For monthly
-    thisMonthTotalExpenses = 0;
-    thisMonthTotalIncome = 0;
-    List<Map<String, dynamic>> thisMonthTransactions = [];
-    _thisMonthTransactionList.clear();
-
-    for (var tran in transactions) {
-      var newTransaction = {
-        "id": tran[DatabaseHelper.colId],
-        "type": tran[DatabaseHelper.colType],
-        "title": tran[DatabaseHelper.colTitle],
-        "amount": tran[DatabaseHelper.colAmount],
-        "remarks": tran[DatabaseHelper.colRemarks],
-        "dateTime": tran[DatabaseHelper.colDateTime],
-        "time": tran[DatabaseHelper.colTime],
-        "category": tran[DatabaseHelper.colCategory],
-      };
-
-      if (getMonthName(newTransaction['dateTime']) == selectedMonth) {
-        thisMonthTransactionList.add(newTransaction);
-        thisMonthTransactions.add(newTransaction);
-        if (newTransaction['type'] == "Expense") {
-          thisMonthTotalExpenses += double.parse(newTransaction['amount']);
-          notifyListeners();
-        } else {
-          thisMonthTotalIncome += double.parse(newTransaction['amount']);
-          notifyListeners();
-        }
-      }
-    }
-
     categorizeTransactions();
-    buildMonthList();
+    buildThisMonthTransactions();
     notifyListeners();
   }
 
-  void setTransactionList(dynamic newTransaction) async {
+  void saveTransaction(dynamic newTransaction) async {
     var transaction = {
       DatabaseHelper.colType: newTransaction['type'],
       DatabaseHelper.colTitle: newTransaction['title'],
@@ -241,85 +248,40 @@ class StateProvider with ChangeNotifier {
 
     await dbHelper.insertTransaction(transaction);
     getTransactionsFromDb();
-    buildMonthList();
+  }
+
+  dynamic toUpdateTransactionId = 0;
+  var transactionToUpdate = {};
+  Future setTransactionToUpdate(dynamic transactionId) async {
+    toUpdateTransactionId = transactionId;
+    var receivedTransaction =
+        await dbHelper.getTransactionById(toUpdateTransactionId);
+    transactionToUpdate['id'] = receivedTransaction!['_id'];
+    transactionToUpdate['type'] = receivedTransaction['type'];
+    transactionToUpdate['title'] = receivedTransaction['title'];
+    transactionToUpdate['amount'] = receivedTransaction['amount'];
+    transactionToUpdate['remarks'] = receivedTransaction['remarks'];
+    transactionToUpdate['dateTime'] = receivedTransaction['dateTime'];
+    transactionToUpdate['time'] = receivedTransaction['time'];
+    transactionToUpdate['category'] = receivedTransaction['category'];
+    notifyListeners();
   }
 
   updateTransaction(dynamic updatedTransaction) async {
     await dbHelper.updateTransaction(updatedTransaction);
     getTransactionsFromDb();
+    notifyListeners();
   }
 
   deleteTransaction(dynamic transactionId) async {
     await dbHelper.deleteTransaction(transactionId);
     getTransactionsFromDb();
-  }
-
-  var expenseCategoryTypesTitles = [];
-  var incomeCategoryTypesTitles = [];
-
-  var thisMonthExpenseCategoryTypesTitles = [];
-  var thisMonthIncomeCategoryTypesTitles = [];
-  giveTitlesToCategoryTypes() async {
-    // Temporary lists for expense and income titles
-    List<String> tempExpenseTitles = [];
-    List<String> tempIncomeTitles = [];
-
-    List<String> tempThisMonthExpenseTitles = [];
-    List<String> tempThisMonthIncomeTitles = [];
-
-    // Expense categories
-    for (var expenseCategoryType in expenseCategoryTypes) {
-      var category = await dbHelper.getCategoryById(expenseCategoryType['id']);
-      var title = category![DatabaseHelper.colTitle];
-      tempExpenseTitles.add(title);
-    }
-
-    // Income categories
-    for (var incomeCategoryType in incomeCategoryTypes) {
-      var category = await dbHelper.getCategoryById(incomeCategoryType['id']);
-      var title = category![DatabaseHelper.colTitle];
-      tempIncomeTitles.add(title);
-    }
-
-    // For this month
-    // Expense categories
-    for (var thisMonthExpenseCategoryType in thisMonthExpenseCategoryTypes) {
-      var category =
-          await dbHelper.getCategoryById(thisMonthExpenseCategoryType['id']);
-      var title = category![DatabaseHelper.colTitle];
-      tempThisMonthExpenseTitles.add(title);
-    }
-
-    // Income categories
-    for (var thisMonthIncomeCategoryType in thisMonthIncomeCategoryTypes) {
-      var category =
-          await dbHelper.getCategoryById(thisMonthIncomeCategoryType['id']);
-      var title = category![DatabaseHelper.colTitle];
-      tempThisMonthIncomeTitles.add(title);
-    }
-
-    // Set the main lists after collecting all titles
-    expenseCategoryTypesTitles = tempExpenseTitles;
-    incomeCategoryTypesTitles = tempIncomeTitles;
-
-    thisMonthExpenseCategoryTypesTitles = tempThisMonthExpenseTitles;
-    thisMonthIncomeCategoryTypesTitles = tempThisMonthIncomeTitles;
+    notifyListeners();
   }
 
   var expenseCategoryTypes = [];
   var incomeCategoryTypes = [];
-
-  var thisMonthExpenseCategoryTypes = [];
-  var thisMonthIncomeCategoryTypes = [];
-
   categorizeTransactions() {
-    expenseCategoryTypes = [];
-    incomeCategoryTypes = [];
-
-    thisMonthExpenseCategoryTypes = [];
-    thisMonthIncomeCategoryTypes = [];
-
-    // For gross data
     for (var transaction in transactionList) {
       if (transaction['type'] == 'Expense') {
         // For expense categories
@@ -358,12 +320,68 @@ class StateProvider with ChangeNotifier {
           });
         }
       }
-      notifyListeners();
     }
+    giveTitlesToCategoryTypes();
+    notifyListeners();
+  }
 
-    // For this month data
+  var expenseCategoryTypesTitles = [];
+  var incomeCategoryTypesTitles = [];
 
-    for (var transaction in thisMonthTransactionList) {
+  giveTitlesToCategoryTypes() async {
+    List<String> tempExpenseTitles = [];
+    List<String> tempIncomeTitles = [];
+
+    for (var expenseCategoryType in expenseCategoryTypes) {
+      var category = await dbHelper.getCategoryById(expenseCategoryType['id']);
+      var title = category![DatabaseHelper.colTitle];
+      tempExpenseTitles.add(title);
+    }
+    for (var incomeCategoryType in incomeCategoryTypes) {
+      var category = await dbHelper.getCategoryById(incomeCategoryType['id']);
+      var title = category![DatabaseHelper.colTitle];
+      tempIncomeTitles.add(title);
+    }
+    expenseCategoryTypesTitles = tempExpenseTitles;
+    incomeCategoryTypesTitles = tempIncomeTitles;
+  }
+
+  // Working with this month
+  dynamic thisMonthTotalExpenses = 0;
+  dynamic thisMonthTotalIncome = 0;
+  setSelectedMonth(int month) {
+    selectedMonth = monthList[month];
+
+    fetchAllData();
+    notifyListeners();
+  }
+
+  var thisMonthCategories = [];
+  var thisMonthTransactions = [];
+  buildThisMonthTransactions() {
+    thisMonthTotalExpenses = 0;
+    thisMonthTotalIncome = 0;
+    thisMonthTransactions.clear();
+    for (var transaction in transactionList) {
+      if (getMonthName(transaction['dateTime'].toString()) == selectedMonth) {
+        thisMonthTransactions.add(transaction);
+        if (transaction['type'] == "Expense") {
+          thisMonthTotalExpenses += double.parse(transaction['amount']);
+        } else {
+          thisMonthTotalIncome += double.parse(transaction['amount']);
+        }
+      }
+    }
+    categorizeThisMonthTransactions();
+    notifyListeners();
+  }
+
+  var thisMonthExpenseCategoryTypes = [];
+  var thisMonthIncomeCategoryTypes = [];
+  categorizeThisMonthTransactions() {
+    thisMonthExpenseCategoryTypes.clear();
+    thisMonthIncomeCategoryTypes.clear();
+    for (var transaction in thisMonthTransactions) {
       if (transaction['type'] == 'Expense') {
         // For expense categories
         double thisMonthExpenseCategoryTotalAmount =
@@ -373,7 +391,7 @@ class StateProvider with ChangeNotifier {
           if (transaction['category'] == category['id']) {
             found = true;
             category['totalAmount'] += thisMonthExpenseCategoryTotalAmount;
-            break; // Exit the loop once a match is found
+            break;
           }
         }
         if (!found) {
@@ -401,61 +419,42 @@ class StateProvider with ChangeNotifier {
           });
         }
       }
-      notifyListeners();
     }
-
-    giveTitlesToCategoryTypes();
+    giveTitlesToThisMonthCategoryTypes();
     notifyListeners();
   }
 
-  // Listing the available  months :
-  var selectedMonth;
+  var thisMonthExpenseCategoryTypesTitles = [];
+  var thisMonthIncomeCategoryTypesTitles = [];
 
-  dynamic monthList = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
-  ];
+  giveTitlesToThisMonthCategoryTypes() async {
+    List<String> tempExpenseTitles = [];
+    List<String> tempIncomeTitles = [];
 
-  buildMonthList() {
-    monthList.clear();
-    _transactionList.forEach((transaction) {
-      if (monthList.length < 1) {
-        monthList.add(
-          getMonthName(transaction['dateTime']),
-        );
-      } else {
-        bool found = false;
-        for (var monthInList in monthList) {
-          if (monthInList == getMonthName(transaction['dateTime'])) {
-            found = true;
-            break;
-          }
-        }
-        if (!found) {
-          monthList.add(
-            getMonthName(transaction['dateTime']),
-          );
-        }
-      }
-    });
+    for (var expenseCategoryType in expenseCategoryTypes) {
+      var category = await dbHelper.getCategoryById(expenseCategoryType['id']);
+      var title = category![DatabaseHelper.colTitle];
+      tempExpenseTitles.add(title);
+    }
+    for (var incomeCategoryType in incomeCategoryTypes) {
+      var category = await dbHelper.getCategoryById(incomeCategoryType['id']);
+      var title = category![DatabaseHelper.colTitle];
+      tempIncomeTitles.add(title);
+    }
+    thisMonthExpenseCategoryTypesTitles = tempExpenseTitles;
+    thisMonthIncomeCategoryTypesTitles = tempIncomeTitles;
+  }
+
+  // Minor operations
+  dynamic dateFieldBackgroundColor = Colors.green;
+  setDateFieldBackgroundColor(var newColor) {
+    dateFieldBackgroundColor = newColor;
     notifyListeners();
   }
 
-  setSelectedMonth(int index) {
-    selectedMonth = monthList[index];
-    getTransactionsFromDb();
-    // notifyListeners();
+  dynamic updateTransactionDateFieldBackgroundColor = Colors.green;
+  setUpdateTransactionDateFieldBackgroundColor(var newColor) {
+    updateTransactionDateFieldBackgroundColor = newColor;
+    notifyListeners();
   }
-
-  // End of Transaction States
 }

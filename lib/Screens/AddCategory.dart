@@ -15,24 +15,32 @@ class _AddCategoryState extends State<AddCategory> {
   var titleController = TextEditingController();
   var iconController = TextEditingController();
 
+  var searchController = TextEditingController();
+
   String _categoryType = "Expense";
 
   var title;
 
   IconData selectedIcon = Icons.local_dining;
-
+  bool darkModeEnabled = false;
   @override
   Widget build(BuildContext context) {
+    darkModeEnabled = Provider.of<StateProvider>(context).darkTheme;
+
     saveCategory(dynamic type, dynamic title, dynamic icon) async {
       var newCategory = {"type": type, "title": title, "icon": icon};
-      context.read<StateProvider>().setCategoryList(newCategory);
+      context.read<StateProvider>().saveCategory(newCategory);
     }
 
     final formKey = GlobalKey<FormState>();
     return Scaffold(
       backgroundColor: _categoryType == "Expense"
-          ? const Color.fromARGB(255, 196, 214, 222)
-          : const Color.fromARGB(255, 210, 219, 200),
+          ? darkModeEnabled
+              ? Color.fromARGB(255, 112, 112, 112)
+              : Color.fromARGB(255, 196, 214, 222)
+          : darkModeEnabled
+              ? Color.fromARGB(255, 112, 112, 112)
+              : Color.fromARGB(255, 210, 219, 200),
       appBar: AppBar(
         title: const Text(
           'Add Category',
@@ -59,11 +67,14 @@ class _AddCategoryState extends State<AddCategory> {
               Form(
                 key: formKey,
                 child: TextFormField(
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
                   controller: titleController,
                   onChanged: (val) {
                     title = val.trim();
                   },
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     hintText: "Title",
                     border: OutlineInputBorder(
                       borderSide: BorderSide(
@@ -85,12 +96,17 @@ class _AddCategoryState extends State<AddCategory> {
                 ),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Select Icon',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Select Icon',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 8),
               GridView.builder(
@@ -114,9 +130,10 @@ class _AddCategoryState extends State<AddCategory> {
                           : Colors.transparent,
                       child: Icon(
                         iconList[index],
-                        color: selectedIcon == iconList[index]
-                            ? Colors.white
-                            : Colors.black,
+                        color: darkModeEnabled ? Colors.white : Colors.black,
+                        // color: selectedIcon == iconList[index]
+                        //     ? Colors.white
+                        //     : Colors.black,
                       ),
                     ),
                   );
@@ -186,9 +203,13 @@ class _AddCategoryState extends State<AddCategory> {
           option,
           style: TextStyle(
             fontSize: 16,
-            color: _categoryType == option ? Colors.white : Colors.black,
-            fontWeight:
-                _categoryType == option ? FontWeight.bold : FontWeight.normal,
+            color: _categoryType == option
+                ? Colors.white
+                : darkModeEnabled
+                    ? Colors.white
+                    : Colors.black,
+            // color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),
