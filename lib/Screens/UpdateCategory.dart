@@ -127,9 +127,6 @@ class _UpdateCategoryState extends State<UpdateCategory> {
                       child: Icon(
                         iconList[index],
                         color: darkModeEnabled ? Colors.white : Colors.black,
-                        // color: selectedIcon == iconList[index]
-                        //     ? Colors.white
-                        //     : Colors.black,
                       ),
                     ),
                   );
@@ -208,9 +205,6 @@ class _UpdateCategoryState extends State<UpdateCategory> {
             fontSize: 16,
             color: Colors.white,
             fontWeight: FontWeight.bold,
-            // color: _categoryType == option ? Colors.white : Colors.black,
-            // fontWeight:
-            //     _categoryType == option ? FontWeight.bold : FontWeight.normal,
           ),
         ),
       ),

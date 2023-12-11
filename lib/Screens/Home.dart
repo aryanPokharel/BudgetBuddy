@@ -7,7 +7,6 @@ import 'package:budget_buddy/Screens/Transactions.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
@@ -64,34 +63,10 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _initBannerAd();
     context.read<StateProvider>().fetchAllData();
   }
 
   final CarouselController _monthListCarouselController = CarouselController();
-
-  // Working with ads
-  late BannerAd _bannerAd;
-  bool _isAdLoaded = false;
-
-  _initBannerAd() {
-    _bannerAd = BannerAd(
-      size: AdSize.banner,
-      adUnitId: 'ca-app-pub-3940256099942544/6300978111',
-      // adUnitId: BannerAd.testAdUnitId,
-      listener: BannerAdListener(onAdLoaded: (ad) {
-        setState(() {
-          _isAdLoaded = true;
-        });
-      }, onAdFailedToLoad: (ad, error) {
-        ad.dispose();
-        print(error);
-      }),
-      request: const AdRequest(),
-    );
-
-    _bannerAd.load();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -221,16 +196,6 @@ class _HomePageState extends State<HomePage> {
           preferredSize: Size.fromHeight(75),
           child: Column(
             children: [
-              // Padding(
-              //   padding: const EdgeInsets.all(2.0),
-              //   child: _isAdLoaded
-              //       ? Container(
-              //           width: MediaQuery.of(context).size.width,
-              //           height: 60,
-              //           child: AdWidget(ad: _bannerAd),
-              //         )
-              //       : Text("Ads comming soon!"),
-              // ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Row(

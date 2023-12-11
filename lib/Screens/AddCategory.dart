@@ -131,9 +131,6 @@ class _AddCategoryState extends State<AddCategory> {
                       child: Icon(
                         iconList[index],
                         color: darkModeEnabled ? Colors.white : Colors.black,
-                        // color: selectedIcon == iconList[index]
-                        //     ? Colors.white
-                        //     : Colors.black,
                       ),
                     ),
                   );

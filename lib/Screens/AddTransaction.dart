@@ -1,10 +1,7 @@
 import 'package:budget_buddy/Constants/DateName.dart';
 import 'package:budget_buddy/Constants/SendSnackBar.dart';
-import 'package:budget_buddy/Constants/URLS.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
-
 import 'package:provider/provider.dart';
 
 class AddTransaction extends StatefulWidget {
@@ -39,7 +36,6 @@ class _AddTransactionState extends State<AddTransaction> {
     foundDateFieldName = '';
   }
 
-  File? _selectedImage;
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -107,10 +103,6 @@ class _AddTransactionState extends State<AddTransaction> {
     selectedTime = TimeOfDay.now();
   }
 
-  final String apiUrl = invoiceReaderURL;
-  final String apiKey = invoiceReaderApiKey;
-  final String authToken = invoiceReaderApiKey;
-
   dynamic selectedCategory;
   TimeOfDay selectedTime = TimeOfDay.now();
 
@@ -119,92 +111,9 @@ class _AddTransactionState extends State<AddTransaction> {
 
   late var picker;
   bool isSendingInvoice = false;
-  // Future sendInvoice() async {
-  //   try {
-  //     setState(() {
-  //       isSendingInvoice = true;
-  //     });
-  //     if (_selectedImage == null) {
-  //       sendSnackBar(context, "Please select an image.");
-  //       return;
-  //     }
-  //     var imageBytes = await _selectedImage!.readAsBytes();
-
-  //     String base64Image = base64Encode(imageBytes);
-
-  //     final response = await http.post(
-  //       Uri.parse(apiUrl),
-  //       headers: <String, String>{
-  //         'Content-Type': 'application/json; charset=UTF-8',
-  //         'Authorization': 'Token $apiKey',
-  //       },
-  //       body: jsonEncode(<String, dynamic>{
-  //         'document': base64Image,
-  //       }),
-  //     );
-
-  //     if (response.statusCode == 201) {
-  //       var responseJson = jsonDecode(response.body);
-
-  //       var prediction =
-  //           responseJson['document']['inference']['pages'][0]['prediction'];
-
-  //       remarksController.text = "Read From Invoice";
-
-  //       for (var titleFieldName in titleFieldNames) {
-  //         if (prediction.containsKey(titleFieldName)) {
-  //           foundTitleFieldName = titleFieldName;
-  //           break;
-  //         }
-  //       }
-
-  //       if (foundTitleFieldName.isNotEmpty) {
-  //         titleController.text =
-  //             prediction[foundTitleFieldName]['value'].toString();
-  //       } else {
-  //         titleController.text = "No Title";
-  //       }
-  //       // For amount
-  //       for (var amountFieldName in amountFieldNames) {
-  //         if (prediction.containsKey(amountFieldName)) {
-  //           foundAmountFieldName = amountFieldName;
-  //           break;
-  //         }
-  //       }
-
-  //       if (foundAmountFieldName.isNotEmpty) {
-  //         amountController.text =
-  //             prediction[foundAmountFieldName]['value'].toString();
-  //       } else {
-  //         amountController.text = "0";
-  //       }
-
-  //       // For Date
-  //       // for (var dateFieldName in dateFieldNames) {
-  //       //   if (prediction.containsKey(dateFieldName)) {
-  //       //     foundDateFieldName = dateFieldName;
-  //       //     break;
-  //       //   }
-  //       // }
-
-  //       // if (foundDateFieldName.isNotEmpty) {
-  //       //   selectedDate =
-  //       //       prediction[foundDateFieldName]['value'].toString() as DateTime?;
-  //       // }
-  //     } else {
-  //       sendSnackBar(context, "Couldn't process the image!");
-  //     }
-  //   } catch (e) {
-  //     sendSnackBar(context, "Bad Network");
-  //   } finally {
-  //     isSendingInvoice = false;
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
-    // picker = ImagePicker();
-    dynamic appTheme = Provider.of<StateProvider>(context).appTheme;
     bool darkModeEnabled = Provider.of<StateProvider>(context).darkTheme;
     var categoryList = Provider.of<StateProvider>(context).categoryList;
     var expenseCategories = categoryList
@@ -256,57 +165,6 @@ class _AddTransactionState extends State<AddTransaction> {
           IconButton(
             onPressed: () {
               sendSnackBar(context, "Invoice Reading Coming Soon!");
-              // showModalBottomSheet(
-              //   context: context,
-              //   builder: (BuildContext context) {
-              //     return Column(
-              //       mainAxisSize: MainAxisSize.min,
-              //       children: <Widget>[
-              //         ListTile(
-              //           leading: Icon(Icons.camera),
-              //           title: Text('Camera'),
-              //           onTap: () async {
-              //             Navigator.pop(context);
-
-              //             final pickedFile = await picker.pickImage(
-              //               source: ImageSource.camera,
-              //             );
-              //             if (pickedFile != null) {
-              //               setState(() {
-              //                 _selectedImage = File(pickedFile.path);
-              //               });
-
-              //               sendInvoice();
-              //             } else {
-              //               sendSnackBar(context, "Didn't get Image!");
-              //             }
-              //           },
-              //         ),
-              //         ListTile(
-              //           leading: Icon(Icons.image),
-              //           title: Text('Gallery'),
-              //           onTap: () async {
-              //             Navigator.pop(context);
-
-              //             final pickedFile = await picker.pickImage(
-              //               source: ImageSource.gallery,
-              //             );
-
-              //             if (pickedFile != null) {
-              //               setState(() {
-              //                 _selectedImage = File(pickedFile.path);
-              //               });
-
-              //               sendInvoice();
-              //             } else {
-              //               sendSnackBar(context, "Didn't get Image!");
-              //             }
-              //           },
-              //         ),
-              //       ],
-              //     );
-              //   },
-              // );
             },
             icon: Icon(Icons.document_scanner),
           )

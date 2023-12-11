@@ -50,6 +50,5 @@ class _MyAdWidgetState extends State<MyAdWidget> {
             )
           : Text("Ads comming soon!"),
     );
-    ;
   }
 }

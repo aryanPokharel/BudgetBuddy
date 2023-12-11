@@ -121,7 +121,6 @@ class _UpdateTransactionState extends State<UpdateTransaction> {
 
   @override
   Widget build(BuildContext context) {
-    dynamic appTheme = Provider.of<StateProvider>(context).appTheme;
     bool darkModeEnabled = Provider.of<StateProvider>(context).darkTheme;
     var categoryList = Provider.of<StateProvider>(context).categoryList;
     dynamic transactionToUpdate =

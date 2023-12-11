@@ -119,7 +119,6 @@ class _InsightsPageState extends State<InsightsPage> {
                           Divider(
                             thickness: 2,
                           ),
-                          MyAdWidget(),
                         ],
                       ),
                     )
