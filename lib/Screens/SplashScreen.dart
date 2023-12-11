@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:budget_buddy/Screens/Home.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
@@ -16,30 +15,22 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     context.read<StateProvider>().fetchAllData();
-    Timer(
-      const Duration(seconds: 1),
-      () {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const HomePage(),
-          ),
-        );
-      },
-    );
   }
 
   @override
   Widget build(BuildContext context) {
+    bool dataLoaded = Provider.of<StateProvider>(context).dataLoaded;
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Center(
-        child: Image.asset(
-          'assets/icons/SoftwareBhatti.png',
-          height: MediaQuery.of(context).size.height * 0.80,
-          width: MediaQuery.of(context).size.width * 0.80,
-        ),
-      ),
+      body: dataLoaded
+          ? HomePage()
+          : Center(
+              child: Image.asset(
+                'assets/icons/SoftwareBhatti.png',
+                height: MediaQuery.of(context).size.height * 0.80,
+                width: MediaQuery.of(context).size.width * 0.80,
+              ),
+            ),
     );
   }
 }

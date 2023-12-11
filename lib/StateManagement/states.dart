@@ -30,6 +30,7 @@ class StateProvider with ChangeNotifier {
     await giveTitlesToThisMonthCategoryTypes();
 
     await getAppSettings();
+    dataLoaded = true;
     notifyListeners();
   }
 
@@ -351,7 +352,6 @@ class StateProvider with ChangeNotifier {
   dynamic thisMonthTotalIncome = 0;
   setSelectedMonth(int month) {
     selectedMonth = monthList[month];
-
     fetchAllData();
     notifyListeners();
   }

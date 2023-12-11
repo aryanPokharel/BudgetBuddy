@@ -60,11 +60,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   bool showMonthlyData = true;
-  @override
-  void initState() {
-    super.initState();
-    context.read<StateProvider>().fetchAllData();
-  }
 
   final CarouselController _monthListCarouselController = CarouselController();
 
