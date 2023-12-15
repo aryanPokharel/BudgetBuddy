@@ -18,12 +18,12 @@ class _MyAdWidgetState extends State<MyAdWidget> {
   // Working with ads
   late BannerAd _bannerAd;
   bool _isAdLoaded = false;
+  var adUnit = 'ca-app-pub-9078201720890090/1438268814';
 
   _initBannerAd() {
     _bannerAd = BannerAd(
       size: AdSize.banner,
-      adUnitId: 'ca-app-pub-3940256099942544/6300978111',
-      // adUnitId: BannerAd.testAdUnitId,
+      adUnitId: adUnit,
       listener: BannerAdListener(onAdLoaded: (ad) {
         setState(() {
           _isAdLoaded = true;
@@ -48,7 +48,7 @@ class _MyAdWidgetState extends State<MyAdWidget> {
               height: 62,
               child: AdWidget(ad: _bannerAd),
             )
-          : Text("Ads comming soon!"),
+          : null,
     );
   }
 }

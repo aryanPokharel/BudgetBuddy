@@ -1,6 +1,6 @@
 import 'package:budget_buddy/Constants/Constants.dart';
 import 'package:budget_buddy/Constants/DrawerColorButton.dart';
-import 'package:budget_buddy/Constants/MyAdWidget.dart';
+import 'package:budget_buddy/AdWidgets/MyAdWidget.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:country_flags/country_flags.dart';
 import 'package:flutter/material.dart';

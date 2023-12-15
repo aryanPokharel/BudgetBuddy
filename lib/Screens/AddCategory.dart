@@ -2,6 +2,7 @@ import 'package:budget_buddy/Constants/IconList.dart';
 import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 
 class AddCategory extends StatefulWidget {
@@ -23,6 +24,53 @@ class _AddCategoryState extends State<AddCategory> {
 
   IconData selectedIcon = Icons.local_dining;
   bool darkModeEnabled = false;
+
+  late InterstitialAd _interstitialAd;
+  bool _isLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initAd();
+  }
+
+  void _initAd() {
+    InterstitialAd.load(
+      adUnitId: 'ca-app-pub-9078201720890090/1701830991',
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: onAdLoaded,
+        onAdFailedToLoad: (error) {
+          print('InterstitialAd failed to load: $error');
+        },
+      ),
+    );
+  }
+
+  void onAdLoaded(InterstitialAd ad) {
+    _interstitialAd = ad;
+    setState(() {
+      _isLoaded = true;
+    });
+
+    _interstitialAd.fullScreenContentCallback = FullScreenContentCallback(
+      onAdDismissedFullScreenContent: (InterstitialAd ad) {
+        ad.dispose();
+      },
+      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+        ad.dispose();
+      },
+    );
+  }
+
+  showInterstitialAd() {
+    if (_isLoaded) {
+      return _interstitialAd.show();
+    } else {
+      return (Text("Interstitial ad is not loaded yet."),);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     darkModeEnabled = Provider.of<StateProvider>(context).darkTheme;
@@ -145,6 +193,7 @@ class _AddCategoryState extends State<AddCategory> {
                   ),
                 ),
                 onPressed: () {
+                  showInterstitialAd();
                   if (formKey.currentState!.validate()) {
                     String hexCodePoint =
                         '0x${selectedIcon.codePoint.toRadixString(16).toUpperCase()}';
@@ -152,6 +201,7 @@ class _AddCategoryState extends State<AddCategory> {
                     saveCategory(_categoryType, title, hexCodePoint);
 
                     sendSnackBar(context, "Category Added");
+
                     Navigator.of(context).pop();
                   } else {
                     sendSnackBar(context, "Provide the title");

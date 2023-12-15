@@ -188,7 +188,9 @@ class _HomePageState extends State<HomePage> {
           )
         ],
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(75),
+          // Get the required preferredSize
+          preferredSize: MediaQuery.of(context).size * 0.08,
+          // preferredSize: Size.fromHeight(55),
           child: Column(
             children: [
               Padding(

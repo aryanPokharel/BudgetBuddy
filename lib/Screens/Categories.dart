@@ -1,5 +1,5 @@
 import 'package:budget_buddy/Constants/LooksEmpty.dart';
-import 'package:budget_buddy/Constants/MyAdWidget.dart';
+import 'package:budget_buddy/AdWidgets/MyAdWidget.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

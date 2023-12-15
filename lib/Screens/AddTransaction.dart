@@ -2,6 +2,7 @@ import 'package:budget_buddy/Constants/DateName.dart';
 import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 
 class AddTransaction extends StatefulWidget {
@@ -27,14 +28,6 @@ class _AddTransactionState extends State<AddTransaction> {
   var title;
   var amount;
   var remarks;
-
-  @override
-  void initState() {
-    super.initState();
-    foundTitleFieldName = '';
-    foundAmountFieldName = '';
-    foundDateFieldName = '';
-  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -150,6 +143,56 @@ class _AddTransactionState extends State<AddTransaction> {
 
     setDateFieldBackgroundColor(var newColor) {
       context.read<StateProvider>().setDateFieldBackgroundColor(newColor);
+    }
+
+    late InterstitialAd _interstitialAd;
+    bool _isLoaded = false;
+
+    void onAdLoaded(InterstitialAd ad) {
+      _interstitialAd = ad;
+      setState(() {
+        _isLoaded = true;
+      });
+
+      _interstitialAd.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (InterstitialAd ad) {
+          ad.dispose();
+        },
+        onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+          ad.dispose();
+        },
+      );
+    }
+
+    showInterstitialAd() {
+      if (_isLoaded) {
+        return _interstitialAd.show();
+      } else {
+        return (Text("Interstitial ad is not loaded yet."),);
+      }
+    }
+
+    void _initAd() {
+      InterstitialAd.load(
+        adUnitId: 'ca-app-pub-9078201720890090/1701830991',
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: onAdLoaded,
+          onAdFailedToLoad: (error) {
+            print('InterstitialAd failed to load: $error');
+          },
+        ),
+      );
+    }
+
+    @override
+    void initState() {
+      super.initState();
+      _initAd();
+
+      foundTitleFieldName = '';
+      foundAmountFieldName = '';
+      foundDateFieldName = '';
     }
 
     return Scaffold(
@@ -523,6 +566,7 @@ class _AddTransactionState extends State<AddTransaction> {
                           ),
                           ElevatedButton(
                             onPressed: () {
+                              showInterstitialAd();
                               if (_transactionType == "Expense") {
                                 var newExpense = {
                                   "type": "Expense",
