@@ -99,7 +99,7 @@ class _TransactionsState extends State<Transactions> {
                   alignment: Alignment.bottomCenter,
                   children: [
                     EmptyListWidget(),
-                    MyAdWidget(),
+                    // MyAdWidget(),
                   ],
                 ),
               ),

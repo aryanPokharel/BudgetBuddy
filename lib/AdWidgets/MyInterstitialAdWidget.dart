@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-class InterstitalAdWidget extends StatefulWidget {
-  const InterstitalAdWidget({super.key});
+class InterstitialAdWidget extends StatefulWidget {
+  const InterstitialAdWidget({super.key});
 
   @override
-  State<InterstitalAdWidget> createState() => _InterstitalAdWidgetState();
+  State<InterstitialAdWidget> createState() => _InterstitialAdWidgetState();
 }
 
-class _InterstitalAdWidgetState extends State<InterstitalAdWidget> {
+class _InterstitialAdWidgetState extends State<InterstitialAdWidget> {
   late InterstitialAd _interstitialAd;
-  bool _isLoaded = false;
+  bool _isLoaded = true;
 
   @override
   void initState() {
@@ -20,7 +20,9 @@ class _InterstitalAdWidgetState extends State<InterstitalAdWidget> {
 
   void _initAd() {
     InterstitialAd.load(
-      adUnitId: 'ca-app-pub-9078201720890090/1701830991',
+      // adUnitId: 'ca-app-pub-9078201720890090/1701830991',
+      // test ad uint :
+      adUnitId: 'ca-app-pub-3940256099942544/1033173712',
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: onAdLoaded,
@@ -33,9 +35,6 @@ class _InterstitalAdWidgetState extends State<InterstitalAdWidget> {
 
   void onAdLoaded(InterstitialAd ad) {
     _interstitialAd = ad;
-    setState(() {
-      _isLoaded = true;
-    });
 
     _interstitialAd.fullScreenContentCallback = FullScreenContentCallback(
       onAdDismissedFullScreenContent: (InterstitialAd ad) {
@@ -57,6 +56,8 @@ class _InterstitalAdWidgetState extends State<InterstitalAdWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return showInterstitialAd();
+    return Container(
+      child: showInterstitialAd(),
+    );
   }
 }

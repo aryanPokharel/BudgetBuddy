@@ -25,6 +25,8 @@ class _AddCategoryState extends State<AddCategory> {
   IconData selectedIcon = Icons.local_dining;
   bool darkModeEnabled = false;
 
+  // Working with interstitial ads
+
   late InterstitialAd _interstitialAd;
   bool _isLoaded = false;
 
@@ -37,6 +39,8 @@ class _AddCategoryState extends State<AddCategory> {
   void _initAd() {
     InterstitialAd.load(
       adUnitId: 'ca-app-pub-9078201720890090/1701830991',
+      // test ad uint :
+      // adUnitId: 'ca-app-pub-3940256099942544/1033173712',
       request: const AdRequest(),
       adLoadCallback: InterstitialAdLoadCallback(
         onAdLoaded: onAdLoaded,
@@ -192,8 +196,9 @@ class _AddCategoryState extends State<AddCategory> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   showInterstitialAd();
+                  // await InterstitialAdWidget();
                   if (formKey.currentState!.validate()) {
                     String hexCodePoint =
                         '0x${selectedIcon.codePoint.toRadixString(16).toUpperCase()}';

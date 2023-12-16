@@ -25,9 +25,6 @@ class _AddTransactionState extends State<AddTransaction> {
   var titleController = TextEditingController();
   var amountController = TextEditingController();
   var remarksController = TextEditingController();
-  var title;
-  var amount;
-  var remarks;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -105,6 +102,57 @@ class _AddTransactionState extends State<AddTransaction> {
   late var picker;
   bool isSendingInvoice = false;
 
+  // Working with interstitial ads
+
+  late InterstitialAd _interstitialAd;
+  bool _isLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initAd();
+  }
+
+  static const String adUnitId = 'ca-app-pub-9078201720890090/1701830991';
+  void _initAd() {
+    InterstitialAd.load(
+      adUnitId: adUnitId,
+      // test ad uint :
+      // adUnitId: 'ca-app-pub-3940256099942544/1033173712',
+      request: const AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: onAdLoaded,
+        onAdFailedToLoad: (error) {
+          print('InterstitialAd failed to load: $error');
+        },
+      ),
+    );
+  }
+
+  void onAdLoaded(InterstitialAd ad) {
+    _interstitialAd = ad;
+    setState(() {
+      _isLoaded = true;
+    });
+
+    _interstitialAd.fullScreenContentCallback = FullScreenContentCallback(
+      onAdDismissedFullScreenContent: (InterstitialAd ad) {
+        ad.dispose();
+      },
+      onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+        ad.dispose();
+      },
+    );
+  }
+
+  showInterstitialAd() {
+    if (_isLoaded) {
+      return _interstitialAd.show();
+    } else {
+      return (Text("Interstitial ad is not loaded yet."),);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     bool darkModeEnabled = Provider.of<StateProvider>(context).darkTheme;
@@ -143,56 +191,6 @@ class _AddTransactionState extends State<AddTransaction> {
 
     setDateFieldBackgroundColor(var newColor) {
       context.read<StateProvider>().setDateFieldBackgroundColor(newColor);
-    }
-
-    late InterstitialAd _interstitialAd;
-    bool _isLoaded = false;
-
-    void onAdLoaded(InterstitialAd ad) {
-      _interstitialAd = ad;
-      setState(() {
-        _isLoaded = true;
-      });
-
-      _interstitialAd.fullScreenContentCallback = FullScreenContentCallback(
-        onAdDismissedFullScreenContent: (InterstitialAd ad) {
-          ad.dispose();
-        },
-        onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-          ad.dispose();
-        },
-      );
-    }
-
-    showInterstitialAd() {
-      if (_isLoaded) {
-        return _interstitialAd.show();
-      } else {
-        return (Text("Interstitial ad is not loaded yet."),);
-      }
-    }
-
-    void _initAd() {
-      InterstitialAd.load(
-        adUnitId: 'ca-app-pub-9078201720890090/1701830991',
-        request: const AdRequest(),
-        adLoadCallback: InterstitialAdLoadCallback(
-          onAdLoaded: onAdLoaded,
-          onAdFailedToLoad: (error) {
-            print('InterstitialAd failed to load: $error');
-          },
-        ),
-      );
-    }
-
-    @override
-    void initState() {
-      super.initState();
-      _initAd();
-
-      foundTitleFieldName = '';
-      foundAmountFieldName = '';
-      foundDateFieldName = '';
     }
 
     return Scaffold(
