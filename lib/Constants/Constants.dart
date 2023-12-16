@@ -31,6 +31,7 @@ List<Color> appThemeColors = [
 Map<String, String> currencyMap = {
   'NRS': "₹",
   'USD': "\$",
+  'INR': "₹",
 };
 
 final darkTheme = ThemeData(

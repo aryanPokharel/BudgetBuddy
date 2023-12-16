@@ -162,9 +162,8 @@ class _TransactionsState extends State<Transactions> {
                                     child: Container(
                                       decoration: BoxDecoration(
                                         color: transaction['type'] == 'Expense'
-                                            ? Color.fromARGB(255, 255, 242, 241)
-                                            : Color.fromARGB(
-                                                255, 245, 255, 234),
+                                            ? Colors.red[100]
+                                            : Colors.green[100],
                                         border: Border(
                                           left: BorderSide(
                                             width: 4,
@@ -178,7 +177,7 @@ class _TransactionsState extends State<Transactions> {
                                       child: Slidable(
                                         key: ValueKey(transaction['id']),
                                         startActionPane: ActionPane(
-                                          motion: const ScrollMotion(),
+                                          motion: StretchMotion(),
                                           dismissible:
                                               DismissiblePane(onDismissed: () {
                                             context
@@ -201,7 +200,7 @@ class _TransactionsState extends State<Transactions> {
                                           ],
                                         ),
                                         endActionPane: ActionPane(
-                                          motion: ScrollMotion(),
+                                          motion: StretchMotion(),
                                           children: [
                                             SlidableAction(
                                               flex: 2,

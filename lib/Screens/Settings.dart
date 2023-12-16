@@ -99,6 +99,7 @@ class _SettingsPageState extends State<SettingsPage> {
             children: [
               buildCurrencyDropdownItem('NP', 'NRS'),
               buildCurrencyDropdownItem('US', 'USD'),
+              buildCurrencyDropdownItem('IN', 'INR'),
             ],
           ),
           const Divider(),

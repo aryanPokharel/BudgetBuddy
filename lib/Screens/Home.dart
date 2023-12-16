@@ -181,16 +181,15 @@ class _HomePageState extends State<HomePage> {
             : null,
         actions: [
           IconButton(
+            tooltip: "Download report",
             onPressed: () {
-              sendSnackBar(context, "Upload to cloud comming soon!");
+              sendSnackBar(context, "Download report comming soon!");
             },
-            icon: Icon(Icons.upload_rounded),
+            icon: Icon(Icons.file_download),
           )
         ],
         bottom: PreferredSize(
-          // Get the required preferredSize
           preferredSize: MediaQuery.of(context).size * 0.08,
-          // preferredSize: Size.fromHeight(55),
           child: Column(
             children: [
               Padding(
@@ -213,8 +212,18 @@ class _HomePageState extends State<HomePage> {
                         ),
                         Text(
                           "$currencySymbol ${totalExpenses.toStringAsFixed(totalExpenses.truncateToDouble() == totalExpenses ? 0 : 2)}",
-                          style: const TextStyle(
-                            color: Colors.red,
+                          style: TextStyle(
+                            color: appTheme != Colors.red
+                                ? appTheme != Colors.green
+                                    ? appTheme != Colors.pink
+                                        ? appTheme != Colors.blue
+                                            ? appTheme != Colors.teal
+                                                ? Colors.red
+                                                : Colors.white
+                                            : Colors.white
+                                        : Colors.white
+                                    : Colors.white
+                                : Colors.white,
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
@@ -239,8 +248,18 @@ class _HomePageState extends State<HomePage> {
                         ),
                         Text(
                           "$currencySymbol ${totalIncome.toStringAsFixed(totalIncome.truncateToDouble() == totalIncome ? 0 : 2)}",
-                          style: const TextStyle(
-                            color: Colors.green,
+                          style: TextStyle(
+                            color: appTheme != Colors.red
+                                ? appTheme != Colors.green
+                                    ? appTheme != Colors.pink
+                                        ? appTheme != Colors.blue
+                                            ? appTheme != Colors.teal
+                                                ? Colors.green
+                                                : Colors.white
+                                            : Colors.white
+                                        : Colors.white
+                                    : Colors.white
+                                : Colors.white,
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),
@@ -267,8 +286,28 @@ class _HomePageState extends State<HomePage> {
                           "$currencySymbol ${(totalIncome - totalExpenses).toStringAsFixed((totalIncome - totalExpenses).truncateToDouble() == (totalIncome - totalExpenses) ? 0 : 2)}",
                           style: TextStyle(
                             color: (totalIncome - totalExpenses) > 0
-                                ? Colors.green
-                                : Colors.red,
+                                ? appTheme != Colors.red
+                                    ? appTheme != Colors.green
+                                        ? appTheme != Colors.pink
+                                            ? appTheme != Colors.blue
+                                                ? appTheme != Colors.teal
+                                                    ? Colors.green
+                                                    : Colors.white
+                                                : Colors.white
+                                            : Colors.white
+                                        : Colors.white
+                                    : Colors.white
+                                : appTheme != Colors.red
+                                    ? appTheme != Colors.green
+                                        ? appTheme != Colors.pink
+                                            ? appTheme != Colors.blue
+                                                ? appTheme != Colors.teal
+                                                    ? Colors.red
+                                                    : Colors.white
+                                                : Colors.white
+                                            : Colors.white
+                                        : Colors.white
+                                    : Colors.white,
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                           ),

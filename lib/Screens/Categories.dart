@@ -66,35 +66,30 @@ class _CategoriesState extends State<Categories> {
           toolbarHeight: 10,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(40),
-            child: Container(
-              color: darkModeEnabled
-                  ? Color.fromARGB(255, 112, 112, 112)
-                  : Color.fromARGB(255, 222, 222, 222),
-              child: TabBar(
-                indicatorColor: darkModeEnabled ? Colors.white70 : Colors.green,
-                tabs: [
-                  Tab(
-                    child: Text(
-                      "Expense",
-                      style: TextStyle(
-                        color: darkModeEnabled ? Colors.white70 : Colors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+            child: TabBar(
+              indicatorColor: darkModeEnabled ? Colors.white70 : appTheme,
+              tabs: [
+                Tab(
+                  child: Text(
+                    "Expense",
+                    style: TextStyle(
+                      color: darkModeEnabled ? Colors.white70 : Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Tab(
-                    child: Text(
-                      "Income",
-                      style: TextStyle(
-                        color: darkModeEnabled ? Colors.white70 : Colors.black,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                ),
+                Tab(
+                  child: Text(
+                    "Income",
+                    style: TextStyle(
+                      color: darkModeEnabled ? Colors.white70 : Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
