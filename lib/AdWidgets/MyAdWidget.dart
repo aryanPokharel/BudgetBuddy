@@ -18,7 +18,8 @@ class _MyAdWidgetState extends State<MyAdWidget> {
   // Working with ads
   late BannerAd _bannerAd;
   bool _isAdLoaded = false;
-  var adUnit = 'ca-app-pub-9078201720890090/1438268814';
+  // var adUnit = 'ca-app-pub-9078201720890090/1438268814';
+  var adUnit = 'ca-app-pub-3940256099942544/6300978111';
 
   _initBannerAd() {
     _bannerAd = BannerAd(

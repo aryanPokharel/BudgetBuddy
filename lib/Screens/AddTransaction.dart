@@ -493,22 +493,32 @@ class _AddTransactionState extends State<AddTransaction> {
                                     category as Map<String, dynamic>;
                                 return DropdownMenuItem<dynamic>(
                                   value: category,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Icon(
-                                        IconData(
-                                            int.parse(categoryData['icon']),
-                                            fontFamily: 'MaterialIcons'),
-                                      ),
-                                      const SizedBox(
-                                        width: 110,
-                                      ),
-                                      Text(
-                                        categoryData['title'],
-                                      ),
-                                    ],
+                                  child: Container(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Icon(
+                                          IconData(
+                                              int.parse(categoryData['icon']),
+                                              fontFamily: 'MaterialIcons'),
+                                          color: !darkModeEnabled
+                                              ? Color.fromARGB(255, 0, 0, 0)
+                                              : null,
+                                        ),
+                                        const SizedBox(
+                                          width: 110,
+                                        ),
+                                        Text(
+                                          categoryData['title'],
+                                          style: TextStyle(
+                                            color: !darkModeEnabled
+                                                ? Color.fromARGB(255, 0, 0, 0)
+                                                : null,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 );
                               }).toList()

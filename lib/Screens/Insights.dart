@@ -3,6 +3,7 @@ import 'package:budget_buddy/Charts/LineGraph.dart';
 import 'package:budget_buddy/Charts/PieGraph.dart';
 import 'package:budget_buddy/Charts/PieGraph2.dart';
 import 'package:budget_buddy/AdWidgets/MyAdWidget.dart';
+import 'package:budget_buddy/Constants/LooksEmpty.dart';
 import 'package:budget_buddy/StateManagement/states.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -52,31 +53,33 @@ class _InsightsPageState extends State<InsightsPage> {
               SizedBox(
                 height: 20,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildRadioOption("Gross", "Pie", "Pie"),
-                  const SizedBox(width: 16),
-                  _buildRadioOption("Gross", "Line", "Line"),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              grossGraphType == "Pie"
-                  ? FlPieGraph(
-                      insightType: showMonthlyData ? "Monthly" : "Overall")
-                  : FlLineGraph(
-                      insightType: showMonthlyData ? "Monthly" : "Overall"),
-              Divider(
-                thickness: 2,
-              ),
-              MyAdWidget(),
               noData
-                  ? MyAdWidget()
+                  ? EmptyListWidget()
                   : Container(
                       child: Column(
                         children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _buildRadioOption("Gross", "Pie", "Pie"),
+                              const SizedBox(width: 16),
+                              _buildRadioOption("Gross", "Line", "Line"),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          grossGraphType == "Pie"
+                              ? FlPieGraph(
+                                  insightType:
+                                      showMonthlyData ? "Monthly" : "Overall")
+                              : FlLineGraph(
+                                  insightType:
+                                      showMonthlyData ? "Monthly" : "Overall"),
+                          Divider(
+                            thickness: 2,
+                          ),
+                          MyAdWidget(),
                           SizedBox(
                             height: 50,
                           ),
