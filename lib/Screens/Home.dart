@@ -1,5 +1,4 @@
 import 'package:budget_buddy/Constants/DateName.dart';
-import 'package:budget_buddy/Constants/SendSnackBar.dart';
 import 'package:budget_buddy/Screens/Categories.dart';
 import 'package:budget_buddy/Constants/Constants.dart';
 import 'package:budget_buddy/Screens/Insights.dart';
@@ -63,6 +62,25 @@ class _HomePageState extends State<HomePage> {
 
   final CarouselController _monthListCarouselController = CarouselController();
 
+  DateTime _selectedDate = DateTime.now();
+
+  Future<void> _selectYear(BuildContext context) async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      initialDatePickerMode: DatePickerMode.year,
+    );
+
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+        print("Selected year: ${_selectedDate.year}");
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var currency = Provider.of<StateProvider>(context).currency;
@@ -80,6 +98,8 @@ class _HomePageState extends State<HomePage> {
         ? Provider.of<StateProvider>(context).thisMonthTotalIncome
         : Provider.of<StateProvider>(context).totalIncome;
     var selectedMonth = Provider.of<StateProvider>(context).selectedMonth;
+
+    var selectedYear = Provider.of<StateProvider>(context).selectedYear;
 
     return Scaffold(
       backgroundColor: darkModeEnabled
@@ -161,9 +181,10 @@ class _HomePageState extends State<HomePage> {
                       child: Text(
                         monthList[index],
                         style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white70),
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white70,
+                        ),
                       ),
                     );
                   },
@@ -180,12 +201,44 @@ class _HomePageState extends State<HomePage> {
                 ))
             : null,
         actions: [
-          IconButton(
-            tooltip: "Download report",
+          TextButton(
             onPressed: () {
-              sendSnackBar(context, "Download report comming soon!");
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text("Select Year"),
+                    content: Container(
+                      width: 300,
+                      height: 300,
+                      child: YearPicker(
+                        firstDate: DateTime(DateTime.now().year - 20),
+                        lastDate: DateTime(DateTime.now().year),
+                        initialDate: _selectedDate,
+                        selectedDate: _selectedDate,
+                        onChanged: (DateTime dateTime) {
+                          setState(() {
+                            _selectedDate = DateTime(dateTime.year);
+                          });
+                          context
+                              .read<StateProvider>()
+                              .setSelectedYear(dateTime.year);
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                  );
+                },
+              );
             },
-            icon: Icon(Icons.file_download),
+            child: Text(
+              selectedYear.toString(),
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white70,
+              ),
+            ),
           )
         ],
         bottom: PreferredSize(

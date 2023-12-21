@@ -347,6 +347,16 @@ class StateProvider with ChangeNotifier {
     incomeCategoryTypesTitles = tempIncomeTitles;
   }
 
+  // Working with this year
+  var selectedYear = DateTime.now().year;
+  dynamic thisYearTotalExpenses = 0;
+  dynamic thisYearTotalIncome = 0;
+  setSelectedYear(int year) {
+    selectedYear = year;
+    fetchAllData();
+    notifyListeners();
+  }
+
   // Working with this month
   dynamic thisMonthTotalExpenses = 0;
   dynamic thisMonthTotalIncome = 0;
@@ -363,12 +373,16 @@ class StateProvider with ChangeNotifier {
     thisMonthTotalIncome = 0;
     thisMonthTransactions.clear();
     for (var transaction in transactionList) {
-      if (getMonthName(transaction['dateTime'].toString()) == selectedMonth) {
-        thisMonthTransactions.add(transaction);
-        if (transaction['type'] == "Expense") {
-          thisMonthTotalExpenses += double.parse(transaction['amount']);
-        } else {
-          thisMonthTotalIncome += double.parse(transaction['amount']);
+      DateTime dateTime = DateTime.parse(transaction['dateTime']);
+      if (dateTime.year.toString() == selectedYear.toString()) {
+        if (getMonthName(dateTime.toString()) == selectedMonth) {
+          print(selectedMonth.toString());
+          thisMonthTransactions.add(transaction);
+          if (transaction['type'] == "Expense") {
+            thisMonthTotalExpenses += double.parse(transaction['amount']);
+          } else {
+            thisMonthTotalIncome += double.parse(transaction['amount']);
+          }
         }
       }
     }
