@@ -106,19 +106,20 @@ class _HomePageState extends State<HomePage> {
           ? Color.fromARGB(255, 112, 112, 112)
           : Color.fromARGB(255, 222, 222, 222),
       bottomNavigationBar: SalomonBottomBar(
-          backgroundColor: darkModeEnabled
-              ? Color.fromARGB(255, 112, 112, 112)
-              : Color.fromARGB(255, 222, 222, 222),
-          currentIndex: _selectedIndex,
-          selectedItemColor: darkModeEnabled ? appTheme[100] : appTheme,
-          unselectedItemColor:
-              darkModeEnabled ? Colors.white70 : const Color(0xff757575),
-          onTap: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-          items: _navBarItems),
+        backgroundColor: darkModeEnabled
+            ? Color.fromARGB(255, 112, 112, 112)
+            : Color.fromARGB(255, 222, 222, 222),
+        currentIndex: _selectedIndex,
+        selectedItemColor: darkModeEnabled ? appTheme[100] : appTheme,
+        unselectedItemColor:
+            darkModeEnabled ? Colors.white70 : const Color(0xff757575),
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        items: _navBarItems,
+      ),
       drawer: Drawer(
         backgroundColor:
             !darkModeEnabled ? Color.fromARGB(255, 222, 222, 222) : null,

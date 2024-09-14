@@ -18,10 +18,6 @@ class _AddTransactionState extends State<AddTransaction> {
   DateTime? selectedDate = DateTime.now();
   dynamic dateToSend;
 
-  late String foundTitleFieldName;
-  late String foundAmountFieldName;
-  late String foundDateFieldName;
-
   var titleController = TextEditingController();
   var amountController = TextEditingController();
   var remarksController = TextEditingController();
@@ -98,9 +94,6 @@ class _AddTransactionState extends State<AddTransaction> {
 
   var choosenExpenseCategory;
   var choosenIncomeCategory;
-
-  late var picker;
-  bool isSendingInvoice = false;
 
   // Working with interstitial ads
 
@@ -192,6 +185,8 @@ class _AddTransactionState extends State<AddTransaction> {
     setDateFieldBackgroundColor(var newColor) {
       context.read<StateProvider>().setDateFieldBackgroundColor(newColor);
     }
+
+    bool isSendingInvoice = false;
 
     return Scaffold(
       backgroundColor: _transactionType == "Expense"
